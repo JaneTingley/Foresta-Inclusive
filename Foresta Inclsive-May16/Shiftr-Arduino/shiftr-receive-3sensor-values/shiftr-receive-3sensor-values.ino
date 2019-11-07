@@ -29,7 +29,8 @@ int moistureReading = 0;   // This is for the received sensor value sent by shif
 int lightReading = 0;   // This is for the received sensor value sent by shiftr
 int temperatureReading = 0;   // This is for the received sensor value sent by shiftr
 
-int moistureThreshold = 400;  // This holds the threshold for the soil - change here and reupload
+int moistureThreshold = 470;  // This holds the threshold for the soil - change here and reupload
+int valveTime = 4000;  // The amount of time between each time the valve is actuated (seconds)
 
 void connect() {
   Serial.print("connecting...");
@@ -113,6 +114,9 @@ void loop() {
     client.publish("/NewThreshold", String(moistureThreshold)); // sending to shiftr client.publish("NewThreshold", String(moistureThreshold)); // sending to shiftr
     Serial.print("moistureThreshold value : ");
     Serial.println(moistureThreshold);
+    client.publish("/ValveTime", String(valveTime));
+    Serial.print("valveTime value : ");
+    Serial.println(valveTime);
   }
 
       // from DhcpAddressPrinter 
