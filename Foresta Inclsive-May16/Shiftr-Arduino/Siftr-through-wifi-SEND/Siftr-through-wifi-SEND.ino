@@ -16,7 +16,7 @@
   *  I had to use #include <WiFiNINA.h> and WiFiClient net; //from wifinina
 MQTTClient client; //from Shiftr to make this work.
 
-It takes about 2 minutes to connect to the internet
+It takes about 1 minute to connect to the internet
   */
 #include <SPI.h>
 #include <WiFiNINA.h>
@@ -118,7 +118,7 @@ void loop() {
   }
   delay (100);
   
-  if (millis() - lastMillis > 1000) {
+  if (millis() - lastMillis > 10000) {
     lastMillis = millis();
     //Serial.print("moistureThreshold value");
     //Serial.println(moistureThreshold);
