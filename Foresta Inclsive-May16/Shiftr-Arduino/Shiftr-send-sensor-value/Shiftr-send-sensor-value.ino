@@ -9,48 +9,43 @@
 // by Joël Gähwiler
 // https://github.com/256dpi/arduino-mqtt
 
-/* FSR testing sketch. 
- 
-Connect one end of FSR to 5V, the other end to Analog 0.
-Then connect one end of a 10K resistor from Analog 0 to ground
-Connect LED from pin 11 through a resistor to ground 
- 
-For more information see www.ladyada.net/learn/sensors/fsr.html */
 
 #include <Ethernet.h>
 #include <MQTT.h>
 #include <SPI.h> //from DhcpAddressPrinter
 
+    // from DhcpAddressPrinter 
+                byte mac[] = {
+                  0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02 /*change mac address so it is different from the programme 
+                  on send arduino */
+                };
+    // end from DhcpAddressPrinter
 
 EthernetClient net;
 MQTTClient client;
 
 unsigned long lastMillis = 0;
-int fsrAnalogPin = 0; // FSR is connected to analog 0 (pressure sensor)
-int fsrReading;      // the analog reading from the FSR resistor divider
+int moistureThreshold = 100;  // this is to hold the value for the soil moisture thresholdmoistureThreshold = 100;
+int moisturePin = A0; // this defines the pin A0 as the moisture sensor pin
+int moistureReading;  // this holds the reading from the moisture sensor
+int lightPin = A1;  // this defines the pin A1 as the light sensor pin
+int lightReading;  // this holds the reading from the light sensor
+int temperaturePin = A2; // this defines the pin A2 as the temperature sensor pin
+int temperatureReading;  // this holds the reading from the temperature sensor
+int motorPin1 = 6; // Ball-Motor
+int motorPin2 = 7; // Ball-Motor
 
-
-void connect() {
-  Serial.print("connecting...");
-  while (!client.connect("Foresta-InclusiveSEND", "83aa4496", "02ffd19115bcd0ed")) {
-    Serial.print(".");
-    delay(1000);
-  }
-
-  Serial.println("\nconnected!"); //  '/n' means start at new line
-
-  //client.subscribe("/sensor1"); //     '/' all names start with a slash
-  client.unsubscribe("/sensor1");
-}
-
-void messageReceived(String &topic, String &payload) {  // string is a type of variable - a series of characters (topic= / sensor1  payload= the value
-  Serial.println("incoming: " + topic + " - " + payload);  // see serial - this is how the information is displayed
-}
 
 void setup() {
+  
+  pinMode(motorPin1, OUTPUT); //set pins as output
+  pinMode(motorPin2, OUTPUT);  //set pins as output
+  pinMode (moisturePin,INPUT); // Initializing soil moisture sensor as input
+  pinMode (lightPin,INPUT); // Initializing light sensor as input
+  pinMode (temperaturePin,INPUT); // Initializing soil temperature sensor as input
+
   Serial.begin(115200);
   
-
   // Note: Local domain names (e.g. "Computer.local" on OSX) are not supported by Arduino.
   // You need to set the IP address directly.
   client.begin("broker.shiftr.io", net);
@@ -60,23 +55,46 @@ void setup() {
 }
 
 void loop() {
+
+  moistureReading = analogRead(moisturePin);
+  lightReading = analogRead(lightPin);
+  temperatureReading = analogRead(temperaturePin); 
+  temperatureReading = map(temperatureReading, 0, 625, -40, 85);
+  if (moistureReading < moistureThreshold)  {  // reads moistureReading - if smaller than moistureThreshold then open valve
+
+  // Turn the motor in one direction
+    digitalWrite(motorPin1, LOW); //close
+    digitalWrite(motorPin2, HIGH);
+  } 
+
+  else{
+    digitalWrite(motorPin1, HIGH); //open
+    digitalWrite(motorPin2, LOW);
+  }
+  delay (100);
+  
   client.loop();
 
   if (!client.connected()) {
     connect();
+  }  
+}
+
+void connect() {
+  Serial.print("connecting...");
+  while (!client.connect("Foresta-InclusiveSEND3SENSOR", "83aa4496", "02ffd19115bcd0ed")) {
+    Serial.print(".");
+    delay(1000);
   }
 
-  fsrReading = analogRead(fsrAnalogPin);
-  Serial.print("Analog reading = ");
-  Serial.println(fsrReading);
-  // publish a message roughly every 2 seconds.
-  if (millis() - lastMillis > 1000) {
-    lastMillis = millis();
-    client.publish("/sensor1", String(fsrReading)); // sending to shiftr    client.publish("/sensor1", String(lastmillis)); // sending to shiftr
-  }
-  
+  Serial.println("\nconnected!"); //  '/n' means start at new line
 
+  client.subscribe("/NewThreshold"); //     '/' all names start with a slash
+  //client.unsubscribe("/NewThreshold");
+}
 
+void messageReceived(String &topic, String &payload) {   // string is a type of variable - a series of characters (topic= /moistureThreshold   payload= the value
+  moistureThreshold = payload.toInt(); // this translates the payload string into an integer, which is now stored in sensorValue
+  Serial.println("incoming: " + topic + " - " + payload);  // see serial - this is how the information is displayed
 
-  
 }
