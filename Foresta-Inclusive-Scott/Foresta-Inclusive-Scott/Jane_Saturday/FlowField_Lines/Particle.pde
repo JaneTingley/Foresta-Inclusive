@@ -29,7 +29,7 @@ class Particle {
   }
 
   void show() {
-    stroke(colors[rand], 2);
+    stroke(colors[rand], 3);
     line(position.x, position.y, prevPosition.x, prevPosition.y);
     updatePrevPosition();
   }

@@ -69,7 +69,7 @@ class Agent {
     strokeWeight(1);
 
     pushMatrix();
-    translate(position.x-5, position.y-5, 500);
+    translate(position.x-5, position.y-5, 800);
 
 
     rotate(theta-45);

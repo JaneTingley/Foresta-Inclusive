@@ -9,7 +9,7 @@ class Particle {
   int rand;
   float thickness;
 
-  //color pallete the the particles will randomly select from
+  //------------------------------color pallete the the particles will randomly select from
   color [] colors = {color(#00fff0), color(#00d1ff), color(#00fc2e)};
 
   Particle (float posX, float posY) { 
@@ -23,7 +23,7 @@ class Particle {
     //determines particle acceleration
     acceleration = new PVector (0, 0);
 
-    //limits speed of particle 
+    //------------------------------limits speed of particle 
     maxSpeed = 2;
 
     //copies last position of particle for use in show method
@@ -55,17 +55,17 @@ class Particle {
   //Method to make the particles avoid the users cursor and
   //increase in thickness when doing so
   void avoidUser() {
-    //checks if mouse is within 30px of a particle
-    if (dist(position.x, position.y, mouseX, mouseY) < 30) {
+    //--------------------------------------------checks if mouse is within 30px of a particle
+    if (dist(position.x, position.y, mouseX, mouseY) < 100) {
       PVector mouse = new PVector(mouseX, mouseY);
       mouse.sub(position);
 
-      //sets the strength of the avoidance (negative number will repel, positive will attact)
+      //-----------------------sets the strength of the avoidance (negative number will repel, positive will attact)
       mouse.setMag(-1);
       acceleration = mouse;
 
-      //increases the thickness of the particle the longer the mouse is close to it
-      thickness += 0.20;
+      //------------------------increases the thickness of the particle the longer the mouse is close to it
+      thickness += 0.25;
     } else {
       //slowly scales the particle back to normal size when mouse is far away
       if (thickness > 1) {
@@ -83,8 +83,8 @@ class Particle {
     avoidUser();
     strokeWeight(thickness);
 
-    //display particle using random color from the pallete
-    stroke(colors[rand], 80);
+    //-----------------------------------display particle using random color from the pallete
+    stroke(colors[rand], 30); //opacity
 
     //draw the particle as line
     line(position.x, position.y, prevPosition.x, prevPosition.y);

@@ -8,7 +8,8 @@ ArrayList<Particle> particles = new ArrayList<Particle>();
 PVector [] flowField;
 
 void setup () {
-  size(500, 500);
+  //size(500, 500);
+  fullScreen();
   background(20, 0, 50);
 
   cols = floor(width / scale) + 1;

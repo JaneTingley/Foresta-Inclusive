@@ -1,4 +1,4 @@
-int scale = 15;
+int scale = 25; // -----------------------------change this for density of flowfield
 int cols;
 int rows;
 float inc = 0.04;
@@ -10,7 +10,9 @@ ArrayList<Particle> particles = new ArrayList<Particle>();
 PVector [] flowField;
 
 void setup () {
-  size(500, 500);
+  //
+  fullScreen();
+  //size(500, 500);
   background(20, 0, 50);
 
   //delete this when not on a retina display 
@@ -22,7 +24,7 @@ void setup () {
   rows = floor(height / scale) + 1;
 
   //adding 6000 particles into the sketch
-  for (int i = 0; i < 6000; i++) {
+  for (int i = 0; i < 10000; i++) {
     particles.add(new Particle(random(width), random(height)));
   }
 
@@ -45,24 +47,24 @@ void draw () {
       //Set flowfield vector to angle calculated above
       PVector v = PVector.fromAngle(angle);
 
-      //Set how strictly the particle will follow the direction of the flowfield
+      //___________________________Set how strictly the particle will follow the direction of the flowfield
       //(Higher the value the strictier it will follow the direction)
-      v.setMag(0.05);
+      v.setMag(0.5); 
 
       //Add the calculated vector to the flowfield
       flowField[index] = v;
       xoff += inc;
 
 
-      //Uncomment this block to see the flowfield
+      //---------------------------Uncomment this block to see the flowfield
       //(for dev purposes can remove it entirely if you wish)
-      /*
-      push();
-      translate(x*scale, y*scale);
-      rotate(v.heading());
-      line(0, 0, scale, 0);
-      pop();
-      */
+      
+      //push();
+      //translate(x*scale, y*scale);
+      //rotate(v.heading());
+      //line(0, 0, scale, 0);
+      //pop();
+      
     }
 
     //increment the noise offsets

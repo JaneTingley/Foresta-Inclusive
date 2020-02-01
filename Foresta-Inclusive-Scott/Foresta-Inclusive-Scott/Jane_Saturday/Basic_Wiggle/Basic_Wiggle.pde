@@ -4,6 +4,7 @@ void setup () {
   size(600, 400);
   pixelDensity(2);
   smooth();
+  frameRate(15);
 }
 
 void draw () {

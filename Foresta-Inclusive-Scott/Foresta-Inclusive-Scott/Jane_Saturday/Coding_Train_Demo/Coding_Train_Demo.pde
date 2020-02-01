@@ -11,7 +11,8 @@
 Agent v;
 
 void setup() {
-  size(800, 800, P3D);
+  //size(800, 800, P3D);
+  fullScreen(P3D);
   v = new Agent(width/2, height/2);
 }
 
