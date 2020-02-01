@@ -1,20 +1,35 @@
-int scale = 25; // -----------------------------change this for density of flowfield
+
+import mqtt.*;
+
+/* sensors used:
+https://www.vegetronix.com/Products/VH400/
+https://www.vegetronix.com/Products/THERM200/
+https://www.vegetronix.com/Products/VG-DARK/
+*/
+
+MQTTClient client;
+
+int speed;
+
+int scale = 15; // -----------------------------change this for density of flowfield
 int cols;
 int rows;
 float inc = 0.04;
 float zoff = 0;
-
-int speed = 1;
 
 //array list that contains the particle objects
 ArrayList<Particle> particles = new ArrayList<Particle>();
 //array of vectors that makes up the flow field
 PVector [] flowField;
 
-import mqtt.*;
-MQTTClient client;
 void setup () {
+   client = new MQTTClient(this);
+  client.connect("mqtt://buddadweet~Foresta-Inclusive@broker.shiftr.io", "processing-sketch");
+  client.subscribe("WetSoil"); //values between 0-800
+  client.subscribe("Light"); // values between 0-800(ish) (hands covering sensor = 200, light but in shade =600
+  client.subscribe("Temperature"); // remapped the values to produce between -30 and 30 degrees. Value not 100% accurate
   //
+  //fullScreen();
   size(500, 500);
   background(20, 0, 50);
 
@@ -33,16 +48,11 @@ void setup () {
 
   //setting flowfield array size
   flowField = new PVector [cols*rows];
-
-  client = new MQTTClient(this);
-  client.connect("mqtt://buddadweet~Foresta-Inclusive@broker.shiftr.io", "processing-sketch");
-  client.subscribe("WetSoil"); //values between 0-800
-  client.subscribe("Light"); // values between 0-800(ish) (hands covering sensor = 200, light but in shade =600
-  client.subscribe("Temperature"); // remapped the values to produce between -30 and 30 degrees. Value not 100% accurate
 }
 
 void draw () {
   background(20, 0, 50);
+
   float yoff = 0;
 
   for (int y = 0; y < rows; y++) {
@@ -57,7 +67,7 @@ void draw () {
 
       //___________________________Set how strictly the particle will follow the direction of the flowfield
       //(Higher the value the strictier it will follow the direction)
-      v.setMag(0.5); 
+      v.setMag(0.03); 
 
       //Add the calculated vector to the flowfield
       flowField[index] = v;
@@ -85,22 +95,17 @@ void draw () {
   //generate the visuals
   for (int i = 0; i < particles.size(); i++) {
     particles.get(i).flow(flowField);
-    particles.get(i).update(speed);
+    particles.get(i).update();
     particles.get(i).edges();
-    particles.get(i).show();
+
+    particles.get(i).show(speed);
   }
 }
 
 void messageReceived(String topic, byte[] payload) {
-  if (topic.equals("WetSoil")) {
-    //println(topic);
-  } else if (topic.equals("Light")) {
-    println(topic);
+  //println("new message: " + topic + " - " + new String(payload));
+  if(topic.equals("Light")){
     speed = int(new String(payload));
-    println(speed);
-  } else if (topic.equals("Temperature")) {
-    //println(topic);
   }
-  println(topic +":"+ new String(payload));
 
 }

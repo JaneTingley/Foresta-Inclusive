@@ -3,7 +3,7 @@ class Particle {
   PVector velocity;
   PVector acceleration;
 
-  float maxSpeed;
+  int maxSpeed;
   PVector prevPosition;
 
   int rand;
@@ -40,10 +40,8 @@ class Particle {
 
 
   //This method handles the movement of the particle (do not change)
-  void update(int inputSpeed) {
-    maxSpeed = map(inputSpeed, 0, 800, 0, 10);
-    println(maxSpeed, "---");
-
+  void update() {
+    //println(inputSpeed, ":", maxSpeed);
     velocity.limit(maxSpeed);
     velocity.add(acceleration);
     position.add(velocity);
@@ -59,7 +57,7 @@ class Particle {
   //increase in thickness when doing so
   void avoidUser() {
     //--------------------------------------------checks if mouse is within 30px of a particle
-    if (dist(position.x, position.y, mouseX, mouseY) < 10) {
+    if (dist(position.x, position.y, mouseX, mouseY) < 100) {
       PVector mouse = new PVector(mouseX, mouseY);
       mouse.sub(position);
 
@@ -81,7 +79,9 @@ class Particle {
   }
 
   //method that displays the particle
-  void show() {
+  void show(int inputSpeed) {
+    maxSpeed =  int(map(inputSpeed, 52, 572, 2, 6));
+
     //check for mouse proximity
     avoidUser();
     strokeWeight(thickness);
