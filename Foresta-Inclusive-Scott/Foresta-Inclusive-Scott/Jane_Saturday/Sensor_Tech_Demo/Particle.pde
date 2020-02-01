@@ -34,7 +34,7 @@ class Particle {
     rand = floor(random(0, colors.length));
 
     //set thickness of the particle
-    thickness = 1;
+    thickness = 2;
   }
 
 
@@ -69,7 +69,7 @@ class Particle {
       thickness += 0.25;
     } else {
       //slowly scales the particle back to normal size when mouse is far away
-      if (thickness > 1) {
+      if (thickness > 2) {
         thickness -= 0.10;
       }
       //set acceleration back to 0 when mouse leavs
@@ -80,7 +80,7 @@ class Particle {
 
   //method that displays the particle
   void show(int inputSpeed) {
-    maxSpeed =  int(map(inputSpeed, 52, 572, 2, 6));
+    maxSpeed =  int(map(inputSpeed, 52, 572, 2, 20));//maps the speed between 2 and 20
 
     //check for mouse proximity
     avoidUser();

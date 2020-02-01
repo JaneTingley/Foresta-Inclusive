@@ -29,8 +29,8 @@ void setup () {
   client.subscribe("Light"); // values between 0-800(ish) (hands covering sensor = 200, light but in shade =600
   client.subscribe("Temperature"); // remapped the values to produce between -30 and 30 degrees. Value not 100% accurate
   //
-  //fullScreen();
-  size(500, 500);
+  fullScreen();
+  //size(500, 500);
   background(20, 0, 50);
 
   //delete this when not on a retina display 
@@ -42,7 +42,7 @@ void setup () {
   rows = floor(height / scale) + 1;
 
   //adding 6000 particles into the sketch
-  for (int i = 0; i < 5000; i++) {
+  for (int i = 0; i < 8000; i++) {
     particles.add(new Particle(random(width), random(height)));
   }
 
