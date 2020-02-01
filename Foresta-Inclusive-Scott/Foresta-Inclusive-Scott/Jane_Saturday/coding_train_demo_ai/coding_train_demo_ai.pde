@@ -12,13 +12,13 @@ Vehicle v;
 PShape s;
 
 void setup() {
-  size(800, 800, P3D);
-
+  //size(800, 800, P3D);
+  fullScreen(P3D);
   v = new Vehicle(width/2, height/2);
 }
 
 void draw() {
-  background(255);
+  background(120, 20, 4);
 
   PVector mouse = new PVector(mouseX, mouseY);
 
