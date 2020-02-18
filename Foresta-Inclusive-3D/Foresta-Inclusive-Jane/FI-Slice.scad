@@ -1,7 +1,7 @@
 
 module thing()
 {
-import("/Users/janetingley/Downloads/trichonymphaToSlice_rotated.stl");
+translate ([0,0,1.4])import("/Users/janetingley/Downloads/trichonymphaToSlice_rotated.stl");
 
   }
 
@@ -25,6 +25,7 @@ module demo_proj()
 
 echo(version=version());
 translate([ +0, 0, 0 ]) demo_proj();
+//translate([ +30, 0, 0 ]) demo_cut();
 
 
 // Written by Clifford Wolf <clifford@clifford.at> and Marius
