@@ -88,9 +88,7 @@ class Particle {
     }
   }
 
-  void show(PVector input) {
-
-    avoidUser(input); //check if particle is near mouse
+  void show() {
     fill(particleColor, 100);
     noStroke();
     ellipse(position.x, position.y, size + particleSizeIncreaser, size+ particleSizeIncreaser);

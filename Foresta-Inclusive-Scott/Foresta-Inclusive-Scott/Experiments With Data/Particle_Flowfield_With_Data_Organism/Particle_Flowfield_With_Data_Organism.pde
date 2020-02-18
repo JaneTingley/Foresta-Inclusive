@@ -6,11 +6,15 @@ float zoff = 0;
 
 //array list that contains the particle objects
 ArrayList<Particle> particles = new ArrayList<Particle>();
+
+ArrayList<Vehicle> vehicles = new ArrayList<Vehicle>();
+
+
 //array of vectors that makes up the flow field
 PVector [] flowField;
 
 Table table;
-Vehicle v;
+
 
 float xOff;
 float yOff;
@@ -22,10 +26,10 @@ float xPos;
 float yPos;
 
 void setup() {
-  size(800, 800, P3D);
+  size(500, 500, P3D);
   //fullScreen();
   background(20, 0, 50);
-
+  pixelDensity(2);
   //setting the offsets to a random position makeing sure circles all start in different location
   xOff = random(width);
   yOff = random(height);
@@ -35,16 +39,19 @@ void setup() {
   xIncr = random(0.0001, 0.002);
   yIncr = random(0.0001, 0.002);
 
-  v = new Vehicle(width/2, height/2);
-
   //dividing canvas into a grid that is scaled
   cols = floor(width / scale) + 1;
   rows = floor(height / scale) + 1;
 
   table = loadTable("data/sensor_data.csv", "header");
 
+  for (int i = 0; i < 5; i++) {
+    vehicles.add(new Vehicle(random(width), random(height)));
+  }
+
+
   for (TableRow row : table.rows()) {
-    for (int i = 0; i < 60; i++) {
+    for (int i = 0; i < 30; i++) {
       float light = row.getFloat("light");
       float temp = row.getFloat("temp");
 
@@ -57,18 +64,12 @@ void setup() {
   flowField = new PVector [cols*rows];
 }
 
-PVector move () {
-  xOff += xIncr;
-  yOff += yIncr;
 
-  xPos = map(noise(xOff), 0, 1, 0, width);
-  yPos = map(noise(yOff), 0, 1, 0, height);
-  return new PVector(xPos, yPos);
-}
 
 void draw() {
   background(20, 0, 50);
-
+  directionalLight(204, 204, 204, .5, 0, -1);
+  emissive(0, 26, 51);
   float yoff = 0;
   for (int y = 0; y < rows; y++) {
     float xoff= 0;
@@ -94,16 +95,33 @@ void draw() {
     zoff += 0.0001;
   }
 
-  PVector orgPos = move();
+  //PVector mouse = new PVector(mouseX, mouseY);
+  //v.seek(mouse);
+  PVector mouse = new PVector(mouseX, mouseY);
+  for (int i = 0; i < vehicles.size(); i++) {
+    if (dist(mouseX, mouseY, vehicles.get(i).position.x, vehicles.get(i).position.y) < 250) {
+      vehicles.get(i).seek(mouse);
+      vehicles.get(i).maxSpeed = 3;
+    } else {
+      vehicles.get(i).maxSpeed = 2;
+      vehicles.get(i).flow(flowField);
+    }
 
-  v.seek(orgPos);
-  v.update();
-  v.display();
+    vehicles.get(i).flow(flowField);
+    vehicles.get(i).separate(vehicles);
+
+    vehicles.get(i).update();
+    vehicles.get(i).edges();
+    vehicles.get(i).display();
+  }
+
+
+
   //loop through particle object methods to generate the visuals
   for (int i = 0; i < particles.size(); i++) {
     particles.get(i).flow(flowField);
     particles.get(i).update();
     particles.get(i).edges();
-    particles.get(i).show(orgPos);
+    particles.get(i).show();
   }
 }
