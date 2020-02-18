@@ -12,16 +12,20 @@ class Particle {
   int size;
   color from;
   color to;
+  float inc = 0.07;
+  float aplha = 100;
 
-  ArrayList <PVector> prevPosition = new <PVector> ArrayList();
+  float sensorLight;
+  float sensorTemp;
+  color [] colorP = {color(#f093fb), color(#f5576c)};
+  int rand= int(random(0, 2));
   //Constructor for particle
-  Particle(float posX, float posY, float sensorLight, float sensorTemp) {
-    color from = color(#2af598);
-    color to = color(#009efd);
+  Particle(float posX, float posY, float sensorLightInput, float sensorTempInput) {
+    color from = color(#007adf);
+    color to = color(#00ecbc);
     //map the values of the sensors to a usable range
-    sensorLight = map(sensorLight, 40.18333333, 259.8135593, 0.5, 5);
-    sensorTemp = map(sensorTemp, 6, 13, 0, 1);
-
+    sensorLight = map(sensorLightInput, 40.18333333, 259.8135593, 0.5, 5);
+    sensorTemp = map(sensorTempInput, 6, 13, 0, 1);
     //set particle movement parameters
     position = new PVector (posX, posY);
     velocity = new PVector (0, 0);
@@ -66,16 +70,14 @@ class Particle {
       mouse.sub(position); // gets the position of the particle in relation to the mouse
       acceleration = mouse;
 
-      if (mousePressed) {
-        mouse.setMag(random(1, 5)); //sets the strength of the avoidance (negatives numbers repel, positive numbers attract);
-      } else {
-         mouse.setMag(random(-5, -1)); //sets the strength of the avoidance (negatives numbers repel, positive numbers attract);
-        particleSizeIncreaser += 0.15; //increases the thickness of the particle the longer the mouse is close to it
-      }
+      mouse.setMag(random(-3, -1)); //sets the strength of the avoidance (negatives numbers repel, positive numbers attract);
+      color newColor = lerpColor(particleColor, color(#f093fb), sensorTemp+0.25);
+      fill(newColor);
     } else {
       if (particleSizeIncreaser > 1) {
         particleSizeIncreaser -= 0.10;
       }
+      fill(particleColor);
     }
   }
 
@@ -93,8 +95,8 @@ class Particle {
 
   void show() {
 
+
     avoidUser(); //check if particle is near mouse
-    fill(particleColor, 60);
     noStroke();
     ellipse(position.x, position.y, size + particleSizeIncreaser, size+ particleSizeIncreaser);
   }

@@ -14,8 +14,8 @@ Table table;
 float xoff = 0.0;
 
 void setup() {
-  size(800, 800, P3D);
-//fullScreen();
+  size(500, 500, P3D);
+  pixelDensity(2);
   background(20, 0, 50);
 
   //dividing canvas into a grid that is scaled
@@ -25,7 +25,7 @@ void setup() {
   table = loadTable("data/sensor_data.csv", "header");
 
   for (TableRow row : table.rows()) {
-    for (int i = 0; i < 60; i++) {
+    for (int i = 0; i < 30; i++) {
       float light = row.getFloat("light");
       float temp = row.getFloat("temp");
 
@@ -40,7 +40,7 @@ void setup() {
 
 void draw() {
   xoff = xoff + .01;
-  float alpha = map(noise(xoff), 0, 1, 4, 10);
+  float alpha = map(noise(xoff), 0, 1, 4, 20);
   fill(20, 0, 50, alpha);
   rect(0, 0, width, height);
 
