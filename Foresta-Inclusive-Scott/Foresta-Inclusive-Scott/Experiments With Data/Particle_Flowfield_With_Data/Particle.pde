@@ -59,7 +59,7 @@ class Particle {
     float rawMouseSpeed = dist(mouseX, mouseY, pmouseX, pmouseY);
     float smoothedSpeedToRadius = map(rawMouseSpeed, 1, 40, 5, 60);
 
-    if (dist(position.x, position.y, mouseX, mouseY) < smoothedSpeedToRadius) {
+    if (dist(position.x, position.y, mouseX, mouseY) < smoothedSpeedToRadius) { // leap motion here
       PVector mouse = new PVector(mouseX, mouseY);
       mouse.sub(position); // gets the position of the particle in relation to the mouse
       mouse.setMag(random(-5, -1)); //sets the strength of the avoidance (negatives numbers repel, positive numbers attract);

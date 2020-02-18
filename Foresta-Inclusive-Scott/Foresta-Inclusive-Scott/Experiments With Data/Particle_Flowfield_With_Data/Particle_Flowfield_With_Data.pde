@@ -12,8 +12,8 @@ PVector [] flowField;
 Table table;
 
 void setup() {
-  size(800, 800);
-  //fullScreen();
+  //size(800, 800);
+  fullScreen();
   background(20, 0, 50);
 
   //dividing canvas into a grid that is scaled
@@ -23,7 +23,7 @@ void setup() {
   table = loadTable("data/sensor_data.csv", "header");
 
   for (TableRow row : table.rows()) {
-    for (int i = 0; i < 60; i++) {
+    for (int i = 0; i < 100; i++) {
       float light = row.getFloat("light");
       float temp = row.getFloat("temp");
 

@@ -21,8 +21,8 @@ class Particle {
   int rand= int(random(0, 2));
   //Constructor for particle
   Particle(float posX, float posY, float sensorLightInput, float sensorTempInput) {
-    color from = color(#007adf);
-    color to = color(#00ecbc);
+    color from = color(#007adf); //Hex values of particle (from and to)
+    color to = color(#00ecbc);  //Hex values of particle
     //map the values of the sensors to a usable range
     sensorLight = map(sensorLightInput, 40.18333333, 259.8135593, 0.5, 5);
     sensorTemp = map(sensorTempInput, 6, 13, 0, 1);

@@ -14,7 +14,8 @@ Table table;
 float xoff = 0.0;
 
 void setup() {
-  size(500, 500, P3D);
+  size(500, 500);
+  //fullScreen();
   pixelDensity(2);
   background(20, 0, 50);
 
@@ -22,10 +23,10 @@ void setup() {
   cols = floor(width / scale) + 1;
   rows = floor(height / scale) + 1;
 
-  table = loadTable("data/sensor_data.csv", "header");
+  table = loadTable("data/sensor_data.csv", "header");// excel type file
 
   for (TableRow row : table.rows()) {
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 30; i++) { // change the # to change the amount of particles
       float light = row.getFloat("light");
       float temp = row.getFloat("temp");
 
@@ -39,8 +40,9 @@ void setup() {
 }
 
 void draw() {
+  println(frameRate);
   xoff = xoff + .01;
-  float alpha = map(noise(xoff), 0, 1, 4, 20);
+  float alpha = map(noise(xoff), 0, 1, 4, 90);
   fill(20, 0, 50, alpha);
   rect(0, 0, width, height);
 
