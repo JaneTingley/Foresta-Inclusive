@@ -66,6 +66,21 @@ import com.leapmotion.leap.*;
 
   //Handles the movement of the particle (do not change)
   void update() {
+    
+    if ( pointer.isValid() ) {// this is a boolean
+
+      color frontColor = color(245, 242, 250 ); // set the fill colour and define the opacity
+
+      InteractionBox iBox = frame.interactionBox();//The InteractionBox class represents a box-shaped region completely within the field of view of the Leap Motion controller
+      // A class that stores the interaction zone (named "iBox") as seen by leap
+
+      Vector tip = iBox.normalizePoint(pointer.tipPosition()); // Vector = three floats ->X, Y, Z coordinate b/w 0 and 1
+      //The Vector struct (class) represents a three-component mathematical vector or point such as a direction or position in three-dimensional space
+      // named "tip"
+      fingerPaint(tip, frontColor); // fingerPaint below (tip, frontColor (from line 30))
+    }
+
+    
     velocity.limit(maxSpeed);
     velocity.add(acceleration);
     position.add(velocity);
@@ -79,19 +94,6 @@ import com.leapmotion.leap.*;
 
   //method to pushaway and grow particles when close to mouse
   void avoidUser() {
-
-    if ( pointer.isValid() ) {// this is a boolean
-
-      color frontColor = color(245, 242, 250 ); // set the fill colour and define the opacity
-
-      InteractionBox iBox = frame.interactionBox();//The InteractionBox class represents a box-shaped region completely within the field of view of the Leap Motion controller
-      // A class that stores the interaction zone (named "iBox") as seen by leap
-
-      Vector tip = iBox.normalizePoint(pointer.tipPosition()); // Vector = three floats ->X, Y, Z coordinate b/w 0 and 1
-      //The Vector struct (class) represents a three-component mathematical vector or point such as a direction or position in three-dimensional space
-      // named "tip"
-      fingerPaint(tip, frontColor); // fingerPaint below (tip, frontColor (from line 30))
-    }
 
 
     //maps the speed of the mouse to radius particles should be replled to
