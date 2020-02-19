@@ -118,9 +118,9 @@ class Particle {
   void fingerPaint(Vector tip, color frontColor) // gets the values from fingerPaint(tip, frontColor) above
   { 
     fill(frontColor);
-    x = tip.getX() * width; // define X - The horizontal component. Here we need to de-normalize it - times the value b/w 0 and 1 (so for example .87)
+    float x = tip.getX() * width; // define X - The horizontal component. Here we need to de-normalize it - times the value b/w 0 and 1 (so for example .87)
     // When you multiply it by width you get the position relative to the width
-    y = height - tip.getY() * height; // the leap motion defines from bottom and Processing defines Y from top. this reverses the values 
+    float y = height - tip.getY() * height; // the leap motion defines from bottom and Processing defines Y from top. this reverses the values 
     ellipse( x, y, tip.getZ()*100, tip.getZ()*100);   // X and y defines location and the second two values determin width and height
     //https://developer-archive.leapmotion.com/documentation/java/api/gen-java/classcom_1_1leapmotion_1_1leap_1_1_vector.html
     // See the info on vector to understand getX()
