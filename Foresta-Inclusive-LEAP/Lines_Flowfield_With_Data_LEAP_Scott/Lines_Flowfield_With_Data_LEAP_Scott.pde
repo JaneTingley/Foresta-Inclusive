@@ -2,7 +2,7 @@
  import com.leapmotion.leap.*;
 
 
-int scale = 20; // -----------------------------change this for density of flowfield
+int scale = 30; // -----------------------------change this for density of flowfield
 int cols;
 int rows;
 float inc = 0.07;
