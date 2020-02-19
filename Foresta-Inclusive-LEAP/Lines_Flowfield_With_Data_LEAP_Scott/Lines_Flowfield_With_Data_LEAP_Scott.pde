@@ -1,5 +1,6 @@
 //documentation for the Java API - https://developer-archive.leapmotion.com/documentation/java/api/gen-java/classcom_1_1leapmotion_1_1leap_1_1_controller.html
- 
+ import com.leapmotion.leap.*;
+
 
 int scale = 20; // -----------------------------change this for density of flowfield
 int cols;

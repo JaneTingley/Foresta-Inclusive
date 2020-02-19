@@ -1,5 +1,4 @@
 class Particle {
-import com.leapmotion.leap.*;
 
   //Controls particle movement
   PVector position;
