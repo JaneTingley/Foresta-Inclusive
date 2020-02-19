@@ -1,7 +1,7 @@
 
 module thing()
 {
-translate ([0,0,-0.2]) import("/Users/jtingley/Downloads/trichonymphaToSlice_rotated_fixed.stl");
+translate ([0,0,-1.7]) import("/Users/janetingley/Documents/GitHub/Foresta-Inclusive/Foresta-Inclusive-3D/Foresta-Inclusive-Jane/trichonymphaToSlice_reducedPolyCount.stl");
 
 
   }
@@ -11,22 +11,13 @@ translate ([0,0,-0.2]) import("/Users/jtingley/Downloads/trichonymphaToSlice_rot
 module demo_proj()
 {
   linear_extrude(center = true, height = 0.3) projection(cut = true) thing(); // .3 (3mm sice
-  # thing();
+  % thing();
 }
 
-/*module demo_cut()
-{
-  for (i=[-20:5:+20]) {
-     rotate(-30, [ 1, 1, 0 ]) translate([ 0, 0, -i ])
-      linear_extrude(center = true, height = 0.5) projection(cut = true)
-        translate([ 0, 0, i ]) rotate(+30, [ 1, 1, 0 ]) thing();
-  }
-  % thing();
-}*/
+
 
 echo(version=version());
 translate([ +0, 0, 0 ]) demo_proj();
-//translate([ +30, 0, 0 ]) demo_cut();
 
 
 // Written by Clifford Wolf <clifford@clifford.at> and Marius
