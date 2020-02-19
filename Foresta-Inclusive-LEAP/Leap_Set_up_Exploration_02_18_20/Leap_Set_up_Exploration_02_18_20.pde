@@ -11,7 +11,7 @@ Controller leap = new Controller(); //The Controller class is your main interfac
  
 void setup()
 {
-   frameRate(120);
+   frameRate(60);
    size(600, 600);
    background(canvasColor);
    stroke(0xf5f2fa); // default is black - so this sets it to white (ps black looks neat)

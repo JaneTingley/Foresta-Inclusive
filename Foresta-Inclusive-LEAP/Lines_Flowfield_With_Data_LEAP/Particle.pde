@@ -62,8 +62,8 @@ class Particle {
   //method to pushaway and grow particles when close to mouse
   void avoidUser() {
     //maps the speed of the mouse to radius particles should be replled to
-    float rawMouseSpeed = dist(mouseX, mouseY, pmouseX, pmouseY);
-    float smoothedSpeedToRadius = map(rawMouseSpeed, 1, 40, 30, 60);
+    float rawMouseSpeed = dist(mouseX, mouseY, pmouseX, pmouseY);// determines width
+    float smoothedSpeedToRadius = map(rawMouseSpeed, 1, 40, 30, 60); // smoothing values
 
     if (dist(position.x, position.y, mouseX, mouseY) < smoothedSpeedToRadius) {
       PVector mouse = new PVector(mouseX, mouseY);

@@ -95,7 +95,7 @@ void draw() {
     
     if( pointer.isValid() ) {// this is a boolean
   
-    color frontColor = color(245, 242, 250, alphaVal ); // set the fill colour and define the opacity
+    color frontColor = color(245, 242, 250 ); // set the fill colour and define the opacity
  
     InteractionBox iBox = frame.interactionBox();//The InteractionBox class represents a box-shaped region completely within the field of view of the Leap Motion controller
     // A class that stores the interaction zone (named "iBox") as seen by leap
