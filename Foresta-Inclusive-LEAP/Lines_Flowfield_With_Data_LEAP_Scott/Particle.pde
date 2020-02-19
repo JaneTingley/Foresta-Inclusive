@@ -32,10 +32,11 @@ class Particle {
 
   Particle(float posX, float posY, float sensorLightInput, float sensorTempInput) {
     leap = new Controller();
+
+
+
     frame = leap.frame();
     pointer = frame.pointables().frontmost();
-
-
 
 
     color from = color(#007adf); //Hex values of particle (from and to)
@@ -65,7 +66,7 @@ class Particle {
 
   //Handles the movement of the particle (do not change)
   void update() {
-    
+
     if ( pointer.isValid() ) {// this is a boolean
 
       color frontColor = color(245, 242, 250 ); // set the fill colour and define the opacity
@@ -79,7 +80,7 @@ class Particle {
       fingerPaint(tip, frontColor); // fingerPaint below (tip, frontColor (from line 30))
     }
 
-    
+
     velocity.limit(maxSpeed);
     velocity.add(acceleration);
     position.add(velocity);
@@ -118,9 +119,9 @@ class Particle {
   void fingerPaint(Vector tip, color frontColor) // gets the values from fingerPaint(tip, frontColor) above
   { 
     fill(frontColor);
-    float x = tip.getX() * width; // define X - The horizontal component. Here we need to de-normalize it - times the value b/w 0 and 1 (so for example .87)
+    x = tip.getX() * width; // define X - The horizontal component. Here we need to de-normalize it - times the value b/w 0 and 1 (so for example .87)
     // When you multiply it by width you get the position relative to the width
-    float y = height - tip.getY() * height; // the leap motion defines from bottom and Processing defines Y from top. this reverses the values 
+    y = height - tip.getY() * height; // the leap motion defines from bottom and Processing defines Y from top. this reverses the values 
     ellipse( x, y, tip.getZ()*100, tip.getZ()*100);   // X and y defines location and the second two values determin width and height
     //https://developer-archive.leapmotion.com/documentation/java/api/gen-java/classcom_1_1leapmotion_1_1leap_1_1_vector.html
     // See the info on vector to understand getX()
@@ -140,7 +141,8 @@ class Particle {
 
   void show() {
 
-
+    frame = leap.frame();
+    pointer = frame.pointables().frontmost();
     avoidUser(); //check if particle is near mouse
     noStroke();
     ellipse(position.x, position.y, size + particleSizeIncreaser, size+ particleSizeIncreaser);
