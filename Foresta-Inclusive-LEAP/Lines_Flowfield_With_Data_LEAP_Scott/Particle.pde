@@ -1,4 +1,5 @@
 class Particle {
+import com.leapmotion.leap.*;
 
   //Controls particle movement
   PVector position;
@@ -14,7 +15,7 @@ class Particle {
   color to;
   float inc = 0.07;
   float aplha = 100;
-  
+
   float x;
   float y;
 
@@ -91,8 +92,8 @@ class Particle {
       // named "tip"
       fingerPaint(tip, frontColor); // fingerPaint below (tip, frontColor (from line 30))
     }
-    
-    
+
+
     //maps the speed of the mouse to radius particles should be replled to
     float rawMouseSpeed = dist(mouseX, mouseY, pmouseX, pmouseY);// determines width
     float smoothedSpeedToRadius = map(rawMouseSpeed, 1, 40, 30, 60); // smoothing values
@@ -112,17 +113,17 @@ class Particle {
       fill(particleColor);
     }
   }
-  
+
   void fingerPaint(Vector tip, color frontColor) // gets the values from fingerPaint(tip, frontColor) above
-{ 
-  fill(frontColor);
-     x = tip.getX() * width; // define X - The horizontal component. Here we need to de-normalize it - times the value b/w 0 and 1 (so for example .87)
+  { 
+    fill(frontColor);
+    x = tip.getX() * width; // define X - The horizontal component. Here we need to de-normalize it - times the value b/w 0 and 1 (so for example .87)
     // When you multiply it by width you get the position relative to the width
-     y = height - tip.getY() * height; // the leap motion defines from bottom and Processing defines Y from top. this reverses the values 
+    y = height - tip.getY() * height; // the leap motion defines from bottom and Processing defines Y from top. this reverses the values 
     ellipse( x, y, tip.getZ()*100, tip.getZ()*100);   // X and y defines location and the second two values determin width and height
-//https://developer-archive.leapmotion.com/documentation/java/api/gen-java/classcom_1_1leapmotion_1_1leap_1_1_vector.html
-// See the info on vector to understand getX()
-}
+    //https://developer-archive.leapmotion.com/documentation/java/api/gen-java/classcom_1_1leapmotion_1_1leap_1_1_vector.html
+    // See the info on vector to understand getX()
+  }
 
   //Reset particle position to oppsite edge if offscreen
   void edges () {
