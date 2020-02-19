@@ -1,7 +1,8 @@
 
 module thing()
 {
-translate ([0,0,1.4])import("/Users/janetingley/Downloads/trichonymphaToSlice_rotated.stl");
+translate ([0,0,-0.2]) import("/Users/jtingley/Downloads/trichonymphaToSlice_rotated_fixed.stl");
+
 
   }
 
@@ -9,7 +10,7 @@ translate ([0,0,1.4])import("/Users/janetingley/Downloads/trichonymphaToSlice_ro
 
 module demo_proj()
 {
-  linear_extrude(center = true, height = 0.3) projection(cut = false) thing(); // .3 (3mm sice
+  linear_extrude(center = true, height = 0.3) projection(cut = true) thing(); // .3 (3mm sice
   # thing();
 }
 
