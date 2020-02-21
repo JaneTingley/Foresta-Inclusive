@@ -1,16 +1,15 @@
 
 module thing()
 {
-translate ([0,0,-1.7]) import("/Users/janetingley/Documents/GitHub/Foresta-Inclusive/Foresta-Inclusive-3D/Foresta-Inclusive-Jane/trichonymphaToSlice_reducedPolyCount.stl");
-
-
+    translate([0,0,+8]) rotate([90,0,0]) import("/Users/janetingley/Documents/GitHub/Foresta-Inclusive/Foresta-Inclusive-3D/Foresta-Inclusive-Jane/FI-Slice-Ready.stl");
   }
 
 
 
 module demo_proj()
 {
-  linear_extrude(center = true, height = 0.3) projection(cut = true) thing(); // .3 (3mm sice
+  //linear_extrude(center = true, height = 3) 
+    projection(cut = true) thing(); // .3 (3mm sice
   % thing();
 }
 
