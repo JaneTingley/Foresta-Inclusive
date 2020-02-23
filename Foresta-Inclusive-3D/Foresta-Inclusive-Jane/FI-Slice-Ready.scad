@@ -3,4 +3,5 @@ difference (){
 
 
     translate ([0,-36.0,0]) cube([203, 42, 380], center=true);
+    /*#translate ([0,-27,20]) rotate ([90,0,0]) scale([1,2,1]) sphere (60);*/ //This should be added when I do the finel - do all modifications to the model before I slice it.
 }
