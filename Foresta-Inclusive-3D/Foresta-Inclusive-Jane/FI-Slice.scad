@@ -1,14 +1,15 @@
 
 module thing()
 {
-    translate([0,0,15]) rotate([90,0,0]) import("/Users/jtingley/Documents/GitHub/Foresta-Inclusive/Foresta-Inclusive-3D/Foresta-Inclusive-Jane/FI-Slice-Ready.stl");
+    translate([0,0,-70]) /*rotate([90,0,0])*/ import("/Users/jtingley/Documents/GitHub/Foresta-Inclusive/Foresta-Inclusive-3D/Foresta-Inclusive-Jane/FI-Slice-Ready.stl");
   }
+
 
 
 
 module demo_proj()
 {
-  linear_extrude(center = true, height = 6) 
+  //linear_extrude(center = true, height = 6) 
     projection(cut = true) thing(); //  (6mm sice
   % thing();
 }
