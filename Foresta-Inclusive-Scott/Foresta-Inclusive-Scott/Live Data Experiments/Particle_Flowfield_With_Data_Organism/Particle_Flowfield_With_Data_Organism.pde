@@ -1,4 +1,4 @@
-int scale = 20; // -----------------------------change this for density of flowfield
+int scale = 25; // -----------------------------change this for density of flowfield
 int cols;
 int rows;
 float inc = 0.04;
@@ -84,7 +84,7 @@ void draw() {
 
       //___________________________Set how strictly the particle will follow the direction of the flowfield (Higher the value the strictier it will follow the direction)
       v.setMag(0.10); 
-
+      
       //Add the calculated vector to the flowfield
       flowField[index] = v;
       xoff += inc;

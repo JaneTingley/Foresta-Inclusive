@@ -12,6 +12,7 @@ class Particle {
   int size;
   color from;
   color to;
+  
   //Constructor for particle
   Particle(float posX, float posY, float sensorLight, float sensorTemp) {
     color from = color(#38f9d7);
@@ -71,6 +72,8 @@ class Particle {
       }
     }
   }
+  
+
 
   //Reset particle position to oppsite edge if offscreen
   void edges () {
