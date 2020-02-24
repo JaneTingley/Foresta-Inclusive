@@ -16,6 +16,8 @@ class Vehicle {
   float maxForce;    // Maximum steering force
   float maxSpeed;    // Maximum speed
   float wiggle; //controls org wiggle
+  int savedTime;
+  boolean followPerson;
 
   Vehicle(float x, float y) {
     acceleration = new PVector(0, 0);
@@ -27,7 +29,8 @@ class Vehicle {
 
     wiggle = random(-1, 1);
 
-
+    savedTime = millis();
+    followPerson = true;
     s = loadShape("data/trichonympha_ver1_reduced_flip.obj");
   }
 
@@ -64,21 +67,28 @@ class Vehicle {
   // A method that calculates a steering force towards a target
   // STEER = DESIRED MINUS VELOCITY
   void seek(PVector input) {
-    PVector desired = PVector.sub(input, position);  // A vector pointing from the position to the target
-    // Scale to maximum speed
-    desired.setMag(5);
+    if (followPerson == true) {
 
-    // Steering = Desired minus velocity
-    PVector steer = PVector.sub(desired, velocity);
-    steer.limit(maxForce);  // Limit to maximum steering force
 
-    applyForce(steer);
+      PVector desired = PVector.sub(input, position);  // A vector pointing from the position to the target
+      // Scale to maximum speed
+      desired.setMag(5);
+
+      // Steering = Desired minus velocity
+      PVector steer = PVector.sub(desired, velocity);
+      steer.limit(maxForce);  // Limit to maximum steering force
+
+      applyForce(steer);
+      
+    }
   }
 
+
+  //this code was adapted from Daniel Shiffmans https://natureofcode.com/ //
   void separate (ArrayList<Vehicle> vehicles) {
     // Note how the desired separation is based
     // on the Vehicle’s size.
-    float desiredseparation = 35; //[bold]
+    float desiredseparation = 20; //[bold]
     PVector sum = new PVector();
     int count = 0;
     for (Vehicle other : vehicles) {
@@ -86,11 +96,6 @@ class Vehicle {
       if ((d > 0) && (d < desiredseparation)) {
         PVector diff = PVector.sub(position, other.position);
         diff.normalize();
-        // What is the magnitude of the PVector
-        // pointing away from the other vehicle?
-        // The closer it is, the more we should flee.
-        // The farther, the less. So we divide
-        // by the distance to weight it appropriately.
         diff.div(d);  //[bold]
         sum.add(diff);
         count++;
@@ -105,42 +110,41 @@ class Vehicle {
       applyForce(steer);
     }
   }
+  ////////////////////////////////////////////////////////////////////////
 
   void edges () {
 
     if (position.x > width ) {
-      position.x = 0;
+      position.x = random(20, 30);
     } else if (position.x < 0 ) {
-      position.x = width;
+      position.x = width - random(20, 30);
     }
 
     if (position.y > height ) {
-      position.y = 0;
+      position.y = random(20, 30);
     } else if (position.y < 0 ) {
-      position.y = height;
+      position.y = height  - random(20, 30);
+    }
+  }
+
+  void followTimer() {
+    int loiterTime = 5000;
+    int passedTime = millis() - savedTime; 
+    if (passedTime >  loiterTime) {
+      savedTime = millis();
+      return
     }
   }
 
   void display() {
 
 
-
     s.setFill(color(#00fff0));
-
-    // Draw a triangle rotated in the direction of velocity
     float theta = velocity.heading2D() + PI/2;
-    fill(127);
-    stroke(0);
-    strokeWeight(1);
     pushMatrix();
     translate(position.x, position.y);
     rotate(theta);
     scale(2.5);
-    //beginShape();
-    //vertex(0, -r*2);
-    //vertex(-r, r*2);
-    //vertex(r, r*2);
-    //endShape(CLOSE);
     shape(s, 0, 0);
 
     popMatrix();
