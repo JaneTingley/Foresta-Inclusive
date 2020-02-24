@@ -11,42 +11,44 @@
  */
 #include <SPI.h>
 #include <WiFiNINA.h>
-//#include <Ethernet.h>
-#include <MQTT.h>
-//#include <SPI.h> //from DhcpAddressPrinter
+#include <Ethernet.h> //from Shiftr
+#include <MQTT.h> //from Shiftr
 
 #include "arduino_secrets.h" 
 ///////please enter your sensitive data in the Secret tab/arduino_secrets.h
 
-WiFiClient net; //from wifinina
+EthernetClient net; //from Shiftr
 MQTTClient client; //from Shiftr
 
-
+int sensorValue = 0;   // This is for the received sensor value sent by shiftr
+int onActuator = 8;    //Led Light on/off
 char ssid[] = SECRET_SSID;        // your network SSID (name)
 char pass[] = SECRET_PASS;    // your network password (use for WPA, or use as key for WEP)
 int status = WL_IDLE_STATUS;     // the Wifi radio's status
-unsigned long lastMillis = 0;
-int fsrAnalogPin = 0; // FSR is connected to analog 0 (pressure sensor)
-int fsrReading;      // the analog reading from the FSR resistor divider
+unsigned long lastMillis = 0;  // to act as a timer for verifying the connection to wifi is still working
 
 void connect() {
   Serial.print("connecting...");
-  while (!client.connect("Foresta-Inclusive2", "83aa4496", "02ffd19115bcd0ed")) {
+  while (!client.connect("Foresta-InclusiveNEW", "83aa4496", "02ffd19115bcd0ed")) {
     Serial.print(".");
     delay(1000);
   }
 
-  Serial.println("\nconnected!"); //  '/n' means start at new line
+  Serial.println("\nconnected!");  //  '/n' means start at new line
 
-  //client.subscribe("/sensor1"); //     '/' all names start with a slash
-  client.unsubscribe("/WetSoil");
+  client.subscribe("/sensor1");  //     '/' all names start with a slash
+  //client.unsubscribe("/sensor1");
 }
 
-void messageReceived(String &topic, String &payload) {  // string is a type of variable - a series of characters (topic= / sensor1  payload= the value
-  Serial.println("incoming: " + topic + " - " + payload);  // see seria - this is how the information is displayed
+void messageReceived(String &topic, String &payload) {   // string is a type of variable - a series of characters (topic= /sensor1  payload= the value
+  sensorValue = payload.toInt(); // this translates the payload string into and integer, which is now stored in sensorValue
+  Serial.println("incoming: " + topic + " - " + payload);  // see serial - this is how the information is displayed
+  //Serial.print("Sensor Value: ");//prints sensorValue
+  //Serial.println(sensorValue);//prints sensorValue
 }
 
 void setup() {
+  pinMode(onActuator, OUTPUT); //Set LED pin as output
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
   while (!Serial) {
@@ -74,6 +76,7 @@ void setup() {
 
     // wait 10 seconds for connection:
     delay(10000);
+
   }
 
   // you're connected now, so print out the data:
@@ -81,31 +84,35 @@ void setup() {
   printCurrentNet();
   printWifiData();
 
+// The following is for Shiftr - connecting
   client.begin("broker.shiftr.io", net);
-  client.onMessage(messageReceived); // call this function (message received) whenever there is a message
+  client.onMessage(messageReceived);  // call this function (message received) whenever there is a message
 
   connect();
-
 }
 
 void loop() {
-  // check the network connection once every 10 seconds:
-  delay(10000);
-  printCurrentNet();
+  client.loop();
 
-   if (!client.connected()) {
+  if (!client.connected()) {
     connect();
   }
 
-  fsrReading = analogRead(fsrAnalogPin);
-  Serial.print("Analog reading = ");
-  Serial.println(fsrReading);
-  // publish a message roughly every 2 seconds.
-  if (millis() - lastMillis > 1000) {
-    lastMillis = millis();
-    client.publish("/woot2", String(fsrReading)); // sending to shiftr    client.publish("/woot2", String(lastmillis)); // sending to shiftr
+  if (sensorValue >300) {  // reads sensorValue and if more than 330 - turns on LEd - (solenoid)
+    digitalWrite(onActuator, HIGH);//turn D8 "On"
   }
-  
+  else {
+    digitalWrite(onActuator, LOW);//turn D8 "Off"
+  }
+  delay (100);
+
+
+
+   // publish a message roughly every 100 seconds.
+  if (millis() - lastMillis > 100000) {
+    lastMillis = millis();
+    printCurrentNet();
+  }
 }
 
 void printWifiData() {
