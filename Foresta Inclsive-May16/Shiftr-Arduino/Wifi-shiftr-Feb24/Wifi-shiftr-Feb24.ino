@@ -19,7 +19,7 @@ WiFiClient net; //from wifinina
 MQTTClient client; //from Shiftr
 
 int SoilHumid = 0;   // This is for the received sensor value sent by shiftr
-int randomNumber=3;
+long randomNumber;
 char ssid[] = SECRET_SSID;        // your network SSID (name)
 char pass[] = SECRET_PASS;    // your network password (use for WPA, or use as key for WEP)
 int status = WL_IDLE_STATUS;     // the Wifi radio's status
@@ -84,7 +84,8 @@ void loop() {
   if (millis() - lastMillis > 1000) {
     lastMillis = millis();
     //printCurrentNet();
-    //client.publish("/RandomNumber", String(randomNumber)); // sending to shiftr    
+    randomNumber=random (10, 20);//sends random values between 10 & 20
+    client.publish("/RandomNumber", String(randomNumber)); // sending to shiftr    
   }
 }
 //------------------------------------Shiftr-Connect
