@@ -66,7 +66,9 @@ void setup() {
                   printCurrentNet();
                   printWifiData();
 
+  
   //  The following is for Shiftr - connecting
+  
   client.begin("broker.shiftr.io", net);
   client.onMessage(messageReceived);  // call this function (message received) whenever there is a message
 
