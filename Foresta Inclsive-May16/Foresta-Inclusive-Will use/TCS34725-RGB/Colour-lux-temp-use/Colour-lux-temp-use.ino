@@ -14,7 +14,7 @@ Connect GROUND to common ground */
 /* Initialise with specific int time and gain values */
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS34725_GAIN_1X);
  
-void setup(void) {
+void setup() {
 Serial.begin(9600);
  
 if (tcs.begin()) {
