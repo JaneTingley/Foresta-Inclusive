@@ -28,11 +28,11 @@ while (1);
 }
  
 void loop(void) {
-  float red, green, blue;
-uint16_t r, g, b, c, colorTemp, lux;
+  float red, green, blue; //taken from the other sketch to transform RGB values
+  uint16_t r, g, b, c, colorTemp, lux;
  
-tcs.getRawData(&r, &g, &b, &c);
-  tcs.getRGB(&red, &green, &blue);
+  tcs.getRawData(&r, &g, &b, &c);
+  tcs.getRGB(&red, &green, &blue);//taken from the other sketch to transform RGB values
   
 colorTemp = tcs.calculateColorTemperature(r, g, b);
 lux = tcs.calculateLux(r, g, b);
