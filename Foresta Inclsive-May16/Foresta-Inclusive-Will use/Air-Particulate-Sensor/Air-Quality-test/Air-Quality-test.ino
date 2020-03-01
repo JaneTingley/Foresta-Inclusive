@@ -5,6 +5,8 @@
 // For UNO and others without hardware serial, we must use software serial...
 // pin #2 is IN from sensor (TX pin on sensor), leave pin #3 disconnected
 // comment these two lines if using hardware serial
+
+//https://learn.adafruit.com/pm25-air-quality-sensor/arduino-code
 #include <SoftwareSerial.h>
 SoftwareSerial pmsSerial(2, 3);
 
