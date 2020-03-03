@@ -105,7 +105,7 @@ void loop() {
 
     Serial.println(" ");
       if(ccs.available()){
-    if(!ccs.readData()){
+      if(!ccs.readData()){
       Serial.print("CO2: ");
       Serial.print(ccs.geteCO2());
       Serial.print("ppm, TVOC: ");
