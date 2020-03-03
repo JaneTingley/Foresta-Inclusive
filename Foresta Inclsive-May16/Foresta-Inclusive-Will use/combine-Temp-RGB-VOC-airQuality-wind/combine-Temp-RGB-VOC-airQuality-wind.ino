@@ -1,11 +1,13 @@
 /***************************************************************************
   This is a sketch that connects the 
-  1) BME280 humidity, temperature & pressure sensor
-  2) CCS811 Gas Sensor - Co2 and VOC
-  3) TCS34725 - RGB colour sensor - Colour temp, LUX
+  1) BME280 humidity, temperature & pressure sensor - https://learn.adafruit.com/adafruit-bme280-humidity-barometric-pressure-temperature-sensor-breakout/arduino-test
+  2) CCS811 Gas Sensor - Co2 and VOC - https://learn.adafruit.com/adafruit-ccs811-air-quality-sensor?view=all
+  3) TCS34725 - RGB colour sensor - Colour temp, LUX - https://learn.adafruit.com/adafruit-color-sensors/arduino-code
+  4) PM2.5 Air Quality Sensor - https://learn.adafruit.com/pm25-air-quality-sensor/arduino-code
+  5) Anemometer wind Sensor - https://www.adafruit.com/product/1733
 
-  These sensors use I2C or SPI to communicate, 2 or 4 pins are required
-  to interface. The device's I2C address is either 0x76 or 0x77.
+  Sensors 1, 2 and 3 use I2C or SPI to communicate, 2 or 4 pins are required
+  to interface. The device's I2C address is either 0x76 or 0x77 and 0x5a.
 
 SDA-> Pin 4A on Arduino Uno
 SCL -> Pin 5A on Arduino Uno
@@ -13,7 +15,10 @@ SCL -> Pin 5A on Arduino Uno
 Notes on wiring:
 CCS811 Gas Sensor - Co2 and VOC - must also ground WAKE pin
 TCS34725 - RGB colour sensor - To turn off LED on Board ground LED pin
-
+PM2.5 - Ground, Positive, Pin 2 on Arduino
+Anemometer wind sensor -- red to + of power source - 12vdc is fine.  
+    Black is to ground on power source and ground on microcontroller.
+    Blue goes to A0
 
  ***************************************************************************/
 
@@ -47,6 +52,8 @@ Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS347
 unsigned long delayTime;
 unsigned long time;
 unsigned long previousMillis = 0;
+int sensorPin = A0;    // select the input pin for the potentiometer
+int sensorValue = 0;  // variable to store the value coming from the sensor
 
 void setup() {
     Serial.begin(115200);
@@ -87,6 +94,10 @@ void loop() {
     previousMillis = currentMillis;
     }
     
+    // read the value from the sensor:
+    sensorValue = analogRead(sensorPin);
+    //sensorPin = Serial.read();
+    Serial.print("Wind: ");Serial.println(sensorValue);
     printValues();
     delay(delayTime);  
     

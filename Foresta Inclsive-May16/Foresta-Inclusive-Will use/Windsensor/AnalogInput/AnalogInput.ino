@@ -7,10 +7,9 @@
   by analogRead().
 
   The circuit:
-  - potentiometer
-    center pin of the potentiometer to the analog input 0
-    one side pin (either one) to ground
-    the other side pin to +5V
+  - wind sensor - red to + of power source - 12vdc is fine.  
+    Black is to ground on power source and ground on microcontroller.
+    Blue goes to A0
   - LED
     anode (long leg) attached to digital output 13
     cathode (short leg) attached to ground
