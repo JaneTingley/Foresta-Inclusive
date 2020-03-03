@@ -44,80 +44,42 @@ unsigned long delayTime;
 
 void setup() {
     Serial.begin(9600);
-    tcs.begin();
-    !ccs.begin();
-    /*while(!Serial);    // get serial running
-    //Serial.println(F("BME280 test"));
-    //Serial.println("CCS811 test");
-
-    if (tcs.begin()) {
-    //Serial.println("Found sensor");
-    } else {
-    Serial.println("No TCS34725 found ... check your connections");
-    while (1);
-    }
-
-    if(!ccs.begin()){
-    Serial.println("Failed to start sensor! Please check your wiring.");
-    while(1);
-  }*/
-
-  // Wait for the sensor to be ready
-    while(!ccs.available());
+    tcs.begin(); //RGB colour sensor
+    !ccs.begin(); //Gas sensor
+    
     unsigned status;
-    
-    // default settings
-    status = bme.begin();  
-    // You can also pass in a Wire library object like &Wire2
-    // status = bme.begin(0x76, &Wire2)
-    /*if (!status) {
-        Serial.println("Could not find a valid BME280 sensor, check wiring, address, sensor ID!");
-        Serial.print("SensorID was: 0x"); Serial.println(bme.sensorID(),16);
-        Serial.print("        ID of 0xFF probably means a bad address, a BMP 180 or BMP 085\n");
-        Serial.print("   ID of 0x56-0x58 represents a BMP 280,\n");
-        Serial.print("        ID of 0x60 represents a BME 280.\n");
-        Serial.print("        ID of 0x61 represents a BME 680.\n");
-        while (1) delay(10);
-    }
-    
-    Serial.println("-- Default Test --");
-    
+    status = bme.begin();  //Pressure/Temp sensor
 
-    Serial.println();*/
     delayTime = 1000;
+
+    // questions - 1) Why do the sensors come on-line at different times?
+    // 2) why does bme.begin need a variable - It is not called anywhere else in the sketch
 }
 
 
 void loop() { 
     printValues();
-    delay(delayTime);
+    delay(delayTime);  // why does when I try to change things the printValues gets flagged?
+                        // for example I want to put RGB code and GAS code in their own function and call them in 
+                        //a similar way - why doesn't this work?
 
 //---RGB code
-      //float red, green, blue; //taken from the other sketch to transform RGB values
-      uint16_t r, g, b, c, colorTemp, lux;
- 
-      tcs.getRawData(&r, &g, &b, &c);
-      //tcs.getRGB(&red, &green, &blue);//taken from the other sketch to transform RGB values
+      uint16_t r, g, b, c, colorTemp, lux;  // unsigned 16 bit integer to hold all values
+      tcs.getRawData(&r, &g, &b, &c); // This gets the raw data (not using the RGB colour values converter)
   
-    colorTemp = tcs.calculateColorTemperature(r, g, b);
-    lux = tcs.calculateLux(r, g, b);
- //-----
-
-    Serial.print("Color Temp: "); Serial.print(colorTemp, DEC); Serial.println(" K ");
-    Serial.print("Lux: "); Serial.print(lux, DEC);
-
+      colorTemp = tcs.calculateColorTemperature(r, g, b);
+      lux = tcs.calculateLux(r, g, b);
+      Serial.print("Color Temp: "); Serial.print(colorTemp, DEC); Serial.println(" K ");
+      Serial.print("Lux: "); Serial.print(lux, DEC);//-----
+    
+//---- For Gas and VOC - CCS811
     Serial.println(" ");
       if(ccs.available()){
       if(!ccs.readData()){
       Serial.print("CO2: "); Serial.print(ccs.geteCO2()); Serial.println("ppm");
-      Serial.print("TVOC: ");
-      Serial.println(ccs.getTVOC());
+      Serial.print("TVOC: "); Serial.println(ccs.getTVOC());
     }
-    else{
-      Serial.println("ERROR!");
-      while(1);
-    }
-  }
+  }//-------
   delay(50);
 }
 
