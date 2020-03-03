@@ -41,6 +41,9 @@ Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS347
  
 
 unsigned long delayTime;
+unsigned long time;
+unsigned long previousMillis = 0;
+
 
 void setup() {
     Serial.begin(9600);
@@ -54,11 +57,21 @@ void setup() {
 
     status = bme.begin();  
 
-    delayTime = 1000;
+    delayTime = 800;
 }
 
 
 void loop() { 
+
+    //Serial.print("Time: ");
+    time = millis();
+    //Serial.println(time);
+    unsigned long currentMillis = millis();
+    if (currentMillis - previousMillis >= delayTime) {
+    previousMillis = currentMillis;
+    }
+
+    
     printValues();
     delay(delayTime);
 

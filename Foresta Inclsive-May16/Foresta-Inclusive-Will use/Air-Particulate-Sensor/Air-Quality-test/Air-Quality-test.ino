@@ -34,16 +34,6 @@ void loop() {
     // reading data was successful!
     Serial.println();
     Serial.println("---------------------------------------");
-    Serial.println("Concentration Units (standard)");
-    Serial.print("PM 1.0: "); Serial.print(data.pm10_standard);
-    Serial.print("\t\tPM 2.5: "); Serial.print(data.pm25_standard);
-    Serial.print("\t\tPM 10: "); Serial.println(data.pm100_standard);
-    Serial.println("---------------------------------------");
-    Serial.println("Concentration Units (environmental)");
-    Serial.print("PM 1.0: "); Serial.print(data.pm10_env);
-    Serial.print("\t\tPM 2.5: "); Serial.print(data.pm25_env);
-    Serial.print("\t\tPM 10: "); Serial.println(data.pm100_env);
-    Serial.println("---------------------------------------");
     Serial.print("Particles > 0.3um / 0.1L air:"); Serial.println(data.particles_03um);
     Serial.print("Particles > 0.5um / 0.1L air:"); Serial.println(data.particles_05um);
     Serial.print("Particles > 1.0um / 0.1L air:"); Serial.println(data.particles_10um);
