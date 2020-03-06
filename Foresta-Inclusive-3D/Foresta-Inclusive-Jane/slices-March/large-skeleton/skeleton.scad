@@ -3,17 +3,17 @@ thick=6.35;
 plugWidth=10;  // holes will be 6.35mm wide, and 1cm long.
 
 skeleton();
-Rib1();
-Rib2();
-Rib3();
+//Rib1();
+//Rib2();
+//Rib3();
 Rib4();
-Rib5();
+//Rib5();
 
 
 
 module Rib5(){
       //14 - 17 614.52-646.28
-    translate ([+41,+614.52,139]) rotate ([-90,0,0])linear_extrude(thick)   import("/Users/jtingley/Documents/GitHub/Foresta-Inclusive/Foresta-Inclusive-3D/Foresta-Inclusive-Jane/slices-March/Cork-slices/last-Rib/Rib4-14x635.svg");
+    translate ([+41,+639.92,139]) rotate ([-90,0,0])linear_extrude(thick)   import("/Users/jtingley/Documents/GitHub/Foresta-Inclusive/Foresta-Inclusive-3D/Foresta-Inclusive-Jane/slices-March/Cork-slices/last-Rib/Rib4-14x635.svg");
     
     
     //7 - 13 
@@ -38,7 +38,7 @@ module Rib4(){
  //Rib 4 -4 cork pieces 
     translate ([-1,+499.65,155]) rotate ([-90,0,0])linear_extrude(thick) import("/Users/jtingley/Documents/GitHub/Foresta-Inclusive/Foresta-Inclusive-3D/Foresta-Inclusive-Jane/slices-March/Cork-slices/rib4/rib4-3x635.svg");    
   //middle
-    translate ([-1,+457.5,155]) rotate ([-90,0,0])linear_extrude(thick) import("/Users/jtingley/Documents/GitHub/Foresta-Inclusive/Foresta-Inclusive-3D/Foresta-Inclusive-Jane/slices-March/Cork-slices/rib4/rib4-2x635.svg");
+    translate ([-1,+490,155]) rotate ([-90,0,0])linear_extrude(thick) import("/Users/jtingley/Documents/GitHub/Foresta-Inclusive/Foresta-Inclusive-3D/Foresta-Inclusive-Jane/slices-March/Cork-slices/rib4/rib4-2x635.svg");
 
     //closest to rib3
     translate ([-1,+396.35,155]) rotate ([-90,0,0])linear_extrude(thick) import("/Users/jtingley/Documents/GitHub/Foresta-Inclusive/Foresta-Inclusive-3D/Foresta-Inclusive-Jane/slices-March/Cork-slices/rib4/rib4-1x635.svg");
@@ -53,7 +53,7 @@ module Rib3(){
 }
 module Rib2(){   
    //Rib2-19-22 x6-35      
-   translate ([-20,+253.35,163]) rotate ([-90,0,0])linear_extrude(thick)  import("/Users/jtingley/Documents/GitHub/Foresta-Inclusive/Foresta-Inclusive-3D/Foresta-Inclusive-Jane/slices-March/Cork-slices/rib2/rib2-19x6-35.svg");
+   #translate ([-20,+253.35,163]) rotate ([-90,0,0])linear_extrude(thick)  import("/Users/jtingley/Documents/GitHub/Foresta-Inclusive/Foresta-Inclusive-3D/Foresta-Inclusive-Jane/slices-March/Cork-slices/rib2/rib2-19x6-35.svg");
   
     translate ([-20,+247,163]) rotate ([-90,0,0])linear_extrude(thick)
     import("/Users/jtingley/Documents/GitHub/Foresta-Inclusive/Foresta-Inclusive-3D/Foresta-Inclusive-Jane/slices-March/Cork-slices/rib2/rib2-19x6-35.svg");
