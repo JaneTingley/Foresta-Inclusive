@@ -1,7 +1,10 @@
 
 module thing()
 {
-    translate([0,0,-178]) /*rotate([90,0,0])*/ import("/Users/jtingley/Documents/GitHub/Foresta-Inclusive/Foresta-Inclusive-3D/Foresta-Inclusive-Jane/FI-Slice-Ready.stl");
+    translate([0,0,-526.35]) rotate([90,0,0]) import("/Users/jtingley/Documents/GitHub/Foresta-Inclusive/Foresta-Inclusive-3D/Foresta-Inclusive-Jane/protozoa.stl");
+
+
+
   }
 
 
