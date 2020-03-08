@@ -71,7 +71,7 @@ void setup() {
         pmsSerial.begin(9600);
 
     tcs.begin(); //RGB colour sensor
-    ccs.begin(); //Gas sensor
+    !ccs.begin(); //Gas sensor
     bme.begin();  //Pressure/Temp sensor
 }
 
