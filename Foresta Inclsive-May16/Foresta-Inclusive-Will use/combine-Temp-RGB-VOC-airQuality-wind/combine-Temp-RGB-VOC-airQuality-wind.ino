@@ -25,9 +25,9 @@ Anemometer wind sensor -- red to + of power source - 12vdc is fine.
 #include <Wire.h>
 #include <SPI.h>
 #include <Adafruit_Sensor.h>
-#include <Adafruit_BME280.h>
-#include "Adafruit_TCS34725.h" // RGB code
-#include "Adafruit_CCS811.h" //CCS811 code
+#include <Adafruit_BME280.h> // Altitude/Temp/Pressure/Humidity
+#include "Adafruit_TCS34725.h" // RGB code - Colour temp and LUX
+#include "Adafruit_CCS811.h" //CCS811 code - Co2 and TVOC
 
 //https://learn.adafruit.com/pm25-air-quality-sensor/arduino-code
 #include <SoftwareSerial.h>
@@ -42,16 +42,25 @@ SoftwareSerial pmsSerial(2, 3);
 
 Adafruit_CCS811 ccs;
 Adafruit_BME280 bme; // I2C
-//Adafruit_BME280 bme(BME_CS); // hardware SPI
-//Adafruit_BME280 bme(BME_CS, BME_MOSI, BME_MISO, BME_SCK); // software SPI
 
 /* Initialise with specific int time and gain values */
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS34725_GAIN_1X);
- 
 
-unsigned long delayTime;
-unsigned long time;
-unsigned long previousMillis = 0;
+struct pms5003data { //particulate
+  uint16_t framelen;
+  uint16_t pm10_standard, pm25_standard, pm100_standard;
+  uint16_t pm10_env, pm25_env, pm100_env;
+  uint16_t particles_03um, particles_05um, particles_10um, particles_25um, particles_50um, particles_100um;
+  uint16_t unused;
+  uint16_t checksum;
+}; 
+
+struct pms5003data data;
+
+unsigned long fastDelayTime = 100;
+unsigned long slowDelayTime = 10000;
+unsigned long previousFastMillis = 0;
+unsigned long previousSlowMillis = 0;
 int sensorPin = A0;    // select the input pin for the potentiometer
 int sensorValue = 0;  // variable to store the value coming from the sensor
 
@@ -62,97 +71,61 @@ void setup() {
         pmsSerial.begin(9600);
 
     tcs.begin(); //RGB colour sensor
-    !ccs.begin(); //Gas sensor
-    
-    unsigned status;
-    status = bme.begin();  //Pressure/Temp sensor
-
-    delayTime = 1000;
-    // questions - 1) Why do the sensors come on-line at different times?
-    // 2) why does bme.begin need a variable - It is not called anywhere else in the sketch
+    ccs.begin(); //Gas sensor
+    bme.begin();  //Pressure/Temp sensor
 }
-
-struct pms5003data { //DO NOT UNDERSTAND why not in setup
-  uint16_t framelen;
-  uint16_t pm10_standard, pm25_standard, pm100_standard;
-  uint16_t pm10_env, pm25_env, pm100_env;
-  uint16_t particles_03um, particles_05um, particles_10um, particles_25um, particles_50um, particles_100um;
-  uint16_t unused;
-  uint16_t checksum;
-};
-
-struct pms5003data data;
-
 
 void loop() { 
 
-    //Serial.print("Time: ");
-    time = millis();
-    //Serial.println(time);
     unsigned long currentMillis = millis();
-    if (currentMillis - previousMillis >= delayTime) {
-    previousMillis = currentMillis;
-    }
-    
-    // read the value from the sensor:
-    sensorValue = analogRead(sensorPin);
-    //sensorPin = Serial.read();
-    Serial.print("Wind: ");Serial.println(sensorValue);
-    printValues();
-    delay(delayTime);  
-    
-    
-    // why does when I try to change things the printValues gets flagged?
-                        // for example I want to put RGB code and GAS code in their own function and call them in 
-                        //a similar way - why doesn't this work?
+    if (currentMillis - previousFastMillis >= fastDelayTime) {
+        previousFastMillis = currentMillis;
+        // This runs every fastDelayTime ms
+        // Process fast sensors    
+        // read the value from the wind sensor:
+        sensorValue = analogRead(sensorPin);
+        Serial.print("Wind: ");Serial.println(sensorValue);
 
-//---RGB code
-      uint16_t r, g, b, c, colorTemp, lux;  // unsigned 16 bit integer to hold all values
-      tcs.getRawData(&r, &g, &b, &c); // This gets the raw data (not using the RGB colour values converter)
+        if (currentMillis - previousSlowMillis >= slowDelayTime) {
+          previousSlowMillis = currentMillis;
+          // This runs every slowDelayTime ms
+          // Process slow sensors
+          printValuesVOC();
+          printValuesBME();
+          printValuesRGB();
   
-      colorTemp = tcs.calculateColorTemperature(r, g, b);
-      lux = tcs.calculateLux(r, g, b);
-      Serial.print("Color Temp: "); Serial.print(colorTemp, DEC); Serial.println(" K ");
-      Serial.print("Lux: "); Serial.print(lux, DEC);//-----
-    
-//---- For Gas and VOC - CCS811
-    Serial.println(" ");
-      if(ccs.available()){
-      if(!ccs.readData()){
-      Serial.print("CO2: "); Serial.print(ccs.geteCO2()); Serial.println("ppm");
-      Serial.print("TVOC: "); Serial.println(ccs.getTVOC());
+          if (readPMSdata(&pmsSerial)) {
+            // reading data was successful!
+            Serial.println();
+            Serial.println("---------------------------------------");
+            Serial.print("Particles > 0.3um / 0.1L air:"); Serial.println(data.particles_03um);
+            Serial.print("Particles > 0.5um / 0.1L air:"); Serial.println(data.particles_05um);
+            Serial.print("Particles > 1.0um / 0.1L air:"); Serial.println(data.particles_10um);
+            Serial.print("Particles > 2.5um / 0.1L air:"); Serial.println(data.particles_25um);
+            Serial.print("Particles > 5.0um / 0.1L air:"); Serial.println(data.particles_50um);
+            Serial.print("Particles > 10.0 um / 0.1L air:"); Serial.println(data.particles_100um);
+            Serial.println("---------------------------------------");
+          }
+        }        
     }
-  }//-------
-  delay(50);
-
-    if (readPMSdata(&pmsSerial)) {
-    // reading data was successful!
-    Serial.println();
-    Serial.println("---------------------------------------");
-    Serial.print("Particles > 0.3um / 0.1L air:"); Serial.println(data.particles_03um);
-    Serial.print("Particles > 0.5um / 0.1L air:"); Serial.println(data.particles_05um);
-    Serial.print("Particles > 1.0um / 0.1L air:"); Serial.println(data.particles_10um);
-    Serial.print("Particles > 2.5um / 0.1L air:"); Serial.println(data.particles_25um);
-    Serial.print("Particles > 5.0um / 0.1L air:"); Serial.println(data.particles_50um);
-    Serial.print("Particles > 10.0 um / 0.1L air:"); Serial.println(data.particles_100um);
-    Serial.println("---------------------------------------");
-  }
+    delay(50);
 }
 
 ///----------------------particle
 boolean readPMSdata(Stream *s) {
+  // Read a byte at a time until we get to the special '0x42' start-byte
+  while (s->available() && s->peek() != 0x42) {
+    s->read();
+  }
+
   if (! s->available()) {
+    Serial.println("no data");
     return false;
   }
   
-  // Read a byte at a time until we get to the special '0x42' start-byte
-  if (s->peek() != 0x42) {
-    s->read();
-    return false;
-  }
-
   // Now read all 32 bytes
   if (s->available() < 32) {
+    Serial.println("< 32 bytes available");
     return false;
   }
     
@@ -190,7 +163,29 @@ boolean readPMSdata(Stream *s) {
   return true;
 }
 
-void printValues() { // prints the values for the BME280
+void printValuesVOC(){
+  //---- For Gas and VOC - CCS811
+    Serial.println(" ");
+      if(ccs.available()){
+      if(!ccs.readData()){
+      Serial.print("CO2: "); Serial.print(ccs.geteCO2()); Serial.println("ppm");
+      Serial.print("TVOC: "); Serial.println(ccs.getTVOC());
+    }
+  }//-------  
+}
+
+void printValuesRGB(){
+  //---RGB code
+      uint16_t r, g, b, c, colorTemp, lux;  // unsigned 16 bit integer to hold all values
+      tcs.getRawData(&r, &g, &b, &c); // This gets the raw data (not using the RGB colour values converter)
+  
+      colorTemp = tcs.calculateColorTemperature(r, g, b);
+      lux = tcs.calculateLux(r, g, b);
+      Serial.print("Color Temp: "); Serial.print(colorTemp, DEC); Serial.println(" K ");
+      Serial.print("Lux: "); Serial.println(lux, DEC);//-----
+}
+
+void printValuesBME() { // prints the values for the BME280
     Serial.print("Temperature = "); Serial.print(bme.readTemperature()); Serial.println(" *C");
     Serial.print("Pressure = "); Serial.print(bme.readPressure() / 100.0F);Serial.println(" hPa");
     Serial.print("Approx. Altitude = "); Serial.print(bme.readAltitude(SEALEVELPRESSURE_HPA)); Serial.println(" m");
