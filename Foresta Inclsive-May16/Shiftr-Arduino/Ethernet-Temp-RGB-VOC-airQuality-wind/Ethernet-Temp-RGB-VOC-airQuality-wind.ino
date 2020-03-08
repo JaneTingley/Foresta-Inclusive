@@ -33,6 +33,17 @@ Anemometer wind sensor -- red to + of power source - 12vdc is fine.
 #include <SoftwareSerial.h>
 SoftwareSerial pmsSerial(2, 3);
 
+#include <Ethernet.h> // ethernet
+#include <MQTT.h> . // mqtt to shiftr
+#include <SPI.h> //from DhcpAddressPrinter
+
+    // from DhcpAddressPrinter 
+                byte mac[] = {
+                  0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x03 /*change mac address so it is different from the programme 
+                  on send arduino */
+                };
+    // end from DhcpAddressPrinter
+
 #define BME_SCK 13
 #define BME_MISO 12
 #define BME_MOSI 11
@@ -45,6 +56,9 @@ Adafruit_BME280 bme; // I2C
 
 /* Initialise with specific int time and gain values */
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS34725_GAIN_1X);
+
+EthernetClient net;  // ethernet 
+MQTTClient client;   // MQTT - to shiftr
 
 struct pms5003data { //particulate
   uint16_t framelen;
@@ -64,19 +78,80 @@ unsigned long previousSlowMillis = 0;
 int sensorPin = A0;    // select the input pin for the potentiometer
 int sensorValue = 0;  // variable to store the value coming from the sensor
 
+unsigned long lastMillis = 0;
+int moistureReading = 0;   // This is for the received sensor value sent by shiftr
+int lightReading = 0;   // This is for the received sensor value sent by shiftr
+int temperatureReading = 0;   // This is for the received sensor value sent by shiftr
+
+int moistureThreshold = 470;  // This holds the threshold for the soil - change here and reupload
+int valveTime = 4000;  // The amount of time between each time the valve is actuated (seconds)
+
 void setup() {
     Serial.begin(115200);
+    
+        // from DhcpAddressPrinter           
+                   // start the Ethernet connection:
+                    Serial.println("Initialize Ethernet with DHCP:");
+                    if (Ethernet.begin(mac) == 0) {
+                      Serial.println("Failed to configure Ethernet using DHCP");
+                      if (Ethernet.hardwareStatus() == EthernetNoHardware) {
+                        Serial.println("Ethernet shield was not found.  Sorry, can't run without hardware. :(");
+                      } else if (Ethernet.linkStatus() == LinkOFF) {
+                        Serial.println("Ethernet cable is not connected.");
+                      }
+                      // no point in carrying on, so do nothing forevermore:
+                     while (true) {
+                        delay(1);
+                      }
+                    }
+                    // print your local IP address:
+                    Serial.print("My IP address: ");
+                    Serial.println(Ethernet.localIP());
+        // end from DhcpAddressPrinter
 
+        
         // sensor baud rate is 9600 //PM2.5
         pmsSerial.begin(9600);
 
     tcs.begin(); //RGB colour sensor
     ccs.begin(); //Gas sensor
     bme.begin();  //Pressure/Temp sensor
+
+    // Note: Local domain names (e.g. "Computer.local" on OSX) are not supported by Arduino.
+    // You need to set the IP address directly.
+    client.begin("broker.shiftr.io", net);
+    client.onMessage(messageReceived);  // call this function (message received) whenever there is a message
+    client.onMessage(messageReceived1);  // call this function (message received) whenever there is a message
+    client.onMessage(messageReceived2);  // call this function (message received) whenever there is a message
+  
+    connect();
+
+}
+
+void connect() {
+  Serial.print("connecting...");
+  while (!client.connect("Foresta-InclusiveRECEIVE3SENSORS", "83aa4496", "02ffd19115bcd0ed")) {
+    Serial.print(".");
+    delay(1000);
+  }
+
+  Serial.println("\nconnected!");  //  '/n' means start at new line
+
+  client.subscribe("/WetSoil");  //     '/' all names start with a slash
+  //client.unsubscribe("/WetSoil");
+  client.subscribe("/Light");  //     '/' all names start with a slash
+  client.subscribe("/Temperature");  //     '/' all names start with a slash
 }
 
 void loop() { 
 
+   client.loop();
+
+    if (!client.connected()) {
+    connect();
+    }
+
+    
     unsigned long currentMillis = millis();
     if (currentMillis - previousFastMillis >= fastDelayTime) {
         previousFastMillis = currentMillis;
@@ -108,7 +183,54 @@ void loop() {
           }
         }        
     }
+
+      // This sends the threshold value to the wifi module  
+    if (millis() - lastMillis > 1000) {
+      lastMillis = millis();
+      client.publish("/NewThreshold", String(moistureThreshold)); // sending to shiftr client.publish("NewThreshold", String(moistureThreshold)); // sending to shiftr
+      Serial.print("moistureThreshold value : ");
+      Serial.println(moistureThreshold);
+      client.publish("/ValveTime", String(valveTime));
+      Serial.print("valveTime value : ");
+      Serial.println(valveTime);
+    }
     delay(50);
+
+    // from DhcpAddressPrinter 
+                        switch (Ethernet.maintain()) {
+                        case 1:
+                          //renewed fail
+                          Serial.println("Error: renewed fail");
+                          break;
+                    
+                        case 2:
+                          //renewed success
+                          Serial.println("Renewed success");
+                          //print your local IP address:
+                          Serial.print("My IP address: ");
+                          Serial.println(Ethernet.localIP());
+                          break;
+                    
+                        case 3:
+                          //rebind fail
+                          Serial.println("Error: rebind fail");
+                          break;
+                    
+                        case 4:
+                          //rebind success
+                          Serial.println("Rebind success");
+                          //print your local IP address:
+                          Serial.print("My IP address: ");
+                          Serial.println(Ethernet.localIP());
+                          break;
+                    
+                        default:
+                          //nothing happened
+                          break;
+                          
+                      }
+      // end from DhcpAddressPrinter
+
 }
 
 ///----------------------particle
@@ -192,4 +314,25 @@ void printValuesBME() { // prints the values for the BME280
     Serial.print("Humidity = "); Serial.print(bme.readHumidity()); Serial.println(" %");
 
     Serial.println();  
+}
+
+void messageReceived(String &topic, String &payload) {   // string is a type of variable - a series of characters (topic= /WetSoil  payload= the value
+  moistureReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
+  Serial.println("incoming: " + topic + " - " + payload);  // see serial - this is how the information is displayed
+  //Serial.print("Sensor Value: ");//prints sensorValue
+  //Serial.println(moistureReading);//prints sensorValue
+}
+
+void messageReceived1(String &topic, String &payload) {   // string is a type of variable - a series of characters (topic= /WetSoil  payload= the value
+  lightReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in lightReading
+  Serial.println("incoming: " + topic + " - " + payload);  // see serial - this is how the information is displayed
+  //Serial.print("Sensor Value: ");//prints sensorValue
+  //Serial.println(lightReading);//prints sensorValue
+}
+
+void messageReceived2(String &topic, String &payload) {   // string is a type of variable - a series of characters (topic= /WetSoil  payload= the value
+  temperatureReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in temperatureReading
+  Serial.println("incoming: " + topic + " - " + payload);  // see serial - this is how the information is displayed
+  //Serial.print("Sensor Value: ");//prints sensorValue
+  //Serial.println(temperatureReading);//prints sensorValue
 }
