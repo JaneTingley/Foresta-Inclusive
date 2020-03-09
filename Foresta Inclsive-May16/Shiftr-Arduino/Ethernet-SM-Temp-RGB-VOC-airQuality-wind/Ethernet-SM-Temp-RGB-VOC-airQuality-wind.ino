@@ -159,7 +159,7 @@ void loop() {
         // Process fast sensors    
         // read the value from the wind sensor:
         sensorValue = analogRead(sensorPin);
-        Serial.print("Wind: ");Serial.println(sensorValue);
+        //Serial.print("Wind: ");Serial.println(sensorValue);
 
         if (currentMillis - previousSlowMillis >= slowDelayTime) {
           previousSlowMillis = currentMillis;
@@ -171,7 +171,7 @@ void loop() {
   
           if (readPMSdata(&pmsSerial)) {
             // reading data was successful!
-            Serial.println();
+            /*Serial.println();
             Serial.println("---------------------------------------");
             Serial.print("Particles > 0.3um / 0.1L air:"); Serial.println(data.particles_03um);
             Serial.print("Particles > 0.5um / 0.1L air:"); Serial.println(data.particles_05um);
@@ -179,7 +179,7 @@ void loop() {
             Serial.print("Particles > 2.5um / 0.1L air:"); Serial.println(data.particles_25um);
             Serial.print("Particles > 5.0um / 0.1L air:"); Serial.println(data.particles_50um);
             Serial.print("Particles > 10.0 um / 0.1L air:"); Serial.println(data.particles_100um);
-            Serial.println("---------------------------------------");
+            Serial.println("---------------------------------------");*/
           }
         }        
     }
@@ -188,11 +188,11 @@ void loop() {
     if (millis() - lastMillis > 1000) {
       lastMillis = millis();
       client.publish("/NewThreshold", String(moistureThreshold)); // sending to shiftr client.publish("NewThreshold", String(moistureThreshold)); // sending to shiftr
-      Serial.print("moistureThreshold value : ");
-      Serial.println(moistureThreshold);
+      //Serial.print("moistureThreshold value : ");
+      //Serial.println(moistureThreshold);
       client.publish("/ValveTime", String(valveTime));
-      Serial.print("valveTime value : ");
-      Serial.println(valveTime);
+      //Serial.print("valveTime value : ");
+      //Serial.println(valveTime);
     }
     delay(50);
 
@@ -278,7 +278,7 @@ boolean readPMSdata(Stream *s) {
   memcpy((void *)&data, (void *)buffer_u16, 30);
 
   if (sum != data.checksum) {
-    Serial.println("Checksum failure");
+    //Serial.println("Checksum failure");
     return false;
   }
   // success!
@@ -287,11 +287,11 @@ boolean readPMSdata(Stream *s) {
 
 void printValuesVOC(){
   //---- For Gas and VOC - CCS811
-    Serial.println(" ");
+    //Serial.println(" ");
       if(ccs.available()){
       if(!ccs.readData()){
-      Serial.print("CO2: "); Serial.print(ccs.geteCO2()); Serial.println("ppm");
-      Serial.print("TVOC: "); Serial.println(ccs.getTVOC());
+      //Serial.print("CO2: "); Serial.print(ccs.geteCO2()); Serial.println("ppm");
+      //Serial.print("TVOC: "); Serial.println(ccs.getTVOC());
     }
   }//-------  
 }
@@ -303,15 +303,15 @@ void printValuesRGB(){
   
       colorTemp = tcs.calculateColorTemperature(r, g, b);
       lux = tcs.calculateLux(r, g, b);
-      Serial.print("Color Temp: "); Serial.print(colorTemp, DEC); Serial.println(" K ");
-      Serial.print("Lux: "); Serial.println(lux, DEC);//-----
+      //Serial.print("Color Temp: "); Serial.print(colorTemp, DEC); Serial.println(" K ");
+      //Serial.print("Lux: "); Serial.println(lux, DEC);//-----
 }
 
 void printValuesBME() { // prints the values for the BME280
-    Serial.print("Temperature = "); Serial.print(bme.readTemperature()); Serial.println(" *C");
-    Serial.print("Pressure = "); Serial.print(bme.readPressure() / 100.0F);Serial.println(" hPa");
-    Serial.print("Approx. Altitude = "); Serial.print(bme.readAltitude(SEALEVELPRESSURE_HPA)); Serial.println(" m");
-    Serial.print("Humidity = "); Serial.print(bme.readHumidity()); Serial.println(" %");
+    Serial.print("Temperature = "); Serial.println(bme.readTemperature()); //Serial.println(" *C");
+    Serial.print("Pressure = "); Serial.println(bme.readPressure() / 100.0F);//Serial.println(" hPa");
+    //Serial.print("Approx. Altitude = "); Serial.println(bme.readAltitude(SEALEVELPRESSURE_HPA)); //Serial.println(" m");
+    Serial.print("Humidity = "); Serial.println(bme.readHumidity()); //Serial.println(" %");
 
     Serial.println();  
 }
