@@ -32,18 +32,6 @@ Anemometer wind sensor -- red to + of power source - 12vdc is fine.
     Blue goes to A0
 
  ***************************************************************************/
-
-#include <Wire.h>
-#include <SPI.h>
-#include <Adafruit_Sensor.h>
-#include <Adafruit_BME280.h> // Altitude/Temp/Pressure/Humidity
-#include "Adafruit_TCS34725.h" // RGB code - Colour temp and LUX
-#include "Adafruit_CCS811.h" //CCS811 code - Co2 and TVOC
-
-//https://learn.adafruit.com/pm25-air-quality-sensor/arduino-code
-//#include <SoftwareSerial.h>
-//SoftwareSerial pmsSerial(2, 3);  --------------When this is not commented out - you cannot see the incoming values
-
 #include <Ethernet.h>
 #include <MQTT.h>
 #include <SPI.h> //from DhcpAddressPrinter
@@ -56,38 +44,10 @@ Anemometer wind sensor -- red to + of power source - 12vdc is fine.
                 };
     // end from DhcpAddressPrinter
 
-#define BME_SCK 13
-#define BME_MISO 12
-#define BME_MOSI 11
-#define BME_CS 10
-
-#define SEALEVELPRESSURE_HPA (1013.25)
-
-Adafruit_CCS811 ccs; // gas sensor
-Adafruit_BME280 bme; // I2C
-
-/* Initialise with specific int time and gain values */
-Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS34725_GAIN_1X);
-
 EthernetClient net;
 MQTTClient client;
 
-  struct pms5003data { //particulate
-  uint16_t framelen;
-  uint16_t pm10_standard, pm25_standard, pm100_standard;
-  uint16_t pm10_env, pm25_env, pm100_env;
-  uint16_t particles_03um, particles_05um, particles_10um, particles_25um, particles_50um, particles_100um;
-  uint16_t unused;
-  uint16_t checksum;
-}; 
-
-struct pms5003data data;
-
-unsigned long fastDelayTime = 100;
-unsigned long slowDelayTime = 10000;
-unsigned long previousFastMillis = 0;
-unsigned long previousSlowMillis = 0;
-int sensorPin = A0;    // select the input pin for the potentiometer
+int sensorPin = A0;    // select the input pin for the wind sensor
 int windsensorValue = 0;  // variable to store the value coming from the wind sensor
 
 unsigned long lastMillis = 0;
@@ -151,14 +111,7 @@ void setup() {
     client.begin("broker.shiftr.io", net); 
     
     client.onMessage(messageReceived);  // call this function (message received) whenever there is a message
-    
-    // sensor baud rate is 9600 //PM2.5
-    //pmsSerial.begin(9600); --------------------------software serial detail commented out
 
-    //tcs.begin(); //RGB colour sensor
-   // ccs.begin(); //Gas sensor
-    //bme.begin();  //Pressure/Temp sensor
-  
     connect();
 
 }
@@ -169,50 +122,18 @@ void loop() {
   if (!client.connected()) {
     connect();
   }
-      unsigned long currentMillis = millis();
-    if (currentMillis - previousFastMillis >= fastDelayTime) {
-        previousFastMillis = currentMillis;
-        // This runs every fastDelayTime ms
-        // Process fast sensors    
-        // read the value from the wind sensor:
-        windsensorValue = analogRead(sensorPin);
-        //Serial.print("Wind: ");Serial.println(windsensorValue);
-
-        if (currentMillis - previousSlowMillis >= slowDelayTime) {
-          previousSlowMillis = currentMillis;
-          // This runs every slowDelayTime ms
-          // Process slow sensors
-          //printValuesVOC();
-          //printValuesBME();
-         // printValuesRGB();
-  
-         // if (readPMSdata(&pmsSerial)) {
-            // reading data was successful!
-            /*Serial.println();
-            Serial.println("---------------------------------------");
-            Serial.print("Particles > 0.3um / 0.1L air:"); Serial.println(data.particles_03um);
-            Serial.print("Particles > 0.5um / 0.1L air:"); Serial.println(data.particles_05um);
-            Serial.print("Particles > 1.0um / 0.1L air:"); Serial.println(data.particles_10um);
-            Serial.print("Particles > 2.5um / 0.1L air:"); Serial.println(data.particles_25um);
-            Serial.print("Particles > 5.0um / 0.1L air:"); Serial.println(data.particles_50um);
-            Serial.print("Particles > 10.0 um / 0.1L air:"); Serial.println(data.particles_100um);
-            Serial.println("---------------------------------------");*/
-          //}
-        }        
-    }
 
   // This sends the threshold value to the wifi module  
   if (millis() - lastMillis > 1000) {
     lastMillis = millis();
-    client.publish("/NewThreshold", String(moistureThreshold)); // sending to shiftr client.publish("NewThreshold", String(moistureThreshold)); // sending to shiftr
-    //Serial.print("moistureThreshold value : ");
-    //Serial.println(moistureThreshold);
-    client.publish("/ValveTime", String(valveTime));
-    //Serial.print("valveTime value : ");
-    //Serial.println(valveTime);
+    windsensorValue = analogRead(sensorPin);
     client.publish("/Wind", String(windsensorValue));
+    Serial.print("Wind value: ");Serial.println(windsensorValue);
+    client.publish("/NewThreshold", String(moistureThreshold)); // sending to shiftr client.publish("NewThreshold", String(moistureThreshold)); // sending to shiftr
+    Serial.print("moistureThreshold value : "); Serial.println(moistureThreshold);
+    client.publish("/ValveTime", String(valveTime));
+    Serial.print("valveTime value : "); Serial.println(valveTime);
   }
-  delay(50);
 
       // from DhcpAddressPrinter 
                         switch (Ethernet.maintain()) {
