@@ -1,3 +1,14 @@
+// This example uses an Arduino Uno together with
+// an Ethernet Shield to connect to shiftr.io.
+// It also automatically asks for an IP address. This code was taken from
+// EXAMPLES/Ethernet/DhcpAddressPrinter
+//
+// You can see the information here"
+// https://shiftr.io/buddadweet/Foresta-Inclusive
+//
+// by Joël Gähwiler
+// https://github.com/256dpi/arduino-mqtt
+
 /***************************************************************************
   This is a sketch that connects the 
   1) BME280 humidity, temperature & pressure sensor - https://learn.adafruit.com/adafruit-bme280-humidity-barometric-pressure-temperature-sensor-breakout/arduino-test
@@ -30,12 +41,13 @@ Anemometer wind sensor -- red to + of power source - 12vdc is fine.
 #include "Adafruit_CCS811.h" //CCS811 code - Co2 and TVOC
 
 //https://learn.adafruit.com/pm25-air-quality-sensor/arduino-code
-#include <SoftwareSerial.h>
-SoftwareSerial pmsSerial(2, 3);
+//#include <SoftwareSerial.h>
+//SoftwareSerial pmsSerial(2, 3);  --------------When this is not commented out - you cannot see the incoming values
 
-#include <Ethernet.h> // ethernet
-#include <MQTT.h> . // mqtt to shiftr
+#include <Ethernet.h>
+#include <MQTT.h>
 #include <SPI.h> //from DhcpAddressPrinter
+
 
     // from DhcpAddressPrinter 
                 byte mac[] = {
@@ -57,10 +69,10 @@ Adafruit_BME280 bme; // I2C
 /* Initialise with specific int time and gain values */
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS34725_GAIN_1X);
 
-EthernetClient net;  // ethernet 
-MQTTClient client;   // MQTT - to shiftr
+EthernetClient net;
+MQTTClient client;
 
-struct pms5003data { //particulate
+  struct pms5003data { //particulate
   uint16_t framelen;
   uint16_t pm10_standard, pm25_standard, pm100_standard;
   uint16_t pm10_env, pm25_env, pm100_env;
@@ -86,10 +98,37 @@ int temperatureReading = 0;   // This is for the received sensor value sent by s
 int moistureThreshold = 470;  // This holds the threshold for the soil - change here and reupload
 int valveTime = 4000;  // The amount of time between each time the valve is actuated (seconds)
 
+void connect() {
+  Serial.print("connecting...");
+  while (!client.connect("Foresta-InclusiveRECEIVE3SENSORS", "83aa4496", "02ffd19115bcd0ed")) {
+    Serial.print(".");
+    delay(1000);
+  }
+
+  Serial.println("\nconnected!");  //  '/n' means start at new line
+
+  client.subscribe("/WetSoil");  //     '/' all names start with a slash
+  //client.unsubscribe("/WetSoil");
+  client.subscribe("/Light");  //     '/' all names start with a slash
+  client.subscribe("/Temperature");  //     '/' all names start with a slash
+}
+void messageReceived(String &topic, String &payload) {   // string is a type of variable - a series of characters (topic= /WetSoil  payload= the value
+  if (topic== "moistureReading"){
+   moistureReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
+  }
+  if (topic== "lightReading"){
+   lightReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
+  } 
+  if (topic== "temperatureReading"){
+   temperatureReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
+  }
+  Serial.println("incoming: " + topic + " - " + payload);  // see serial - this is how the information is displayed
+}
+
 void setup() {
-    Serial.begin(115200);
-    
-        // from DhcpAddressPrinter           
+  Serial.begin(9600);
+
+    // from DhcpAddressPrinter           
                    // start the Ethernet connection:
                     Serial.println("Initialize Ethernet with DHCP:");
                     if (Ethernet.begin(mac) == 0) {
@@ -107,69 +146,47 @@ void setup() {
                     // print your local IP address:
                     Serial.print("My IP address: ");
                     Serial.println(Ethernet.localIP());
-        // end from DhcpAddressPrinter*/
+    // end from DhcpAddressPrinter
 
-        
-        // sensor baud rate is 9600 //PM2.5
-        pmsSerial.begin(9600);
+    client.begin("broker.shiftr.io", net); 
+    
+    client.onMessage(messageReceived);  // call this function (message received) whenever there is a message
+    
+    // sensor baud rate is 9600 //PM2.5
+    //pmsSerial.begin(9600); --------------------------software serial detail commented out
 
-    tcs.begin(); //RGB colour sensor
-    ccs.begin(); //Gas sensor
-    bme.begin();  //Pressure/Temp sensor
-
-    // Note: Local domain names (e.g. "Computer.local" on OSX) are not supported by Arduino.
-    // You need to set the IP address directly.
-    client.begin("broker.shiftr.io", net);
-    //client.onMessage(messageReceived);  // call this function (message received) whenever there is a message
-    //client.onMessage(messageReceived1);  // call this function (message received) whenever there is a message
-    //client.onMessage(messageReceived2);  // call this function (message received) whenever there is a message
+    //tcs.begin(); //RGB colour sensor
+   // ccs.begin(); //Gas sensor
+    //bme.begin();  //Pressure/Temp sensor
   
     connect();
 
 }
 
-void connect() {
-  //Serial.print("connecting...");
-  while (!client.connect("Foresta-InclusiveRECEIVE3SENSORS", "83aa4496", "02ffd19115bcd0ed")) {
-    //Serial.print(".");
-    delay(1000);
-  }
+void loop() {
+  client.loop();
 
-  Serial.println("\nconnected!");  //  '/n' means start at new line
-
-  client.subscribe("/WetSoil");  //     '/' all names start with a slash
-  //client.unsubscribe("/WetSoil");
-  client.subscribe("/Light");  //     '/' all names start with a slash
-  client.subscribe("/Temperature");  //     '/' all names start with a slash
-}
-
-void loop() { 
-
-   client.loop();
-
-    if (!client.connected()) {
+  if (!client.connected()) {
     connect();
-    }
-
-    
-    unsigned long currentMillis = millis();
+  }
+      unsigned long currentMillis = millis();
     if (currentMillis - previousFastMillis >= fastDelayTime) {
         previousFastMillis = currentMillis;
         // This runs every fastDelayTime ms
         // Process fast sensors    
         // read the value from the wind sensor:
         windsensorValue = analogRead(sensorPin);
-        //Serial.print("Wind: ");Serial.println(sensorValue);
+        //Serial.print("Wind: ");Serial.println(windsensorValue);
 
         if (currentMillis - previousSlowMillis >= slowDelayTime) {
           previousSlowMillis = currentMillis;
           // This runs every slowDelayTime ms
           // Process slow sensors
-          printValuesVOC();
+          //printValuesVOC();
           //printValuesBME();
          // printValuesRGB();
   
-          if (readPMSdata(&pmsSerial)) {
+         // if (readPMSdata(&pmsSerial)) {
             // reading data was successful!
             /*Serial.println();
             Serial.println("---------------------------------------");
@@ -180,24 +197,24 @@ void loop() {
             Serial.print("Particles > 5.0um / 0.1L air:"); Serial.println(data.particles_50um);
             Serial.print("Particles > 10.0 um / 0.1L air:"); Serial.println(data.particles_100um);
             Serial.println("---------------------------------------");*/
-          }
+          //}
         }        
     }
 
-      // This sends the threshold value to the wifi module  
-    if (millis() - lastMillis > 1000) {
-      lastMillis = millis();
-      client.publish("/NewThreshold", String(moistureThreshold)); // sending to shiftr client.publish("NewThreshold", String(moistureThreshold)); // sending to shiftr
-      //Serial.print("moistureThreshold value : ");
-      //Serial.println(moistureThreshold);
-      client.publish("/ValveTime", String(valveTime));
-      //Serial.print("valveTime value : ");
-      //Serial.println(valveTime);
-      client.publish("/Wind", String(windsensorValue));
-    }
-    delay(50);
+  // This sends the threshold value to the wifi module  
+  if (millis() - lastMillis > 1000) {
+    lastMillis = millis();
+    client.publish("/NewThreshold", String(moistureThreshold)); // sending to shiftr client.publish("NewThreshold", String(moistureThreshold)); // sending to shiftr
+    //Serial.print("moistureThreshold value : ");
+    //Serial.println(moistureThreshold);
+    client.publish("/ValveTime", String(valveTime));
+    //Serial.print("valveTime value : ");
+    //Serial.println(valveTime);
+    client.publish("/Wind", String(windsensorValue));
+  }
+  delay(50);
 
-    // from DhcpAddressPrinter 
+      // from DhcpAddressPrinter 
                         switch (Ethernet.maintain()) {
                         case 1:
                           //renewed fail
@@ -232,100 +249,5 @@ void loop() {
                       }
       // end from DhcpAddressPrinter
 
-}
-
-///----------------------particle
-boolean readPMSdata(Stream *s) {
-  // Read a byte at a time until we get to the special '0x42' start-byte
-  while (s->available() && s->peek() != 0x42) {
-    s->read();
-  }
-
-  if (! s->available()) {
-    //Serial.println("no data");
-    return false;
-  }
   
-  // Now read all 32 bytes
-  if (s->available() < 32) {
-    //Serial.println("< 32 bytes available");
-    return false;
-  }
-    
-  uint8_t buffer[32];    
-  uint16_t sum = 0;
-  s->readBytes(buffer, 32);
-
-  // get checksum ready
-  for (uint8_t i=0; i<30; i++) {
-    sum += buffer[i];
-  }
-
-  /* debugging
-  for (uint8_t i=2; i<32; i++) {
-    Serial.print("0x"); Serial.print(buffer[i], HEX); Serial.print(", ");
-  }
-  Serial.println();
-  */
-  
-  // The data comes in endian'd, this solves it so it works on all platforms
-  uint16_t buffer_u16[15];
-  for (uint8_t i=0; i<15; i++) {
-    buffer_u16[i] = buffer[2 + i*2 + 1];
-    buffer_u16[i] += (buffer[2 + i*2] << 8);
-  }
-
-  // put it into a nice struct :)
-  memcpy((void *)&data, (void *)buffer_u16, 30);
-
-  if (sum != data.checksum) {
-    //Serial.println("Checksum failure");
-    return false;
-  }
-  // success!
-  return true;
-}
-
-void printValuesVOC(){
-  //---- For Gas and VOC - CCS811
-    //Serial.println(" ");
-      if(ccs.available()){
-      if(!ccs.readData()){
-      //Serial.print("CO2: "); Serial.print(ccs.geteCO2()); Serial.println("ppm");
-      //Serial.print("TVOC: "); Serial.println(ccs.getTVOC());
-    }
-  }//-------  
-}
-
-void printValuesRGB(){
-  //---RGB code
-      uint16_t r, g, b, c, colorTemp, lux;  // unsigned 16 bit integer to hold all values
-      tcs.getRawData(&r, &g, &b, &c); // This gets the raw data (not using the RGB colour values converter)
-  
-      colorTemp = tcs.calculateColorTemperature(r, g, b);
-      lux = tcs.calculateLux(r, g, b);
-      //Serial.print("Color Temp: "); Serial.print(colorTemp, DEC); Serial.println(" K ");
-      //Serial.print("Lux: "); Serial.println(lux, DEC);//-----
-}
-
-void printValuesBME() { // prints the values for the BME280
-    //Serial.print("Temperature = "); Serial.println(bme.readTemperature()); //Serial.println(" *C");
-    //Serial.print("Pressure = "); Serial.println(bme.readPressure() / 100.0F);//Serial.println(" hPa");
-    //Serial.print("Approx. Altitude = "); Serial.println(bme.readAltitude(SEALEVELPRESSURE_HPA)); //Serial.println(" m");
-    //Serial.print("Humidity = "); Serial.println(bme.readHumidity()); //Serial.println(" %");
-    //Serial.println();  
-}
-
-void messageReceived(String &topic, String &payload) {   // string is a type of variable - a series of characters (topic= /WetSoil  payload= the value
-  if (topic== "moistureReading"){
-   moistureReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
-  }
-  if (topic== "lightReading"){
-   lightReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
-  } 
-  if (topic== "temperatureReading"){
-   temperatureReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
-  }
-  Serial.println("incoming: " + topic + " - " + payload);  // see serial - this is how the information is displayed
-
 }
