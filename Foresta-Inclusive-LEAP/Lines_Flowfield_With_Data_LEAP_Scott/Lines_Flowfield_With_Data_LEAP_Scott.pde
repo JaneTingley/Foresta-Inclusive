@@ -50,8 +50,7 @@ void setup() {
 }
 
 void draw() {
-  println(frameRate);
-   
+  //println(frameRate);
   xoff = xoff + .01;
   float alpha = map(noise(xoff), 0, 1, 4, 90);
   fill(20, 0, 50, alpha);
