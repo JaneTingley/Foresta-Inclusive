@@ -35,6 +35,7 @@ Anemometer wind sensor -- red to + of power source - 12vdc is fine.
 #include <Ethernet.h>
 #include <MQTT.h>
 #include <SPI.h> //from DhcpAddressPrinter
+#include "Adafruit_CCS811.h"
 
 
     // from DhcpAddressPrinter 

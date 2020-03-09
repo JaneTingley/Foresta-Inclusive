@@ -3,16 +3,16 @@
 #include "Adafruit_CCS811.h"
 Adafruit_CCS811 ccs;
 void setup() {
-Serial.begin(9600);
-Serial.println("CCS811 test");
-if(!ccs.begin()){
-Serial.println("Failed to start sensor! Please check your wiring.");
-while(1);
-}
-//calibrate temperature sensor
-while(!ccs.available());
-float temp = ccs.calculateTemperature();
-ccs.setTempOffset(temp - 25.0);
+  Serial.begin(9600);
+  Serial.println("CCS811 test");
+  if(!ccs.begin()){
+    Serial.println("Failed to start sensor! Please check your wiring.");
+    while(1);
+    }
+  //calibrate temperature sensor
+  while(!ccs.available());
+  float temp = ccs.calculateTemperature();
+  ccs.setTempOffset(temp - 25.0);
 }
 void loop() {
 if(ccs.available()){
