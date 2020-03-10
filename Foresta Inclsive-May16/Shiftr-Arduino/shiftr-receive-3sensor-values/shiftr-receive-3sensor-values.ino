@@ -11,13 +11,12 @@
 
 
 
-//https://learn.adafruit.com/pm25-air-quality-sensor/arduino-code
-//#include <SoftwareSerial.h>
-//SoftwareSerial pmsSerial(2, 3);  --------------When this is not commented out - you cannot see the incoming values
-
 #include <Ethernet.h>
 #include <MQTT.h>
 #include <SPI.h> //from DhcpAddressPrinter
+
+#include <Wire.h>
+#include "Adafruit_TCS34725.h"
 
 
     // from DhcpAddressPrinter 
@@ -30,6 +29,8 @@
 EthernetClient net;
 MQTTClient client;
 
+Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS34725_GAIN_1X);
+
 int sensorPin = A0;    // select the input pin for the wind sensor
 int windsensorValue = 0;  // variable to store the value coming from the wind sensor
 
@@ -40,34 +41,6 @@ int temperatureReading = 0;   // This is for the received sensor value sent by s
 
 int moistureThreshold = 470;  // This holds the threshold for the soil - change here and reupload
 int valveTime = 4000;  // The amount of time between each time the valve is actuated (seconds)
-
-void connect() {
-  Serial.print("connecting...");
-  while (!client.connect("Foresta-InclusiveRECEIVE3SENSORS", "83aa4496", "02ffd19115bcd0ed")) {
-    Serial.print(".");
-    delay(1000);
-  }
-
-  Serial.println("\nconnected!");  //  '/n' means start at new line
-
-  client.subscribe("/WetSoil");  //     '/' all names start with a slash
-  //client.unsubscribe("/WetSoil");
-  client.subscribe("/Light");  //     '/' all names start with a slash
-  client.subscribe("/Temperature");  //     '/' all names start with a slash
-}
-
-void messageReceived(String &topic, String &payload) {   // string is a type of variable - a series of characters (topic= /WetSoil  payload= the value
-  if (topic== "moistureReading"){
-   moistureReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
-  }
-  if (topic== "lightReading"){
-   lightReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
-  } 
-  if (topic== "temperatureReading"){
-   temperatureReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
-  }
-  Serial.println("incoming: " + topic + " - " + payload);  // see serial - this is how the information is displayed
-}
 
 void setup() {
   Serial.begin(9600);
@@ -100,8 +73,12 @@ void setup() {
   
     connect();
 
-  
-
+    if (tcs.begin()) {
+      Serial.println("Found sensor");
+    } else {
+      Serial.println("No TCS34725 found ... check your connections");
+      while (1);
+    }
 
 }
 
@@ -160,4 +137,32 @@ void loop() {
       // end from DhcpAddressPrinter
 
   
+}
+
+void connect() {
+  Serial.print("connecting...");
+  while (!client.connect("Foresta-InclusiveRECEIVE3SENSORS", "83aa4496", "02ffd19115bcd0ed")) {
+    Serial.print(".");
+    delay(1000);
+  }
+
+  Serial.println("\nconnected!");  //  '/n' means start at new line
+
+  client.subscribe("/WetSoil");  //     '/' all names start with a slash
+  //client.unsubscribe("/WetSoil");
+  client.subscribe("/Light");  //     '/' all names start with a slash
+  client.subscribe("/Temperature");  //     '/' all names start with a slash
+}
+
+void messageReceived(String &topic, String &payload) {   // string is a type of variable - a series of characters (topic= /WetSoil  payload= the value
+  if (topic== "moistureReading"){
+   moistureReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
+  }
+  if (topic== "lightReading"){
+   lightReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
+  } 
+  if (topic== "temperatureReading"){
+   temperatureReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
+  }
+  Serial.println("incoming: " + topic + " - " + payload);  // see serial - this is how the information is displayed
 }
