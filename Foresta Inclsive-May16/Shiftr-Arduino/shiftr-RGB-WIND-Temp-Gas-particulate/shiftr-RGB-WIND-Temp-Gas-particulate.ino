@@ -75,13 +75,6 @@ unsigned long previousSlowMillis = 0;
 int sensorPin = A0;    // select the input pin for the wind sensor
 int windsensorValue = 0;  // variable to store the value coming from the wind sensor
 
-//int moistureReading = 0;   // This is for the received sensor value sent by shiftr
-//int lightReading = 0;   // This is for the received sensor value sent by shiftr
-//int temperatureReading = 0;   // This is for the received sensor value sent by shiftr
-
-//int moistureThreshold = 470;  // This holds the threshold for the soil - change here and reupload
-//int valveTime = 4000;  // The amount of time between each time the valve is actuated (seconds)
-
 void setup() {
   Serial.begin(115200); // this is now faster for particulate sensor
 
@@ -174,11 +167,6 @@ void loop() {
         client.publish("/Humid", String(int(bme.readHumidity())));
         //Serial.print("Humid: "); Serial.print(bme.readHumidity()); Serial.println("");
 
-        Make processing sketch for this function
-        client.publish("/NewThreshold", String(moistureThreshold)); // sending to shiftr client.publish("NewThreshold", String(moistureThreshold)); // sending to shiftr
-        //Serial.print("moistureThreshold value : "); Serial.println(moistureThreshold);
-        client.publish("/ValveTime", String(valveTime));
-        //Serial.print("valveTime value : "); Serial.println(valveTime);
          */     
         
           if (readPMSdata(&pmsSerial)) {
