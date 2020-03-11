@@ -183,7 +183,7 @@ void loop() {
           if (readPMSdata(&pmsSerial)) {
             // reading data was successful!
             client.publish("/Particles.3", String(data.particles_03um)); 
-            //Serial.print("Particles > 0.3um / 0.1L air:"); Serial.println(data.particles_03um);
+            Serial.print("Particles > 0.3um / 0.1L air:"); Serial.println(data.particles_03um);
             client.publish("/Particles.5", String(data.particles_05um));
             //Serial.print("Particles > 0.5um / 0.1L air:"); Serial.println(data.particles_05um);
             client.publish("/Particles1", String(data.particles_10um));
