@@ -23,10 +23,10 @@ void draw() {
   PVector mouse = new PVector(mouseX, mouseY);
 
   // Draw an ellipse at the mouse position
-  fill(200);
-  stroke(0);
-  strokeWeight(2);
-  ellipse(mouse.x, mouse.y, 48, 48);
+  //fill(200);
+ // stroke(0);
+ // strokeWeight(2);
+  //ellipse(mouse.x, mouse.y, 48, 48);
 
   // Call the appropriate steering behaviors for our agents
   v.seek(mouse);
