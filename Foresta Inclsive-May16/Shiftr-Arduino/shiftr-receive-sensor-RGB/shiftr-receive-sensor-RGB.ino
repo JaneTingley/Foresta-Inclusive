@@ -22,7 +22,7 @@
 #endif
 
 // Which pin on the Arduino is connected to the NeoPixels?
-#define PIN        8 // On Trinket or Gemma, suggest changing this to 1
+#define PIN        8 // RGB LED panel here
 
 // How many NeoPixels are attached to the Arduino?
 #define NUMPIXELS 484 // Popular NeoPixel ring size
@@ -79,8 +79,11 @@ void setup() {
     // You need to set the IP address directly.
     client.begin("broker.shiftr.io", net);
     client.onMessage(messageReceived);  // call this function (message received) whenever there is a message
-  
+
     connect();
+
+    pixels.begin(); // INITIALIZE NeoPixel strip object (REQUIRED)
+    pixels.clear(); // Set all pixel colors to 'off'
 
 }
 
@@ -90,6 +93,28 @@ void loop() {
   if (!client.connected()) {
     connect();
   }
+
+  // The first NeoPixel in a strand is #0, second is 1, all the way up
+  // to the count of pixels minus one.
+  for(int i=0; i<NUMPIXELS; i++) { // For each pixel...
+
+    // pixels.Color() takes RGB values, from 0,0,0 up to 255,255,255
+    pixels.setPixelColor(i, pixels.Color(182, 29, 142));
+    pixels.show();   // Send the updated pixel colors to the hardware.
+    delay(DELAYVAL); // Pause before next pass through loop
+  }
+  delay(3000);
+  
+    for(int i=0; i<NUMPIXELS; i++) { // For each pixel...
+
+    // pixels.Color() takes RGB values, from 0,0,0 up to 255,255,255
+    pixels.setPixelColor(i, pixels.Color(0, 80, 163));
+    pixels.show();   // Send the updated pixel colors to the hardware.
+    delay(DELAYVAL); // Pause before next pass through loop
+    }
+    
+  delay(3000);
+  
   DhcAddress (); 
 }
 
