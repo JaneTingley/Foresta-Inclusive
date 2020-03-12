@@ -143,7 +143,7 @@ void loop() {
         temperatureReading = map(temperatureReading, 0, 625, -40, 85);
         client.publish("/Temperature1", String(temperatureReading)); // sending to shiftr
 
-        /*//this converts the RGB colour sensor data 
+        //this converts the RGB colour sensor data 
         float red, green, blue; //taken from the other sketch to transform RGB values
         uint16_t r, g, b, c, colorTemp, lux;
         tcs.getRawData(&r, &g, &b, &c);
@@ -167,7 +167,7 @@ void loop() {
         //Serial.print("VOC: "); Serial.print(ccs.getTVOC()); Serial.println("");
           }
         }    
-        /*
+        
         //BME sensor - Humidity/temp/pressure
         client.publish("/Temp-degree", String(int(bme.readTemperature())));
         //Serial.print("Temp-degree: "); Serial.print(bme.readTemperature()); Serial.println("");
@@ -177,9 +177,8 @@ void loop() {
         //Serial.print("Alt: "); Serial.print(bme.readAltitude(SEALEVELPRESSURE_HPA)); Serial.println("");
         client.publish("/Humid", String(int(bme.readHumidity())));
         //Serial.print("Humid: "); Serial.print(bme.readHumidity()); Serial.println("");
-
-         */     
-        
+            
+        //Particulate
           if (readPMSdata(&pmsSerial)) {
             // reading data was successful!
             client.publish("/Particles.3", String(data.particles_03um)); 
