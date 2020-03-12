@@ -18,7 +18,7 @@
 // Adafruit NeoPixel library
 #include <Adafruit_NeoPixel.h>
 #ifdef __AVR__
-#include <avr/power.h> // Required for 16 MHz Adafruit Trinket
+//#include <avr/power.h> // Required for 16 MHz Adafruit Trinket
 #endif
 
 // Which pin on the Arduino is connected to the NeoPixels?
@@ -30,7 +30,7 @@
 // from DhcpAddressPrinter 
         byte mac[] = {
           0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x03 /*change mac address so it is different from the programme 
-          on send arduino */
+         // on send arduino */
         };
 // end from DhcpAddressPrinter
 
@@ -46,15 +46,19 @@ Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
 #define DELAYVAL 10 // Time (in milliseconds) to pause between pixels
 
-EthernetClient net;
+//EthernetClient net;
 MQTTClient client;
 
-int lightReading = 0;   // This is for the received sensor value sent by shiftr
+//unsigned long lastMillis = 0;
+//int lightReading = 0;   // This is for the received sensor value sent by shiftr
 
 void setup() {
   Serial.begin(9600);
+  
+    pixels.begin(); // INITIALIZE NeoPixel strip object (REQUIRED)
+    pixels.clear(); // Set all pixel colors to 'off'
 
-// from DhcpAddressPrinter           
+/*from DhcpAddressPrinter           
      // start the Ethernet connection:
       Serial.println("Initialize Ethernet with DHCP:");
       if (Ethernet.begin(mac) == 0) {
@@ -73,26 +77,36 @@ void setup() {
       Serial.print("My IP address: ");
       Serial.println(Ethernet.localIP());
 // end from DhcpAddressPrinter
-
+*/
     
     // Note: Local domain names (e.g. "Computer.local" on OSX) are not supported by Arduino.
     // You need to set the IP address directly.
-    client.begin("broker.shiftr.io", net);
-    client.onMessage(messageReceived);  // call this function (message received) whenever there is a message
+    //client.begin("broker.shiftr.io", net);
+    //client.onMessage(messageReceived);  // call this function (message received) whenever there is a message
 
-    connect();
-
-    pixels.begin(); // INITIALIZE NeoPixel strip object (REQUIRED)
-    pixels.clear(); // Set all pixel colors to 'off'
+    //connect();
 
 }
 
 void loop() {
-  client.loop();
+  //client.loop();
 
-  if (!client.connected()) {
-    connect();
+  //if (!client.connected()) {
+    //connect();
+  //}
+
+
+  // This sends the threshold value to the wifi module  
+  /*if (millis() - lastMillis > 3000) {
+    lastMillis = millis();
+    for(int i=0; i<NUMPIXELS; i++) { // For each pixel...
+
+    // pixels.Color() takes RGB values, from 0,0,0 up to 255,255,255
+    pixels.setPixelColor(i, pixels.Color(182, 29, 142));
+    pixels.show();   // Send the updated pixel colors to the hardware.
+    delay(DELAYVAL); // Pause before next pass through loop
   }
+  }*/
 
   // The first NeoPixel in a strand is #0, second is 1, all the way up
   // to the count of pixels minus one.
@@ -103,8 +117,7 @@ void loop() {
     pixels.show();   // Send the updated pixel colors to the hardware.
     delay(DELAYVAL); // Pause before next pass through loop
   }
-  delay(3000);
-  
+ delay(3000);
     for(int i=0; i<NUMPIXELS; i++) { // For each pixel...
 
     // pixels.Color() takes RGB values, from 0,0,0 up to 255,255,255
@@ -115,10 +128,10 @@ void loop() {
     
   delay(3000);
   
-  DhcAddress (); 
+  //DhcAddress (); 
 }
 
-void connect() {
+/*void connect() {
   Serial.print("connecting...");
   while (!client.connect("Foresta-InclusiveRGBPanel", "83aa4496", "02ffd19115bcd0ed")) {
     Serial.print(".");
@@ -174,4 +187,4 @@ void DhcAddress (){
     }
 // end from DhcpAddressPrinter
   
-}
+}*/
