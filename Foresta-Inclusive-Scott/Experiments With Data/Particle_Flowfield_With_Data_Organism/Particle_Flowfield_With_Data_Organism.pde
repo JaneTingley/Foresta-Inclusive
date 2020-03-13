@@ -26,7 +26,7 @@ float xPos;
 float yPos;
 
 void setup() {
-  size(500, 500, P3D);
+  size(800, 800, P3D);
   //fullScreen();
   background(20, 0, 50);
   pixelDensity(2);
