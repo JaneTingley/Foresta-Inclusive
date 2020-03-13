@@ -15,6 +15,13 @@
 #include <MQTT.h>
 #include <SPI.h> //from DhcpAddressPrinter
 
+#include "LPD8806.h"
+#include "SPI.h"
+
+// Simple test for LPD8806-based RGB LED strip
+// Not compatible with Trinket/Gemma due to limited RAM
+
+/*****************************************************************************/
 
     // from DhcpAddressPrinter 
                 byte mac[] = {
@@ -25,6 +32,18 @@
 
 EthernetClient net;
 MQTTClient client;
+
+// Number of RGB LEDs in strand:
+int nLEDs = 1;
+
+// Chose 2 pins for output; can be any valid output pins:
+int dataPin  = 2;
+int clockPin = 3;
+
+// First parameter is the number of LEDs in the strand.  The LED strips
+// are 32 LEDs per meter but you can extend or cut the strip.  Next two
+// parameters are SPI data and clock pins:
+LPD8806 strip = LPD8806(nLEDs, dataPin, clockPin);
 
 int sensorPin = A0;    // select the input pin for the wind sensor
 int windsensorValue = 0;  // variable to store the value coming from the wind sensor
@@ -39,6 +58,11 @@ int valveTime = 4000;  // The amount of time between each time the valve is actu
 
 void setup() {
   Serial.begin(9600);
+    // Start up the LED strip
+  strip.begin();
+
+  // Update the strip, to start they are all 'off'
+  strip.show();
 
     // from DhcpAddressPrinter           
                    // start the Ethernet connection:
@@ -67,7 +91,6 @@ void setup() {
     client.onMessage(messageReceived);  // call this function (message received) whenever there is a message
   
     connect();
-
 }
 
 void loop() {
@@ -76,6 +99,10 @@ void loop() {
   if (!client.connected()) {
     connect();
   }
+  
+  for(int i=0; i<strip.numPixels(); i++) strip.setPixelColor(i, strip.Color(145,12,40)); // White;
+  strip.show();              // Refresh LED states
+  delay (100);
 
   // This sends the threshold value to the wifi module  
   if (millis() - lastMillis > 1000) {
@@ -129,7 +156,7 @@ void loop() {
 
 void connect() {
   Serial.print("connecting...");
-  while (!client.connect("Foresta-InclusiveRECEIVE3SENSORS", "83aa4496", "02ffd19115bcd0ed")) {
+  while (!client.connect("Foresta-InclusiveRGB", "83aa4496", "02ffd19115bcd0ed")) {
     Serial.print(".");
     delay(1000);
   }
@@ -153,4 +180,22 @@ void messageReceived(String &topic, String &payload) {   // string is a type of 
    temperatureReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
   }
   Serial.println("incoming: " + topic + " - " + payload);  // see serial - this is how the information is displayed
+}
+
+// Chase one dot down the full strip.  Good for testing purposes.
+void colorChase(uint32_t c, uint8_t wait) {
+  int i;
+  
+  // Start by turning all pixels off:
+  for(i=0; i<strip.numPixels(); i++) strip.setPixelColor(i, 0);
+
+  // Then display one pixel at a time:
+  for(i=0; i<strip.numPixels(); i++) {
+    strip.setPixelColor(i, c); // Set new pixel 'on'
+    strip.show();              // Refresh LED states
+    strip.setPixelColor(i, 0); // Erase pixel, but don't refresh!
+    delay(wait);
+  }
+
+  strip.show(); // Refresh to turn off last pixel
 }

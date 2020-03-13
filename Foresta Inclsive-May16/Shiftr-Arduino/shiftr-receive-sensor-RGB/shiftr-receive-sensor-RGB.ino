@@ -15,17 +15,15 @@
 #include <MQTT.h>
 #include <SPI.h> //from DhcpAddressPrinter
 
-// Adafruit NeoPixel library
 #include <Adafruit_NeoPixel.h>
-#ifdef __AVR__
-//#include <avr/power.h> // Required for 16 MHz Adafruit Trinket
-#endif
+//LED strip LPD8806 - adafruit
+#include "LPD8806.h"
+#include "SPI.h"
 
-// Which pin on the Arduino is connected to the NeoPixels?
-#define PIN        8 // RGB LED panel here
+// Simple test for 160 (5 meters) of LPD8806-based RGB LED strip
+// Not compatible with Trinket/Gemma due to limited RAM
 
-// How many NeoPixels are attached to the Arduino?
-#define NUMPIXELS 484 // Popular NeoPixel ring size
+/*****************************************************************************/
 
 // from DhcpAddressPrinter 
         byte mac[] = {
@@ -34,31 +32,34 @@
         };
 // end from DhcpAddressPrinter
 
-Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
-    // Argument 1 = Number of pixels in NeoPixel strip
-    // Argument 2 = Arduino pin number (most are valid)
-    // Argument 3 = Pixel type flags, add together as needed:
-    //   NEO_KHZ800  800 KHz bitstream (most NeoPixel products w/WS2812 LEDs)
-    //   NEO_KHZ400  400 KHz (classic 'v1' (not v2) FLORA pixels, WS2811 drivers)
-    //   NEO_GRB     Pixels are wired for GRB bitstream (most NeoPixel products)
-    //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
-    //   NEO_RGBW    Pixels are wired for RGBW bitstream (NeoPixel RGBW products)
-
-#define DELAYVAL 10 // Time (in milliseconds) to pause between pixels
-
-//EthernetClient net;
+EthernetClient net;
 MQTTClient client;
+
+// Number of RGB LEDs in strand:
+int nLEDs = 32;
+
+// Chose 2 pins for output; can be any valid output pins:
+int dataPin  = 2;
+int clockPin = 3;
+
+// First parameter is the number of LEDs in the strand.  The LED strips
+// are 32 LEDs per meter but you can extend or cut the strip.  Next two
+// parameters are SPI data and clock pins:
+LPD8806 strip = LPD8806(nLEDs, dataPin, clockPin);
 
 //unsigned long lastMillis = 0;
 //int lightReading = 0;   // This is for the received sensor value sent by shiftr
 
 void setup() {
-  Serial.begin(9600);
-  
-    pixels.begin(); // INITIALIZE NeoPixel strip object (REQUIRED)
-    pixels.clear(); // Set all pixel colors to 'off'
+  Serial.begin(9600);  
+  // Start up the LED strip
+  strip.begin();
 
-/*from DhcpAddressPrinter           
+  // Update the strip, to start they are all 'off'
+  strip.show();
+  
+
+//from DhcpAddressPrinter           
      // start the Ethernet connection:
       Serial.println("Initialize Ethernet with DHCP:");
       if (Ethernet.begin(mac) == 0) {
@@ -77,25 +78,27 @@ void setup() {
       Serial.print("My IP address: ");
       Serial.println(Ethernet.localIP());
 // end from DhcpAddressPrinter
-*/
-    
+
     // Note: Local domain names (e.g. "Computer.local" on OSX) are not supported by Arduino.
     // You need to set the IP address directly.
-    //client.begin("broker.shiftr.io", net);
-    //client.onMessage(messageReceived);  // call this function (message received) whenever there is a message
+    client.begin("broker.shiftr.io", net);
+    client.onMessage(messageReceived);  // call this function (message received) whenever there is a message
 
-    //connect();
+    connect();
 
 }
 
 void loop() {
-  //client.loop();
+  client.loop();
 
-  //if (!client.connected()) {
-    //connect();
-  //}
+  if (!client.connected()) {
+    connect();
+  }
 
-
+  for(int i=0; i<strip.numPixels(); i++) strip.setPixelColor(i, strip.Color(0,12,40)); // White;
+      strip.show();              // Refresh LED states
+      delay (100);
+      
   // This sends the threshold value to the wifi module  
   /*if (millis() - lastMillis > 3000) {
     lastMillis = millis();
@@ -108,30 +111,11 @@ void loop() {
   }
   }*/
 
-  // The first NeoPixel in a strand is #0, second is 1, all the way up
-  // to the count of pixels minus one.
-  for(int i=0; i<NUMPIXELS; i++) { // For each pixel...
-
-    // pixels.Color() takes RGB values, from 0,0,0 up to 255,255,255
-    pixels.setPixelColor(i, pixels.Color(182, 29, 142));
-    pixels.show();   // Send the updated pixel colors to the hardware.
-    delay(DELAYVAL); // Pause before next pass through loop
-  }
- delay(3000);
-    for(int i=0; i<NUMPIXELS; i++) { // For each pixel...
-
-    // pixels.Color() takes RGB values, from 0,0,0 up to 255,255,255
-    pixels.setPixelColor(i, pixels.Color(0, 80, 163));
-    pixels.show();   // Send the updated pixel colors to the hardware.
-    delay(DELAYVAL); // Pause before next pass through loop
-    }
-    
-  delay(3000);
-  
-  //DhcAddress (); 
+ 
+  DhcAddress (); 
 }
 
-/*void connect() {
+void connect() {
   Serial.print("connecting...");
   while (!client.connect("Foresta-InclusiveRGBPanel", "83aa4496", "02ffd19115bcd0ed")) {
     Serial.print(".");
@@ -143,13 +127,13 @@ void loop() {
   client.subscribe("/Light");  //     '/' all names start with a slash
 }
 
-void messageReceived(String &topic, String &payload) {   // string is a type of variable - a series of characters (topic= /WetSoil  payload= the value
+/*void messageReceived(String &topic, String &payload) {   // string is a type of variable - a series of characters (topic= /WetSoil  payload= the value
   if (topic== "lightReading"){
    lightReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
   } 
 
   Serial.println("incoming: " + topic + " - " + payload);  // see serial - this is how the information is displayed
-}
+}*/
 
 void DhcAddress (){
 // from DhcpAddressPrinter 
@@ -187,4 +171,22 @@ void DhcAddress (){
     }
 // end from DhcpAddressPrinter
   
-}*/
+}
+
+// Chase one dot down the full strip.  Good for testing purposes.
+void colorChase(uint32_t c, uint8_t wait) {
+  int i;
+  
+  // Start by turning all pixels off:
+  for(i=0; i<strip.numPixels(); i++) strip.setPixelColor(i, 0);
+
+  // Then display one pixel at a time:
+  for(i=0; i<strip.numPixels(); i++) {
+    strip.setPixelColor(i, c); // Set new pixel 'on'
+    strip.show();              // Refresh LED states
+    strip.setPixelColor(i, 0); // Erase pixel, but don't refresh!
+    delay(wait);
+  }
+
+  strip.show(); // Refresh to turn off last pixel
+}
