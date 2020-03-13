@@ -35,7 +35,7 @@ Anemometer wind sensor -- red to + of power source - 12vdc is fine.
 
 //https://learn.adafruit.com/pm25-air-quality-sensor/arduino-code
 #include <SoftwareSerial.h>
-SoftwareSerial pmsSerial(2, 3);
+SoftwareSerial pmsSerial(10, 11);  // on a mega - (10-RX, 11=TX) on an uno (2=RX,3=TX)
 
 #define BME_SCK 13 // BME - Temp/pressure sensor
 #define BME_MISO 12 // BME - Temp/pressure sensor
@@ -91,23 +91,23 @@ void setup() {
 
 // from DhcpAddressPrinter           
      // start the Ethernet connection:
-//    Serial.println("Initialize Ethernet with DHCP:");
+    Serial.println("Initialize Ethernet with DHCP:");
       if (Ethernet.begin(mac) == 0) {
-//      Serial.println("Failed to configure Ethernet using DHCP");
+      Serial.println("Failed to configure Ethernet using DHCP");
         if (Ethernet.hardwareStatus() == EthernetNoHardware) {
-//      Serial.println("Ethernet shield was not found.  Sorry, can't run without hardware. :(");
+      Serial.println("Ethernet shield was not found.  Sorry, can't run without hardware. :(");
         } else if (Ethernet.linkStatus() == LinkOFF) {
-//      Serial.println("Ethernet cable is not connected.");
+      Serial.println("Ethernet cable is not connected.");
         }
        // no point in carrying on, so do nothing forevermore:
        while (true) {
           delay(1);
         }
       }      
-   // print your local IP address:
-   // Serial.print("My IP address: ");
-   // Serial.println(Ethernet.localIP());
-   // end from DhcpAddressPrinter
+    //print your local IP address:
+    Serial.print("My IP address: ");
+    Serial.println(Ethernet.localIP());
+    //end from DhcpAddressPrinter
     
     client.begin("broker.shiftr.io", net);
     //client.onMessage(messageReceived);  // call this function (message received) whenever there is a message
@@ -131,7 +131,7 @@ void loop() {
         // read the value from the wind sensor:
         windsensorValue = analogRead(sensorPin);
         client.publish("/Wind", String(windsensorValue));
-        //Serial.print("Wind value: ");Serial.println(windsensorValue);
+        Serial.print("Wind value: ");Serial.println(windsensorValue);
 
   // This sends the sensors that change less frequently to shiftr
         if (currentMillis - previousSlowMillis >= slowDelayTime) {
@@ -143,7 +143,7 @@ void loop() {
         temperatureReading = map(temperatureReading, 0, 625, -40, 85);
         client.publish("/Temperature1", String(temperatureReading)); // sending to shiftr
 
-        /*//this converts the RGB colour sensor data 
+        //this converts the RGB colour sensor data 
         float red, green, blue; //taken from the other sketch to transform RGB values
         uint16_t r, g, b, c, colorTemp, lux;
         tcs.getRawData(&r, &g, &b, &c);
@@ -152,49 +152,48 @@ void loop() {
         lux = tcs.calculateLux(r, g, b);
 
         //RBG sensor
-        // print sensor values only when necessary - else look at shiftr
+         //print sensor values only when necessary - else look at shiftr
         client.publish("/colourTemp", String(colorTemp));
-        //Serial.print("Color Temp: "); Serial.print(colorTemp, DEC); Serial.print(" K - ");
+        Serial.print("Color Temp: "); Serial.print(colorTemp, DEC); Serial.println(" K ");
         client.publish("/Lux", String(lux));
-        //Serial.print("Lux: "); Serial.println(lux, DEC);*/
+        Serial.print("Lux: "); Serial.println(lux, DEC);
 
         //Gas/VOC sensor
         if(ccs.available()){
           if(!ccs.readData()){         
           client.publish("/C02", String(ccs.geteCO2()));
-        //Serial.print("C02: "); Serial.print(ccs.geteCO2()); Serial.println("");
+          Serial.print("C02: "); Serial.print(ccs.geteCO2()); Serial.println("");
           client.publish("/VOC", String(ccs.getTVOC()));
-        //Serial.print("VOC: "); Serial.print(ccs.getTVOC()); Serial.println("");
+          Serial.print("VOC: "); Serial.print(ccs.getTVOC()); Serial.println("");
           }
         }    
-        /*
+        
         //BME sensor - Humidity/temp/pressure
         client.publish("/Temp-degree", String(int(bme.readTemperature())));
-        //Serial.print("Temp-degree: "); Serial.print(bme.readTemperature()); Serial.println("");
+        Serial.print("Temp-degree: "); Serial.print(bme.readTemperature()); Serial.println("");
         client.publish("/Pressure-hPa", String(int(bme.readPressure()/100)));
-        //Serial.print("Pressure-hPa: "); Serial.print(intbme.readPressure()); Serial.println("");
+        Serial.print("Pressure-hPa: "); Serial.print(bme.readPressure()); Serial.println("");
         client.publish("/Alt", String(int(bme.readAltitude(SEALEVELPRESSURE_HPA))));
-        //Serial.print("Alt: "); Serial.print(bme.readAltitude(SEALEVELPRESSURE_HPA)); Serial.println("");
+        Serial.print("Alt: "); Serial.print(bme.readAltitude(SEALEVELPRESSURE_HPA)); Serial.println("");
         client.publish("/Humid", String(int(bme.readHumidity())));
-        //Serial.print("Humid: "); Serial.print(bme.readHumidity()); Serial.println("");
-
-         */     
-        
+        Serial.print("Humid: "); Serial.print(bme.readHumidity()); Serial.println("");
+            
+        //Particulate
           if (readPMSdata(&pmsSerial)) {
             // reading data was successful!
             client.publish("/Particles.3", String(data.particles_03um)); 
             Serial.print("Particles > 0.3um / 0.1L air:"); Serial.println(data.particles_03um);
             client.publish("/Particles.5", String(data.particles_05um));
-            //Serial.print("Particles > 0.5um / 0.1L air:"); Serial.println(data.particles_05um);
+            Serial.print("Particles > 0.5um / 0.1L air:"); Serial.println(data.particles_05um);
             client.publish("/Particles1", String(data.particles_10um));
-            //Serial.print("Particles > 1.0um / 0.1L air:"); Serial.println(data.particles_10um);
+            Serial.print("Particles > 1.0um / 0.1L air:"); Serial.println(data.particles_10um);
             client.publish("/Particles2.5", String(data.particles_25um));
-            //Serial.print("Particles > 2.5um / 0.1L air:"); Serial.println(data.particles_25um);
+            Serial.print("Particles > 2.5um / 0.1L air:"); Serial.println(data.particles_25um);
             client.publish("/Particles5", String(data.particles_50um));
-            //Serial.print("Particles > 5.0um / 0.1L air:"); Serial.println(data.particles_50um);
+            Serial.print("Particles > 5.0um / 0.1L air:"); Serial.println(data.particles_50um);
             client.publish("/Particles10", String(data.particles_100um));
-            //Serial.print("Particles > 10.0 um / 0.1L air:"); Serial.println(data.particles_100um);
-            //Serial.println("---------------------------------------");
+            Serial.print("Particles > 10.0 um / 0.1L air:"); Serial.println(data.particles_100um);
+            Serial.println("---------------------------------------");
           } 
     }
   } 
@@ -254,9 +253,9 @@ boolean readPMSdata(Stream *s) {
 }
 
 void connect() {
-  //Serial.print("connecting...");
+  Serial.print("connecting...");
   while (!client.connect("Foresta-InclusiveRECEIVE3SENSORS", "83aa4496", "02ffd19115bcd0ed")) {
-    //Serial.print(".");
+    Serial.print(".");
     delay(1000);
   }
 
@@ -273,7 +272,7 @@ void DhcpAddress(){
 
   // from DhcpAddressPrinter 
   switch (Ethernet.maintain()) {
-  /*case 1:
+  case 1:
     //renewed fail
     Serial.println("Error: renewed fail");
     break;
@@ -301,7 +300,7 @@ void DhcpAddress(){
 
   default:
     //nothing happened
-    break;*/
+    break;
    // end from DhcpAddressPrinter           
   }
 }

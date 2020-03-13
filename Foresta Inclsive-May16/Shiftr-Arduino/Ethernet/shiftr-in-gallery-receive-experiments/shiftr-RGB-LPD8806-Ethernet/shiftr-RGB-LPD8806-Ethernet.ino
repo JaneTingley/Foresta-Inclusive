@@ -15,13 +15,17 @@
 #include <MQTT.h>
 #include <SPI.h> //from DhcpAddressPrinter
 
-#include <Wire.h>
-#include "Adafruit_TCS34725.h"
+#include "LPD8806.h"
+#include "SPI.h"
 
+// Simple test for LPD8806-based RGB LED strip
+// Not compatible with Trinket/Gemma due to limited RAM
+
+/*****************************************************************************/
 
     // from DhcpAddressPrinter 
                 byte mac[] = {
-                  0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x03 /*change mac address so it is different from the programme 
+                  0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x04 /*change mac address so it is different from the programme 
                   on send arduino */
                 };
     // end from DhcpAddressPrinter
@@ -29,21 +33,27 @@
 EthernetClient net;
 MQTTClient client;
 
-Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS34725_GAIN_1X);
+// Number of RGB LEDs in strand:
+int nLEDs = 32;
 
-int sensorPin = A0;    // select the input pin for the wind sensor
-int windsensorValue = 0;  // variable to store the value coming from the wind sensor
+// Chose 2 pins for output; can be any valid output pins:
+int dataPin  = 2;
+int clockPin = 3;
+
+// First parameter is the number of LEDs in the strand.  The LED strips
+// are 32 LEDs per meter but you can extend or cut the strip.  Next two
+// parameters are SPI data and clock pins:
+LPD8806 strip = LPD8806(nLEDs, dataPin, clockPin);
 
 unsigned long lastMillis = 0;
-int moistureReading = 0;   // This is for the received sensor value sent by shiftr
 int lightReading = 0;   // This is for the received sensor value sent by shiftr
-int temperatureReading = 0;   // This is for the received sensor value sent by shiftr
-
-int moistureThreshold = 470;  // This holds the threshold for the soil - change here and reupload
-int valveTime = 4000;  // The amount of time between each time the valve is actuated (seconds)
 
 void setup() {
   Serial.begin(9600);
+    // Start up the LED strip
+  strip.begin();
+  // Update the strip, to start they are all 'off'
+  strip.show();
 
     // from DhcpAddressPrinter           
                    // start the Ethernet connection:
@@ -72,14 +82,6 @@ void setup() {
     client.onMessage(messageReceived);  // call this function (message received) whenever there is a message
   
     connect();
-
-    if (tcs.begin()) {
-      Serial.println("Found sensor");
-    } else {
-      Serial.println("No TCS34725 found ... check your connections");
-      while (1);
-    }
-
 }
 
 void loop() {
@@ -89,17 +91,26 @@ void loop() {
     connect();
   }
 
-  // This sends the threshold value to the wifi module  
+        // Fill the entire strip with...
+    if (lightReading >300) {
+    Serial.println (lightReading);
+    for(int i=0; i<strip.numPixels(); i++) strip.setPixelColor(i, strip.Color(127,0,0)); // red;
+      strip.show();              // Refresh LED states
+      delay (100);
+    }
+  else if (lightReading <300) {
+    Serial.println (lightReading);
+    for(int i=0; i<strip.numPixels(); i++) strip.setPixelColor(i, strip.Color(0,0,127)); // blue;
+        strip.show();              // Refresh LED states
+        delay (100);
+      }
+  
+
+  /*// This sends the threshold value to the wifi module  
   if (millis() - lastMillis > 1000) {
     lastMillis = millis();
-    windsensorValue = analogRead(sensorPin);
-    client.publish("/Wind", String(windsensorValue));
-    Serial.print("Wind value: ");Serial.println(windsensorValue);
-    client.publish("/NewThreshold", String(moistureThreshold)); // sending to shiftr client.publish("NewThreshold", String(moistureThreshold)); // sending to shiftr
-    Serial.print("moistureThreshold value : "); Serial.println(moistureThreshold);
-    client.publish("/ValveTime", String(valveTime));
-    Serial.print("valveTime value : "); Serial.println(valveTime);
-  }
+
+  }*/
 
       // from DhcpAddressPrinter 
                         switch (Ethernet.maintain()) {
@@ -135,34 +146,29 @@ void loop() {
                           
                       }
       // end from DhcpAddressPrinter
-
-  
 }
 
 void connect() {
   Serial.print("connecting...");
-  while (!client.connect("Foresta-InclusiveRECEIVE3SENSORS", "83aa4496", "02ffd19115bcd0ed")) {
+  while (!client.connect("Foresta-InclusiveRGB", "83aa4496", "02ffd19115bcd0ed")) {
     Serial.print(".");
     delay(1000);
   }
 
   Serial.println("\nconnected!");  //  '/n' means start at new line
-
-  client.subscribe("/WetSoil");  //     '/' all names start with a slash
-  //client.unsubscribe("/WetSoil");
+  
+  //client.unsubscribe("/Light");
   client.subscribe("/Light");  //     '/' all names start with a slash
-  client.subscribe("/Temperature");  //     '/' all names start with a slash
+
 }
 
 void messageReceived(String &topic, String &payload) {   // string is a type of variable - a series of characters (topic= /WetSoil  payload= the value
-  if (topic== "moistureReading"){
-   moistureReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
-  }
+
   if (topic== "lightReading"){
-   lightReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
+   lightReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in lightReading  
+
   } 
-  if (topic== "temperatureReading"){
-   temperatureReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
-  }
+
   Serial.println("incoming: " + topic + " - " + payload);  // see serial - this is how the information is displayed
+    
 }
