@@ -15,14 +15,11 @@
 #include <MQTT.h>
 #include <SPI.h> //from DhcpAddressPrinter
 
-//LED strip LPD8806 - adafruit
-#include "LPD8806.h"
-#include "SPI.h"
+#define REDPIN 5
+#define GREENPIN 6
+#define BLUEPIN 3
 
-// Simple test for 160 (5 meters) of LPD8806-based RGB LED strip
-// Not compatible with Trinket/Gemma due to limited RAM
-
-/*****************************************************************************/
+#define FADESPEED 5     // make this higher to slow down
 
 // from DhcpAddressPrinter 
         byte mac[] = {
@@ -34,30 +31,16 @@
 EthernetClient net;
 MQTTClient client;
 
-// Number of RGB LEDs in strand:
-int nLEDs = 32;
-
-// Chose 2 pins for output; can be any valid output pins:
-int dataPin  = 2;
-int clockPin = 3;
-
-// First parameter is the number of LEDs in the strand.  The LED strips
-// are 32 LEDs per meter but you can extend or cut the strip.  Next two
-// parameters are SPI data and clock pins:
-LPD8806 strip = LPD8806(nLEDs, dataPin, clockPin);
-
 //unsigned long lastMillis = 0;
-//int lightReading = 0;   // This is for the received sensor value sent by shiftr
+int lightReading = 0;   // This is for the received sensor value sent by shiftr
 
 void setup() {
   Serial.begin(9600);  
-  // Start up the LED strip
-  strip.begin();
 
-  // Update the strip, to start they are all 'off'
-  strip.show();
+  pinMode(REDPIN, OUTPUT);
+  pinMode(GREENPIN, OUTPUT);
+  pinMode(BLUEPIN, OUTPUT);
   
-
 //from DhcpAddressPrinter           
      // start the Ethernet connection:
       Serial.println("Initialize Ethernet with DHCP:");
@@ -94,9 +77,42 @@ void loop() {
     connect();
   }
 
-  for(int i=0; i<strip.numPixels(); i++) strip.setPixelColor(i, strip.Color(0,12,40)); // White;
-      strip.show();              // Refresh LED states
-      delay (100);
+  int r, g, b;
+
+  // fade from blue to violet
+  for (r = 0; r < 256; r++) { 
+    analogWrite(REDPIN, r);
+    delay(FADESPEED);
+  } 
+  // fade from violet to red
+  for (b = 255; b > 0; b--) { 
+    analogWrite(BLUEPIN, b);
+    delay(FADESPEED);
+  } 
+  // fade from red to yellow
+  for (g = 0; g < 256; g++) { 
+    analogWrite(GREENPIN, g);
+    delay(FADESPEED);
+  } 
+  // fade from yellow to green
+  for (r = 255; r > 0; r--) { 
+    analogWrite(REDPIN, r);
+    delay(FADESPEED);
+  } 
+  // fade from green to teal
+  for (b = 0; b < 256; b++) { 
+    analogWrite(BLUEPIN, b);
+    delay(FADESPEED);
+  } 
+  // fade from teal to blue
+  for (g = 255; g > 0; g--) { 
+    analogWrite(GREENPIN, g);
+    delay(FADESPEED);
+  } 
+
+ // for(int i=0; i<strip.numPixels(); i++) strip.setPixelColor(i, strip.Color(0,12,40)); // White;
+      //strip.show();              // Refresh LED states
+      //delay (100);
       
   // This sends the threshold value to the wifi module  
   /*if (millis() - lastMillis > 3000) {
@@ -126,13 +142,13 @@ void connect() {
   client.subscribe("/Light");  //     '/' all names start with a slash
 }
 
-/*void messageReceived(String &topic, String &payload) {   // string is a type of variable - a series of characters (topic= /WetSoil  payload= the value
+void messageReceived(String &topic, String &payload) {   // string is a type of variable - a series of characters (topic= /WetSoil  payload= the value
   if (topic== "lightReading"){
    lightReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
   } 
 
   Serial.println("incoming: " + topic + " - " + payload);  // see serial - this is how the information is displayed
-}*/
+}
 
 void DhcAddress (){
 // from DhcpAddressPrinter 
@@ -170,22 +186,4 @@ void DhcAddress (){
     }
 // end from DhcpAddressPrinter
   
-}
-
-// Chase one dot down the full strip.  Good for testing purposes.
-void colorChase(uint32_t c, uint8_t wait) {
-  int i;
-  
-  // Start by turning all pixels off:
-  for(i=0; i<strip.numPixels(); i++) strip.setPixelColor(i, 0);
-
-  // Then display one pixel at a time:
-  for(i=0; i<strip.numPixels(); i++) {
-    strip.setPixelColor(i, c); // Set new pixel 'on'
-    strip.show();              // Refresh LED states
-    strip.setPixelColor(i, 0); // Erase pixel, but don't refresh!
-    delay(wait);
-  }
-
-  strip.show(); // Refresh to turn off last pixel
 }
