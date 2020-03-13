@@ -23,7 +23,7 @@
 
 // from DhcpAddressPrinter 
         byte mac[] = {
-          0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x03 /*change mac address so it is different from the programme 
+          0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x04 /*change mac address so it is different from the programme 
          // on send arduino */
         };
 // end from DhcpAddressPrinter
@@ -33,6 +33,8 @@ MQTTClient client;
 
 //unsigned long lastMillis = 0;
 int lightReading = 0;   // This is for the received sensor value sent by shiftr
+//int FADESPEED = 10;
+unsigned long time_now = 0;
 
 void setup() {
   Serial.begin(9600);  
@@ -82,51 +84,34 @@ void loop() {
   // fade from blue to violet
   for (r = 0; r < 256; r++) { 
     analogWrite(REDPIN, r);
-    delay(FADESPEED);
+    delay (FADESPEED);
   } 
   // fade from violet to red
   for (b = 255; b > 0; b--) { 
     analogWrite(BLUEPIN, b);
-    delay(FADESPEED);
+     delay (FADESPEED);
   } 
   // fade from red to yellow
   for (g = 0; g < 256; g++) { 
     analogWrite(GREENPIN, g);
-    delay(FADESPEED);
+    delay (FADESPEED);
   } 
   // fade from yellow to green
   for (r = 255; r > 0; r--) { 
     analogWrite(REDPIN, r);
-    delay(FADESPEED);
+    delay (FADESPEED);
   } 
   // fade from green to teal
   for (b = 0; b < 256; b++) { 
     analogWrite(BLUEPIN, b);
-    delay(FADESPEED);
+    delay (FADESPEED);
   } 
   // fade from teal to blue
   for (g = 255; g > 0; g--) { 
     analogWrite(GREENPIN, g);
-    delay(FADESPEED);
-  } 
-
- // for(int i=0; i<strip.numPixels(); i++) strip.setPixelColor(i, strip.Color(0,12,40)); // White;
-      //strip.show();              // Refresh LED states
-      //delay (100);
-      
-  // This sends the threshold value to the wifi module  
-  /*if (millis() - lastMillis > 3000) {
-    lastMillis = millis();
-    for(int i=0; i<NUMPIXELS; i++) { // For each pixel...
-
-    // pixels.Color() takes RGB values, from 0,0,0 up to 255,255,255
-    pixels.setPixelColor(i, pixels.Color(182, 29, 142));
-    pixels.show();   // Send the updated pixel colors to the hardware.
-    delay(DELAYVAL); // Pause before next pass through loop
+    delay (FADESPEED);
   }
-  }*/
 
- 
   DhcAddress (); 
 }
 
