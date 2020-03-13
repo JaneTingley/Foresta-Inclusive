@@ -164,7 +164,7 @@ void connect() {
 
 void messageReceived(String &topic, String &payload) {   // string is a type of variable - a series of characters (topic= /WetSoil  payload= the value
 
-  if (topic== "lightReading"){
+  if (topic== "/Light"){
    lightReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in lightReading  
 
   } 
