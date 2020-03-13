@@ -15,7 +15,6 @@
 #include <MQTT.h>
 #include <SPI.h> //from DhcpAddressPrinter
 
-#include <Adafruit_NeoPixel.h>
 //LED strip LPD8806 - adafruit
 #include "LPD8806.h"
 #include "SPI.h"
