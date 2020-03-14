@@ -66,9 +66,9 @@ struct pms5003data { //particulate
   uint16_t checksum;
 }; 
 
-struct pms5003data data;
+struct pms5003data data ={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; // sets the values to 0 so that the first upload is not jiberish
 
-unsigned long fastDelayTime = 1000;
+unsigned long fastDelayTime = 500;
 unsigned long slowDelayTime = 10000;
 unsigned long previousFastMillis = 0;
 unsigned long previousSlowMillis = 0;
@@ -134,6 +134,18 @@ void loop() {
         client.publish("/Wind", String(windsensorValue));
         Serial.print("Wind value: ");Serial.println(windsensorValue);
 
+          //Particulate
+          if (readPMSdata(&Serial1)) { //if (readPMSdata(&pmsSerial)) - if using software serial
+            // reading data was successful!
+            Serial.print("Particles > 0.3um / 0.1L air:"); Serial.println(data.particles_03um);
+            Serial.print("Particles > 0.5um / 0.1L air:"); Serial.println(data.particles_05um);
+            Serial.print("Particles > 1.0um / 0.1L air:"); Serial.println(data.particles_10um);
+            Serial.print("Particles > 2.5um / 0.1L air:"); Serial.println(data.particles_25um);
+            Serial.print("Particles > 5.0um / 0.1L air:"); Serial.println(data.particles_50um);
+            Serial.print("Particles > 10.0 um / 0.1L air:"); Serial.println(data.particles_100um);
+            Serial.println("---------------------------------------");
+          } 
+
   // This sends the sensors that change less frequently to shiftr
         if (currentMillis - previousSlowMillis >= slowDelayTime) {
           previousSlowMillis = currentMillis;
@@ -178,24 +190,14 @@ void loop() {
         Serial.print("Alt: "); Serial.print(bme.readAltitude(SEALEVELPRESSURE_HPA)); Serial.println("");
         client.publish("/Humid", String(int(bme.readHumidity())));
         Serial.print("Humid: "); Serial.print(bme.readHumidity()); Serial.println("");
-            
+
         //Particulate
-          if (readPMSdata(&Serial1)) { //if (readPMSdata(&pmsSerial)) - if using software serial
-            // reading data was successful!
             client.publish("/Particles.3", String(data.particles_03um)); 
-            Serial.print("Particles > 0.3um / 0.1L air:"); Serial.println(data.particles_03um);
             client.publish("/Particles.5", String(data.particles_05um));
-            Serial.print("Particles > 0.5um / 0.1L air:"); Serial.println(data.particles_05um);
             client.publish("/Particles1", String(data.particles_10um));
-            Serial.print("Particles > 1.0um / 0.1L air:"); Serial.println(data.particles_10um);
             client.publish("/Particles2.5", String(data.particles_25um));
-            Serial.print("Particles > 2.5um / 0.1L air:"); Serial.println(data.particles_25um);
             client.publish("/Particles5", String(data.particles_50um));
-            Serial.print("Particles > 5.0um / 0.1L air:"); Serial.println(data.particles_50um);
-            client.publish("/Particles10", String(data.particles_100um));
-            Serial.print("Particles > 10.0 um / 0.1L air:"); Serial.println(data.particles_100um);
-            Serial.println("---------------------------------------");
-          } 
+            client.publish("/Particles10", String(data.particles_100um));          
     }
   } 
   DhcpAddress();
