@@ -26,9 +26,6 @@
 EthernetClient net;
 MQTTClient client;
 
-int sensorPin = A0;    // select the input pin for the wind sensor
-int windsensorValue = 0;  // variable to store the value coming from the wind sensor
-
 unsigned long lastMillis = 0;
 int moistureReading = 0;   // This is for the received sensor value sent by shiftr
 int lightReading = 0;   // This is for the received sensor value sent by shiftr
@@ -143,13 +140,13 @@ void connect() {
 }
 
 void messageReceived(String &topic, String &payload) {   // string is a type of variable - a series of characters (topic= /WetSoil  payload= the value
-  if (topic== "moistureReading"){
+  if (topic== "/WetSoil"){
    moistureReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
   }
-  if (topic== "lightReading"){
+  if (topic== "/Light"){
    lightReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
   } 
-  if (topic== "temperatureReading"){
+  if (topic== "/Temperature"){
    temperatureReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
   }
   Serial.println("incoming: " + topic + " - " + payload);  // see serial - this is how the information is displayed
