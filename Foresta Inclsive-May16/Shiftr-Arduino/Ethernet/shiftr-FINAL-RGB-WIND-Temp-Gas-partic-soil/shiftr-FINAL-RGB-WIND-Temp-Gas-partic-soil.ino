@@ -34,8 +34,8 @@ Anemometer wind sensor -- red to + of power source - 12vdc is fine.
 #include "Adafruit_CCS811.h" //CCS811 code - Co2 and TVOC
 
 //https://learn.adafruit.com/pm25-air-quality-sensor/arduino-code
-#include <SoftwareSerial.h>
-SoftwareSerial pmsSerial(10, 11);  // on a mega - (10-RX, 11=TX) on an uno (2=RX,3=TX)
+//#include <SoftwareSerial.h>
+//SoftwareSerial pmsSerial(10, 11);  // on a mega - (10-RX, 11=TX) on an uno (2=RX,3=TX)
 
 #define BME_SCK 13 // BME - Temp/pressure sensor
 #define BME_MISO 12 // BME - Temp/pressure sensor
@@ -83,7 +83,8 @@ void setup() {
   Serial.begin(115200); // this is now faster for particulate sensor
 
         // sensor baud rate is 9600 //PM2.5
-        pmsSerial.begin(9600);
+        //pmsSerial.begin(9600);
+        Serial1.begin(9600); // for mega in pin 19
         
     tcs.begin(); //RGB colour sensor
     bme.begin();  //Pressure/Temp sensor
@@ -179,7 +180,7 @@ void loop() {
         Serial.print("Humid: "); Serial.print(bme.readHumidity()); Serial.println("");
             
         //Particulate
-          if (readPMSdata(&pmsSerial)) {
+          if (readPMSdata(&Serial1)) { //if (readPMSdata(&pmsSerial)) - if using software serial
             // reading data was successful!
             client.publish("/Particles.3", String(data.particles_03um)); 
             Serial.print("Particles > 0.3um / 0.1L air:"); Serial.println(data.particles_03um);
