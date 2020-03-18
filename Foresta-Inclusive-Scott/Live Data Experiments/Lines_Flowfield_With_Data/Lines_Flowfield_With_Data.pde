@@ -72,8 +72,9 @@ void draw() {
       //Set flowfield vector to angle calculated above
       PVector v = PVector.fromAngle(angle);
 
-      //___________________________Set how strictly the particle will follow the direction of the flowfield (Higher the value the strictier it will follow the direction)
-      v.setMag(0.12); 
+      //___________________________Set how strictly the particle will follow the direction of the flowfield 
+      //(Higher the value the strictier it will follow the direction)
+      v.setMag(.05); // was.12
 
       //Add the calculated vector to the flowfield
       flowField[index] = v;

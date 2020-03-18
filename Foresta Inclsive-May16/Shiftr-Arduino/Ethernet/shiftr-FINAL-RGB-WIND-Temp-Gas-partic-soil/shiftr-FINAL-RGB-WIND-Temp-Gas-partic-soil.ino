@@ -199,8 +199,8 @@ void loop() {
             client.publish("/Particles5", String(data.particles_50um));
             client.publish("/Particles10", String(data.particles_100um));          
     }
-  } 
   DhcpAddress();
+  } 
 }
 
 ///----------------------particle
