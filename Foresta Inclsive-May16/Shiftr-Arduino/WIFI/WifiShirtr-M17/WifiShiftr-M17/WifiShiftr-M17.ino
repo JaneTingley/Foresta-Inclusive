@@ -3,27 +3,18 @@
 #include <Adafruit_MQTT.h>
 #include <Adafruit_MQTT_Client.h>
 
-#define USE_SHIFTR
-//#define USE_AIO
-
 #include "arduino_secrets.h" 
 
 WiFiClient net;
 
-#ifdef USE_SHIFTR
- #define MQTT_SERVER "broker.shiftr.io"
- #define MQTT_PORT 1883
- #define MQTT_TOPIC "dummy"
- Adafruit_MQTT_Client mqtt(&net, MQTT_SERVER, MQTT_PORT, MQTT_NAMESPACE, MQTT_USERNAME, MQTT_PASSWORD);
-#elif defined(USE_AIO)
- #define MQTT_SERVER "io.adafruit.com"
- #define MQTT_PORT 1883
- #define MQTT_TOPIC "kintel/feeds/float"
- Adafruit_MQTT_Client mqtt(&net, MQTT_SERVER, MQTT_PORT, MQTT_USERNAME, MQTT_USERNAME, MQTT_PASSWORD);
-#endif
+#define MQTT_SERVER "broker.shiftr.io"
+#define MQTT_PORT 1883
+#define MQTT_TOPIC "dummy"
+Adafruit_MQTT_Client mqtt(&net, MQTT_SERVER, MQTT_PORT, MQTT_NAMESPACE, MQTT_USERNAME, MQTT_PASSWORD);
 
 Adafruit_MQTT_Publish dummyPub = Adafruit_MQTT_Publish(&mqtt, MQTT_TOPIC);
-Adafruit_MQTT_Subscribe dummySub = Adafruit_MQTT_Subscribe(&mqtt, MQTT_TOPIC, MQTT_QOS_1);
+//Subscribe:
+//Adafruit_MQTT_Subscribe dummySub = Adafruit_MQTT_Subscribe(&mqtt, MQTT_TOPIC, MQTT_QOS_1);
 
 char ssid[] = SECRET_SSID;   // your network SSID (name)
 char pass[] = SECRET_PASS;   // your network password (use for WPA, or use as key for WEP)
@@ -61,8 +52,9 @@ void setup() {
   printCurrentNet();
   printWifiData();
 
-  dummySub.setCallback(dummyCallback);
-  mqtt.subscribe(&dummySub);
+//Subscribe:
+//  dummySub.setCallback(dummyCallback);
+//  mqtt.subscribe(&dummySub);
 }
 
 void loop() {
@@ -71,21 +63,22 @@ void loop() {
   }
   MQTT_connect();
 
-  while (Adafruit_MQTT_Subscribe *subscription = mqtt.readSubscription(1000)) {
-    if (subscription == &dummySub) {
-      Serial.print("Got: "); Serial.println((char *)dummySub.lastread);
-    }
-  }
-//  mqtt.processPackets(10000);
+//Subscribe:
+//  while (Adafruit_MQTT_Subscribe *subscription = mqtt.readSubscription(1000)) {
+//    if (subscription == &dummySub) {
+//      Serial.print("Got: "); Serial.println((char *)dummySub.lastread);
+//    }
+//  }
+  
+
+//  if (currentTime - lastMillis > 10000) {
+//    lastMillis = currentTime;
+//    dummyPub.publish(uint32_t(counter));
+//   Serial.print("Publish: "); Serial.println(counter);
+//    counter++;
+//  }
   
   unsigned long currentTime = millis();
-  if (currentTime - lastMillis > 10000) {
-    lastMillis = currentTime;
-    dummyPub.publish(uint32_t(counter));
-    Serial.print("Publish: "); Serial.println(counter);
-    counter++;
-  }
-
   if (currentTime - lastPing > KEEPALIVE) {
     if (mqtt.ping()) {
       lastPing = currentTime;
@@ -100,9 +93,10 @@ void loop() {
   }
 }
 
-void dummyCallback(uint32_t current) {
-  Serial.print("from MQTT: "); Serial.println(current);
-}
+//Subscribe:
+//void dummyCallback(uint32_t current) {
+//  Serial.print("from MQTT: "); Serial.println(current);
+//}
 
 // Function to connect and reconnect as necessary to the MQTT server.
 // Should be called in the loop function and it will take care if connecting.
