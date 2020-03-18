@@ -94,13 +94,13 @@ void loop() {
         // Fill the entire strip with...
     if (lightReading >300) {
     Serial.println (lightReading);
-    for(int i=0; i<strip.numPixels(); i++) strip.setPixelColor(i, strip.Color(127,0,0)); // red;
+    for(int i=0; i<strip.numPixels(); i++) strip.setPixelColor(i, strip.Color(120,4,58)); // red;
       strip.show();              // Refresh LED states
       delay (100);
     }
   else if (lightReading <300) {
     Serial.println (lightReading);
-    for(int i=0; i<strip.numPixels(); i++) strip.setPixelColor(i, strip.Color(0,0,127)); // blue;
+    for(int i=0; i<strip.numPixels(); i++) strip.setPixelColor(i, strip.Color(0,70,105)); // blue;
         strip.show();              // Refresh LED states
         delay (100);
       }
