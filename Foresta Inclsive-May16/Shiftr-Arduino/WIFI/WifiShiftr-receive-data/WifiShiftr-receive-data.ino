@@ -9,16 +9,17 @@ WiFiClient net;
 
 #define MQTT_SERVER "broker.shiftr.io"
 #define MQTT_PORT 1883
-#define MQTT_TOPIC "dummy"
+#define MQTT_TOPIC "Wind" //"dummy"
 Adafruit_MQTT_Client mqtt(&net, MQTT_SERVER, MQTT_PORT, MQTT_NAMESPACE, MQTT_USERNAME, MQTT_PASSWORD);
 
 Adafruit_MQTT_Publish dummyPub = Adafruit_MQTT_Publish(&mqtt, MQTT_TOPIC);
 //Subscribe:
-//Adafruit_MQTT_Subscribe dummySub = Adafruit_MQTT_Subscribe(&mqtt, MQTT_TOPIC, MQTT_QOS_1);
+Adafruit_MQTT_Subscribe WindSub = Adafruit_MQTT_Subscribe(&mqtt, MQTT_TOPIC, MQTT_QOS_1);
 
 char ssid[] = SECRET_SSID;   // your network SSID (name)
 char pass[] = SECRET_PASS;   // your network password (use for WPA, or use as key for WEP)
 int status = WL_IDLE_STATUS; // the Wifi radio's status
+int windReading = 0;
 
 unsigned long lastMillis = 0;
 unsigned long lastPing = 0;
@@ -53,8 +54,8 @@ void setup() {
   printWifiData();
 
 //Subscribe:
-//  dummySub.setCallback(dummyCallback);
-//  mqtt.subscribe(&dummySub);
+//  WindSub.setCallback(WindCallback);
+  mqtt.subscribe(&WindSub);
 }
 
 void loop() {
@@ -63,12 +64,12 @@ void loop() {
   }
   MQTT_connect();
 
-//Subscribe:
-//  while (Adafruit_MQTT_Subscribe *subscription = mqtt.readSubscription(1000)) {
-//    if (subscription == &dummySub) {
-//      Serial.print("Got: "); Serial.println((char *)dummySub.lastread);
-//    }
-//  }
+//Subscribe: // this deals with all of the subcriptions (instead of message receive in shiftr)
+  while (Adafruit_MQTT_Subscribe *subscription = mqtt.readSubscription(1000)) {
+    if (subscription == &WindSub) {
+      Serial.print("Got: "); Serial.println((char *)WindSub.lastread);
+    }
+  }
   
 
 //  if (currentTime - lastMillis > 10000) {
@@ -93,13 +94,15 @@ void loop() {
   }
 }
 
-//Subscribe:
-//void dummyCallback(uint32_t current) {
+//Subscribe: 
+//void WindCallback(uint32_t current) {
 //  Serial.print("from MQTT: "); Serial.println(current);
 //}
 
 // Function to connect and reconnect as necessary to the MQTT server.
 // Should be called in the loop function and it will take care if connecting.
+
+
 void MQTT_connect() {
   // If WiFi client is connected
   if (mqtt.connected()) return;
@@ -115,6 +118,7 @@ void MQTT_connect() {
     delay(5000);
   }
   Serial.println("connected!");
+
 }
 
 void printWifiData() {
