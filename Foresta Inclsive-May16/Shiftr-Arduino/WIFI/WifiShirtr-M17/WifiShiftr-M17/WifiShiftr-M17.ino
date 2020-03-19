@@ -1,7 +1,7 @@
 #include <SPI.h>
 #include <WiFiNINA.h>
-#include <Adafruit_MQTT.h>
-#include <Adafruit_MQTT_Client.h>
+//#include <Adafruit_MQTT.h>
+//#include <Adafruit_MQTT_Client.h>
 
 #include "arduino_secrets.h" 
 
@@ -10,9 +10,9 @@ WiFiClient net;
 #define MQTT_SERVER "broker.shiftr.io"
 #define MQTT_PORT 1883
 #define MQTT_TOPIC "dummy"
-Adafruit_MQTT_Client mqtt(&net, MQTT_SERVER, MQTT_PORT, MQTT_NAMESPACE, MQTT_USERNAME, MQTT_PASSWORD);
+//Adafruit_MQTT_Client mqtt(&net, MQTT_SERVER, MQTT_PORT, MQTT_NAMESPACE, MQTT_USERNAME, MQTT_PASSWORD);
 
-Adafruit_MQTT_Publish dummyPub = Adafruit_MQTT_Publish(&mqtt, MQTT_TOPIC);
+//Adafruit_MQTT_Publish dummyPub = Adafruit_MQTT_Publish(&mqtt, MQTT_TOPIC);
 //Subscribe:
 //Adafruit_MQTT_Subscribe dummySub = Adafruit_MQTT_Subscribe(&mqtt, MQTT_TOPIC, MQTT_QOS_1);
 
