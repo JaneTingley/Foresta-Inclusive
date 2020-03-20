@@ -1,3 +1,16 @@
+/***************************************************************************
+  This is a sketch that connects the 
+
+Anemometer wind Sensor - https://www.adafruit.com/product/1733
+
+Notes on wiring:
+
+Anemometer wind sensor -- red to + of power source - 12vdc is fine.  
+    Black is to ground on power source and ground on microcontroller.
+    Blue goes to A0
+
+ ***************************************************************************/
+
 #include <SPI.h>
 #include <WiFiNINA.h>
 #include <utility/wifi_drv.h>
@@ -12,8 +25,8 @@ WiFiClient net;
 #define MQTT_PORT 1883
 Adafruit_MQTT_Client mqtt(&net, MQTT_SERVER, MQTT_PORT, MQTT_NAMESPACE, MQTT_USERNAME, MQTT_PASSWORD);
 
-Adafruit_MQTT_Publish dummyPub(&mqtt, "dummy");   // publish topic
-Adafruit_MQTT_Subscribe LightSub(&mqtt, "Light"); // subscribe to each topic
+Adafruit_MQTT_Publish Wind1Pub(&mqtt, "Wind1");   // publish topic*********************************************
+Adafruit_MQTT_Subscribe LightSub(&mqtt, "Light"); // subscribe to each topic***********************************
 
 char ssid[] = SECRET_SSID;   // your network SSID (name)
 char pass[] = SECRET_PASS;   // your network password (use for WPA, or use as key for WEP)
@@ -23,6 +36,10 @@ unsigned long lastMillis = 0;
 unsigned long lastPing = 0;
 const unsigned long KEEPALIVE = 60000;
 uint32_t counter = 0;
+
+//sensors:
+int sensorPin = A2;    // sdefines input pin for the wind sensor
+uint32_t windsensorValue = 0;  // variable to store the value coming from the wind sensor
 
 void setup() {
   
@@ -55,7 +72,7 @@ void setup() {
   printWifiData();
   setRGB(0, 0, 0);
 
-  LightSub.setCallback(LightCallback); // each subscription needs a callback function
+  LightSub.setCallback(LightCallback); // each subscription needs a callback function *************
   mqtt.subscribe(&LightSub); // for each
 }
 
@@ -69,15 +86,15 @@ void loop() {
   mqtt_loop();
   
   unsigned long currentTime = millis();
-  if (currentTime - lastMillis > 10000) {
+  if (currentTime - lastMillis > 1000) {
     lastMillis = currentTime;
-    dummyPub.publish(counter);  // this what I add *****************************************************
-    Serial.print("Publish: "); Serial.println(counter);
-    counter++;
+    windsensorValue = analogRead(sensorPin);
+    Wind1Pub.publish(windsensorValue);  // this what I add *****************************************************
+    Serial.print("Publish: "); Serial.println(windsensorValue);
   }
 }
 
-void LightCallback(uint32_t Light) {  // each needs a seperate one
+void LightCallback(uint32_t Light) {  // each needs a seperate one**************************************
   setRGB(0, 100, 0);
   Serial.print("from MQTT: "); Serial.println(Light);
   delay(100);

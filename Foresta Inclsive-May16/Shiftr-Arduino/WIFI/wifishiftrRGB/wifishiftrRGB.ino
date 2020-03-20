@@ -96,22 +96,26 @@ void LightCallback(uint32_t Light) {  // each needs a seperate one
   delay(100);
   setRGB(0, 0, 0);
 
-  int r, g, b;  //defines R,G,B as variables
+  //int r, g, b;  //defines R,G,B as variables
   
   if (Light>= 300) { 
   // fade from blue to violet
-    for (r = 0; r < 256; r++) { // fade out red
-      analogWrite(REDPIN, r);
-      delay(FADESPEED);
+    //for (r = 0; r < 256; r++) { // fade out red
+    analogWrite(REDPIN, 240);
+    analogWrite(GREENPIN, 103);
+    analogWrite(BLUEPIN, 159);
+      //delay(FADESPEED);
     }
-  }
+  //}
   else {
     // fade from violet to blue
-    for (r = 255; r > 0; r--) { // fade in red
-      analogWrite(REDPIN, r);
-      delay(FADESPEED);
+    //for (r = 255; r > 0; r--) { // fade in red
+    analogWrite(REDPIN, 0);
+    analogWrite(GREENPIN, 173);
+    analogWrite(BLUEPIN, 232);
+      //delay(FADESPEED);
   } 
-  }
+  //}
 }
 
 // Call this every loop.
