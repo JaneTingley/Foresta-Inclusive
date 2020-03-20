@@ -98,17 +98,17 @@ void LightCallback(uint32_t Light) {  // each needs a seperate one
 
   //int r, g, b;  //defines R,G,B as variables
   
-  if (Light>= 300) { 
-  // fade from blue to violet
+  if (Light>= 250) { 
+  // fade from blue to pink
     //for (r = 0; r < 256; r++) { // fade out red
-    analogWrite(REDPIN, 240);
-    analogWrite(GREENPIN, 103);
-    analogWrite(BLUEPIN, 159);
+    analogWrite(REDPIN, 244);
+    analogWrite(GREENPIN, 0);
+    analogWrite(BLUEPIN, 75);
       //delay(FADESPEED);
     }
   //}
   else {
-    // fade from violet to blue
+    // fade from pink to blue
     //for (r = 255; r > 0; r--) { // fade in red
     analogWrite(REDPIN, 0);
     analogWrite(GREENPIN, 173);
