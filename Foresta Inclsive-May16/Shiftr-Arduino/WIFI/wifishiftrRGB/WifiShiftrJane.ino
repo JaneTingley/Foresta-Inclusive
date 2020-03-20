@@ -100,15 +100,15 @@ void LightCallback(uint32_t Light) {  // each needs a seperate one
   
   if (Light>= 300) { 
   // fade from blue to violet
-    for (r = 0; r < 256; r++) { 
+    for (r = 0; r < 256; r++) { // fade out red
       analogWrite(REDPIN, r);
       delay(FADESPEED);
     }
   }
   else {
     // fade from violet to blue
-    for (r = 255; r > 0; r--) { 
-      analogWrite(BLUEPIN, b);
+    for (r = 255; r > 0; r--) { // fade in red
+      analogWrite(REDPIN, r);
       delay(FADESPEED);
   } 
   }

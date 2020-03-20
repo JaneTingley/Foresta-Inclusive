@@ -12,6 +12,10 @@ void setup() {
   pinMode(REDPIN, OUTPUT);
   pinMode(GREENPIN, OUTPUT);
   pinMode(BLUEPIN, OUTPUT);
+
+  //analogWrite(REDPIN, 0);
+  //analogWrite(GREENPIN, 0);
+  //analogWrite(BLUEPIN, 255);
 }
  
  
