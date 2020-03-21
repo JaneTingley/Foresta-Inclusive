@@ -54,15 +54,24 @@ WiFiClient net;
 Adafruit_MQTT_Client mqtt(&net, MQTT_SERVER, MQTT_PORT, MQTT_NAMESPACE, MQTT_USERNAME, MQTT_PASSWORD);
 
 Adafruit_MQTT_Publish WindPub(&mqtt, "Wind");   // publish topic*********************************************
-Adafruit_MQTT_Publish Wind1Pub(&mqtt, "Wind1");   // publish topic*********************************************
-Adafruit_MQTT_Publish Wind1Pub(&mqtt, "Wind1");   // publish topic*********************************************
-Adafruit_MQTT_Publish Wind1Pub(&mqtt, "Wind1");   // publish topic*********************************************
-Adafruit_MQTT_Publish Wind1Pub(&mqtt, "Wind1");   // publish topic*********************************************
-Adafruit_MQTT_Publish Wind1Pub(&mqtt, "Wind1");   // publish topic*********************************************
-Adafruit_MQTT_Publish Wind1Pub(&mqtt, "Wind1");   // publish topic*********************************************
-Adafruit_MQTT_Publish Wind1Pub(&mqtt, "Wind1");   // publish topic*********************************************
+Adafruit_MQTT_Publish moistureReadingPub(&mqtt, "moistureReading");   // publish topic*********************************************
+Adafruit_MQTT_Publish soilTemperaturePub(&mqtt, "soilTemperature");   // publish topic*********************************************
+Adafruit_MQTT_Publish colorTempPub(&mqtt, "colorTemp");   // publish topic*********************************************
+Adafruit_MQTT_Publish luxPub(&mqtt, "lux");   // publish topic*********************************************
+Adafruit_MQTT_Publish C02Pub(&mqtt, "C02");   // publish topic*********************************************
+Adafruit_MQTT_Publish TVOCPub(&mqtt, "TVOC");   // publish topic*********************************************
+Adafruit_MQTT_Publish TemperaturePub(&mqtt, "Temperature");   // publish topic*********************************************
+Adafruit_MQTT_Publish PressurePub(&mqtt, "Pressure");   // publish topic*********************************************
+Adafruit_MQTT_Publish AltitudePub(&mqtt, "Altitude");   // publish topic*********************************************
+Adafruit_MQTT_Publish HumidityPub(&mqtt, "Humidity");   // publish topic*********************************************
+Adafruit_MQTT_Publish particles_03umPub(&mqtt, "particles_03um");   // publish topic*********************************************
+Adafruit_MQTT_Publish particles_05umPub(&mqtt, "particles_05um");   // publish topic*********************************************
+Adafruit_MQTT_Publish particles_10umPub(&mqtt, "particles_10um");   // publish topic*********************************************
+Adafruit_MQTT_Publish particles_25umPub(&mqtt, "particles_25um");   // publish topic*********************************************
+Adafruit_MQTT_Publish particles_50umPub(&mqtt, "particles_50um");   // publish topic*********************************************
+Adafruit_MQTT_Publish particles_100umPub(&mqtt, "particles_100um");   // publish topic*********************************************
 
-Adafruit_MQTT_Subscribe LightSub(&mqtt, "Light"); // subscribe to each topic***********************************
+//Adafruit_MQTT_Subscribe LightSub(&mqtt, "Light"); // subscribe to each topic***********************************
 
 Adafruit_BME280 bme; // I2C - BME - Temp/pressure sensor
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS34725_GAIN_1X); //RGB colour sensor
@@ -140,8 +149,8 @@ void setup() {
   printWifiData();
   setRGB(0, 0, 0);
 
-  LightSub.setCallback(LightCallback); // each subscription needs a callback function *************
-  mqtt.subscribe(&LightSub); // for each
+//  LightSub.setCallback(LightCallback); // each subscription needs a callback function *************
+//  mqtt.subscribe(&LightSub); // for each
 }
 
 void setRGB(uint8_t r, uint8_t g, uint8_t b) {
@@ -181,11 +190,13 @@ void loop() {
           previousSlowMillis = currentMillis;
 
           moistureReading = analogRead(moisturePin);
-          client.publish("/WetSoil1", String(moistureReading)); // sending to shiftr 
+          //client.publish("/WetSoil1", String(moistureReading)); // sending to shiftr 
+          moistureReadingPub.publish(moistureReading);  // this what I add *****************************************************
+
           temperatureReading = analogRead(temperaturePin); 
           temperatureReading = map(temperatureReading, 0, 625, -40, 85);
-          client.publish("/Temperature1", String(temperatureReading)); // sending to shiftr
-  
+          soilTemperaturePub.publish(temperatureReading);  // this what I add *****************************************************
+
           //this converts the RGB colour sensor data 
           float red, green, blue; //taken from the other sketch to transform RGB values
           uint16_t r, g, b, c, colorTemp, lux;
@@ -193,41 +204,42 @@ void loop() {
           tcs.getRGB(&red, &green, &blue);//taken from the other sketch to transform RGB values
           colorTemp = tcs.calculateColorTemperature(r, g, b);
           lux = tcs.calculateLux(r, g, b);
-  
+          
           //RBG sensor
            //print sensor values only when necessary - else look at shiftr
-          client.publish("/colourTemp", String(colorTemp));
+          colorTempPub.publish(colorTemp);  // this what I add *****************************************************
           Serial.print("Color Temp: "); Serial.print(colorTemp, DEC); Serial.println(" K ");
-          client.publish("/Lux", String(lux));
+          luxPub.publish(lux);  // this what I add *****************************************************
           Serial.print("Lux: "); Serial.println(lux, DEC);
   
           //Gas/VOC sensor
           if(ccs.available()){
-            if(!ccs.readData()){         
-            client.publish("/C02", String(ccs.geteCO2()));
-            Serial.print("C02: "); Serial.print(ccs.geteCO2()); Serial.println("");
-            client.publish("/VOC", String(ccs.getTVOC()));
-            Serial.print("VOC: "); Serial.print(ccs.getTVOC()); Serial.println("");
-            }
+            if(!ccs.readData()){ 
+              C02Pub.publish(ccs.geteCO2());  // this what I add *****************************************************        
+              Serial.print("C02: "); Serial.print(ccs.geteCO2()); Serial.println("");
+              VOCPub.publish(ccs.getTVOC());  // this what I add *****************************************************        
+              Serial.print("VOC: "); Serial.print(ccs.getTVOC()); Serial.println("");
+              }
           }    
-        
+
           //BME sensor - Humidity/temp/pressure
-          client.publish("/Temp-degree", String(int(bme.readTemperature())));
+          TemperaturePub.publish(bme.readTemperature());  // this what I add ***************************************************** 
           Serial.print("Temp-degree: "); Serial.print(bme.readTemperature()); Serial.println("");
-          client.publish("/Pressure-hPa", String(int(bme.readPressure()/100)));
+          PressurePub.publish(bbme.readPressure()/100));  // this what I add ***************************************************** 
           Serial.print("Pressure-hPa: "); Serial.print(bme.readPressure()); Serial.println("");
-          client.publish("/Alt", String(int(bme.readAltitude(SEALEVELPRESSURE_HPA))));
+          AltitudePub.publish(bme.readAltitude(SEALEVELPRESSURE_HPA));  // this what I add ***************************************************** 
           Serial.print("Alt: "); Serial.print(bme.readAltitude(SEALEVELPRESSURE_HPA)); Serial.println("");
-          client.publish("/Humid", String(int(bme.readHumidity())));
+          HumidityPub.publish(bme.readHumidity());  // this what I add *****************************************************
           Serial.print("Humid: "); Serial.print(bme.readHumidity()); Serial.println("");
 
         //Particulate
-            client.publish("/Particles.3", String(data.particles_03um)); 
-            client.publish("/Particles.5", String(data.particles_05um));
-            client.publish("/Particles1", String(data.particles_10um));
-            client.publish("/Particles2.5", String(data.particles_25um));
-            client.publish("/Particles5", String(data.particles_50um));
-            client.publish("/Particles10", String(data.particles_100um));          
+          particles_03umPub.publish(data.particles_03um);  // this what I add ***************************************************** 
+          particles_05umPub.publish(data.particles_05um);  // this what I add ***************************************************** 
+          particles_10umPub.publish(data.particles_10um);  // this what I add ***************************************************** 
+          particles_25umPub.publish(data.particles_25um);  // this what I add ***************************************************** 
+          particles_50umPub.publish(data.particles_50um);  // this what I add ***************************************************** 
+          particles_100umPub.publish(data.particles_100um);  // this what I add ***************************************************** 
+                   
     }
   }
 }  
