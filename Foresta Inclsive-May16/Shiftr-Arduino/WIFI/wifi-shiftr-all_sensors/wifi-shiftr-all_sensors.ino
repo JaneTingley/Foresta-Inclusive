@@ -59,7 +59,7 @@ Adafruit_MQTT_Publish soilTemperaturePub(&mqtt, "soilTemperature");   // publish
 Adafruit_MQTT_Publish colorTempPub(&mqtt, "colorTemp");   // publish topic*********************************************
 Adafruit_MQTT_Publish luxPub(&mqtt, "lux");   // publish topic*********************************************
 Adafruit_MQTT_Publish C02Pub(&mqtt, "C02");   // publish topic*********************************************
-Adafruit_MQTT_Publish TVOCPub(&mqtt, "TVOC");   // publish topic*********************************************
+Adafruit_MQTT_Publish VOCPub(&mqtt, "VOC");   // publish topic*********************************************
 Adafruit_MQTT_Publish TemperaturePub(&mqtt, "Temperature");   // publish topic*********************************************
 Adafruit_MQTT_Publish PressurePub(&mqtt, "Pressure");   // publish topic*********************************************
 Adafruit_MQTT_Publish AltitudePub(&mqtt, "Altitude");   // publish topic*********************************************
@@ -102,12 +102,12 @@ const unsigned long KEEPALIVE = 60000;
 
 
 //sensors:
-int sensorPin = A2;    // sdefines input pin for the wind sensor
+int sensorPin = A0;    // sdefines input pin for the wind sensor
 uint32_t windsensorValue = 0;  // variable to store the value coming from the wind sensor
-int moisturePin = A3; // this defines the pin A0 as the moisture sensor pin
-int moistureReading;  // this holds the reading from the soil moisture sensor
-int temperaturePin = A4; // defines the pin A2 as the temperature sensor pin
-int temperatureReading;  // this holds the reading from the soil temperature sensor
+int moisturePin = A1; // this defines the pin A0 as the moisture sensor pin
+uint32_t moistureReading;  // this holds the reading from the soil moisture sensor
+int temperaturePin = A2; // defines the pin A2 as the temperature sensor pin
+uint32_t temperatureReading;  // this holds the reading from the soil temperature sensor
 
 void setup() {
   
@@ -207,38 +207,38 @@ void loop() {
           
           //RBG sensor
            //print sensor values only when necessary - else look at shiftr
-          colorTempPub.publish(colorTemp);  // this what I add *****************************************************
+          colorTempPub.publish(uint32_t(colorTemp));  // this what I add *****************************************************
           Serial.print("Color Temp: "); Serial.print(colorTemp, DEC); Serial.println(" K ");
-          luxPub.publish(lux);  // this what I add *****************************************************
+          luxPub.publish(uint32_t(lux));  // this what I add *****************************************************
           Serial.print("Lux: "); Serial.println(lux, DEC);
   
           //Gas/VOC sensor
           if(ccs.available()){
             if(!ccs.readData()){ 
-              C02Pub.publish(ccs.geteCO2());  // this what I add *****************************************************        
+              C02Pub.publish(uint32_t(ccs.geteCO2()));  // this what I add *****************************************************        
               Serial.print("C02: "); Serial.print(ccs.geteCO2()); Serial.println("");
-              VOCPub.publish(ccs.getTVOC());  // this what I add *****************************************************        
+              VOCPub.publish(uint32_t(ccs.getTVOC()));  // this what I add *****************************************************        
               Serial.print("VOC: "); Serial.print(ccs.getTVOC()); Serial.println("");
               }
           }    
 
           //BME sensor - Humidity/temp/pressure
-          TemperaturePub.publish(bme.readTemperature());  // this what I add ***************************************************** 
+          TemperaturePub.publish(uint32_t(bme.readTemperature()));  // this what I add ***************************************************** 
           Serial.print("Temp-degree: "); Serial.print(bme.readTemperature()); Serial.println("");
-          PressurePub.publish(bbme.readPressure()/100));  // this what I add ***************************************************** 
+          PressurePub.publish(uint32_t(bme.readPressure()/100));  // this what I add ***************************************************** 
           Serial.print("Pressure-hPa: "); Serial.print(bme.readPressure()); Serial.println("");
-          AltitudePub.publish(bme.readAltitude(SEALEVELPRESSURE_HPA));  // this what I add ***************************************************** 
+          AltitudePub.publish(uint32_t(bme.readAltitude(SEALEVELPRESSURE_HPA)));  // this what I add ***************************************************** 
           Serial.print("Alt: "); Serial.print(bme.readAltitude(SEALEVELPRESSURE_HPA)); Serial.println("");
-          HumidityPub.publish(bme.readHumidity());  // this what I add *****************************************************
+          HumidityPub.publish(uint32_t(bme.readHumidity()));  // this what I add *****************************************************
           Serial.print("Humid: "); Serial.print(bme.readHumidity()); Serial.println("");
 
         //Particulate
-          particles_03umPub.publish(data.particles_03um);  // this what I add ***************************************************** 
-          particles_05umPub.publish(data.particles_05um);  // this what I add ***************************************************** 
-          particles_10umPub.publish(data.particles_10um);  // this what I add ***************************************************** 
-          particles_25umPub.publish(data.particles_25um);  // this what I add ***************************************************** 
-          particles_50umPub.publish(data.particles_50um);  // this what I add ***************************************************** 
-          particles_100umPub.publish(data.particles_100um);  // this what I add ***************************************************** 
+          particles_03umPub.publish(uint32_t(data.particles_03um));  // this what I add ***************************************************** 
+          particles_05umPub.publish(uint32_t(data.particles_05um));  // this what I add ***************************************************** 
+          particles_10umPub.publish(uint32_t(data.particles_10um));  // this what I add ***************************************************** 
+          particles_25umPub.publish(uint32_t(data.particles_25um));  // this what I add ***************************************************** 
+          particles_50umPub.publish(uint32_t(data.particles_50um));  // this what I add ***************************************************** 
+          particles_100umPub.publish(uint32_t(data.particles_100um));  // this what I add ***************************************************** 
                    
     }
   }
@@ -348,4 +348,56 @@ void printMacAddress(byte mac[]) {
     }
   }
   Serial.println();
+}
+
+///----------------------particle
+boolean readPMSdata(Stream *s) {
+  // Read a byte at a time until we get to the special '0x42' start-byte
+  while (s->available() && s->peek() != 0x42) {
+    s->read();
+  }
+
+  if (! s->available()) {
+    Serial.println("no data");
+    return false;
+  }
+  
+  // Now read all 32 bytes
+  if (s->available() < 32) {
+    Serial.println("< 32 bytes available");
+    return false;
+  }
+    
+  uint8_t buffer[32];    
+  uint16_t sum = 0;
+  s->readBytes(buffer, 32);
+
+  // get checksum ready
+  for (uint8_t i=0; i<30; i++) {
+    sum += buffer[i];
+  }
+
+  /* debugging
+  for (uint8_t i=2; i<32; i++) {
+    Serial.print("0x"); Serial.print(buffer[i], HEX); Serial.print(", ");
+  }
+  Serial.println();
+  */
+  
+  // The data comes in endian'd, this solves it so it works on all platforms
+  uint16_t buffer_u16[15];
+  for (uint8_t i=0; i<15; i++) {
+    buffer_u16[i] = buffer[2 + i*2 + 1];
+    buffer_u16[i] += (buffer[2 + i*2] << 8);
+  }
+
+  // put it into a nice struct :)
+  memcpy((void *)&data, (void *)buffer_u16, 30);
+
+  if (sum != data.checksum) {
+    Serial.println("Checksum failure");
+    return false;
+  }
+  // success!
+  return true;
 }
