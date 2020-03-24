@@ -171,7 +171,7 @@ void loop() {
         // read the value from the wind sensor:
     windsensorValue = analogRead(sensorPin);
     WindPub.publish(windsensorValue);  // this what I add *****************************************************
-    Serial.print("Publish: "); Serial.println(windsensorValue);
+    Serial.print("Wind: "); Serial.println(windsensorValue);
 
           //Particulate
       if (readPMSdata(&Serial1)) { //if (readPMSdata(&pmsSerial)) - if using software serial
