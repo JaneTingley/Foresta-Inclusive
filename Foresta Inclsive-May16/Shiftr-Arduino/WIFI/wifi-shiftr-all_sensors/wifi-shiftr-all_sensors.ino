@@ -29,35 +29,20 @@ Anemometer wind sensor -- red to + of power source - 12vdc is fine.
 #include <Adafruit_MQTT_Client.h>
 
 #include "arduino_secrets.h" 
-
 #include <Wire.h>
-#include "Adafruit_TCS34725.h" //RGB colour sensor
-#include <Adafruit_Sensor.h>  // BME - Temp/pressure sensor
-#include <Adafruit_BME280.h> // BME - Temp/pressure sensor
-#include "Adafruit_CCS811.h" //CCS811 code - Co2 and TVOC
-
-//https://learn.adafruit.com/pm25-air-quality-sensor/arduino-code
-//#include <SoftwareSerial.h>
-//SoftwareSerial pmsSerial(10, 11);  // on a mega - (10-RX, 11=TX) on an uno (2=RX,3=TX)
 
 WiFiClient net;
-
-#define BME_SCK 13 // BME - Temp/pressure sensor
-#define BME_MISO 12 // BME - Temp/pressure sensor
-#define BME_MOSI 11 // BME - Temp/pressure sensor
-#define BME_CS 10 // BME - Temp/pressure sensor
-
-#define SEALEVELPRESSURE_HPA (1013.25)
 
 #define MQTT_SERVER "broker.shiftr.io"
 #define MQTT_PORT 1883
 Adafruit_MQTT_Client mqtt(&net, MQTT_SERVER, MQTT_PORT, MQTT_NAMESPACE, MQTT_USERNAME, MQTT_PASSWORD);
 
-Adafruit_MQTT_Publish WindPub(&mqtt, "Wind");   // publish topic*********************************************
+Adafruit_MQTT_Publish colorTempPub(&mqtt, "colorTemp");   // publish topic*********************************************
+Adafruit_MQTT_Publish luxPub(&mqtt, "lux");               // publish topic*********************************************
+
+/*Adafruit_MQTT_Publish WindPub(&mqtt, "Wind");   // publish topic*********************************************
 Adafruit_MQTT_Publish moistureReadingPub(&mqtt, "moistureReading");   // publish topic*********************************************
 Adafruit_MQTT_Publish soilTemperaturePub(&mqtt, "soilTemperature");   // publish topic*********************************************
-Adafruit_MQTT_Publish colorTempPub(&mqtt, "colorTemp");   // publish topic*********************************************
-Adafruit_MQTT_Publish luxPub(&mqtt, "lux");   // publish topic*********************************************
 Adafruit_MQTT_Publish C02Pub(&mqtt, "C02");   // publish topic*********************************************
 Adafruit_MQTT_Publish VOCPub(&mqtt, "VOC");   // publish topic*********************************************
 Adafruit_MQTT_Publish TemperaturePub(&mqtt, "Temperature");   // publish topic*********************************************
@@ -69,25 +54,11 @@ Adafruit_MQTT_Publish particles_05umPub(&mqtt, "particles_05um");   // publish t
 Adafruit_MQTT_Publish particles_10umPub(&mqtt, "particles_10um");   // publish topic*********************************************
 Adafruit_MQTT_Publish particles_25umPub(&mqtt, "particles_25um");   // publish topic*********************************************
 Adafruit_MQTT_Publish particles_50umPub(&mqtt, "particles_50um");   // publish topic*********************************************
-Adafruit_MQTT_Publish particles_100umPub(&mqtt, "particles_100um");   // publish topic*********************************************
+Adafruit_MQTT_Publish particles_100umPub(&mqtt, "particles_100um");   // publish topic*********************************************/
 
 //Adafruit_MQTT_Subscribe LightSub(&mqtt, "Light"); // subscribe to each topic***********************************
 
-Adafruit_BME280 bme; // I2C - BME - Temp/pressure sensor
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS34725_GAIN_1X); //RGB colour sensor
-Adafruit_CCS811 ccs; //CCS811 code - Co2 and TVOC
-
-struct pms5003data { //particulate
-  uint16_t framelen;
-  uint16_t pm10_standard, pm25_standard, pm100_standard;
-  uint16_t pm10_env, pm25_env, pm100_env;
-  uint16_t particles_03um, particles_05um, particles_10um, particles_25um, particles_50um, particles_100um;
-  uint16_t unused;
-  uint16_t checksum;
-}; 
-
-struct pms5003data data ={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; // sets the values to 0 so that the first upload is not jiberish
-
 
 char ssid[] = SECRET_SSID;   // your network SSID (name)
 char pass[] = SECRET_PASS;   // your network password (use for WPA, or use as key for WEP)
@@ -101,25 +72,18 @@ unsigned long lastPing = 0;
 const unsigned long KEEPALIVE = 60000;
 
 
-//sensors:
+/* //sensors:
 int sensorPin = A0;    // sdefines input pin for the wind sensor
 uint32_t windsensorValue = 0;  // variable to store the value coming from the wind sensor
 int moisturePin = A1; // this defines the pin A0 as the moisture sensor pin
 uint32_t moistureReading;  // this holds the reading from the soil moisture sensor
 int temperaturePin = A2; // defines the pin A2 as the temperature sensor pin
-uint32_t temperatureReading;  // this holds the reading from the soil temperature sensor
+uint32_t temperatureReading;  // this holds the reading from the soil temperature sensor*/
 
 void setup() {
   
   Serial.begin(115200);
-
-          // sensor baud rate is 9600 //PM2.5
-        //pmsSerial.begin(9600);
-        Serial1.begin(9600); // for mega in pin 19
-        
-    tcs.begin(); //RGB colour sensor
-    bme.begin();  //Pressure/Temp 
-    ccs.begin(); // gas sensor
+  tcs.begin(); //RGB colour sensor
     
   while (!Serial && millis() < 4000);
   delay(100);
@@ -160,7 +124,7 @@ void setRGB(uint8_t r, uint8_t g, uint8_t b) {
 }
 
 void loop() {
-  mqtt_loop();
+  if (!mqtt_loop()) return;
 
     // This sends the sensor data that needs to be sent quickly to shiftr - ie//wind
     unsigned long currentMillis = millis();
@@ -168,36 +132,7 @@ void loop() {
         previousFastMillis = currentMillis;
         // This runs every fastDelayTime ms
         // Process fast sensors    
-        // read the value from the wind sensor:
-    windsensorValue = analogRead(sensorPin);
-    WindPub.publish(windsensorValue);  // this what I add *****************************************************
-    Serial.print("Wind: "); Serial.println(windsensorValue);
-    
-          //Particulate
-      if (readPMSdata(&Serial1)) { //if (readPMSdata(&pmsSerial)) - if using software serial
-        // reading data was successful!
-        Serial.print("Particles > 0.3um / 0.1L air:"); Serial.println(data.particles_03um);
-        Serial.print("Particles > 0.5um / 0.1L air:"); Serial.println(data.particles_05um);
-        Serial.print("Particles > 1.0um / 0.1L air:"); Serial.println(data.particles_10um);
-        Serial.print("Particles > 2.5um / 0.1L air:"); Serial.println(data.particles_25um);
-        Serial.print("Particles > 5.0um / 0.1L air:"); Serial.println(data.particles_50um);
-        Serial.print("Particles > 10.0 um / 0.1L air:"); Serial.println(data.particles_100um);
-        Serial.println("---------------------------------------");
-      } 
 
-  // This sends the sensors that change less frequently to shiftr
-        if (currentMillis - previousSlowMillis >= slowDelayTime) {
-          previousSlowMillis = currentMillis;
-
-          moistureReading = analogRead(moisturePin);
-          moistureReadingPub.publish(moistureReading);  // this what I add *****************************************************
-    Serial.print("Soil-Moisture: "); Serial.println(moistureReading);
- 
-          temperatureReading = analogRead(temperaturePin); 
-          temperatureReading = map(temperatureReading, 0, 625, -40, 85);
-          soilTemperaturePub.publish(temperatureReading);  // this what I add *****************************************************
-   Serial.print("Soil-Temp: "); Serial.println(temperatureReading);
-   
           //this converts the RGB colour sensor data 
           float red, green, blue; //taken from the other sketch to transform RGB values
           uint16_t r, g, b, c, colorTemp, lux;
@@ -212,35 +147,15 @@ void loop() {
           Serial.print("Color Temp: "); Serial.print(colorTemp, DEC); Serial.println(" K ");
           luxPub.publish(uint32_t(lux));  // this what I add *****************************************************
           Serial.print("Lux: "); Serial.println(lux, DEC);
-  
-          //Gas/VOC sensor
-          if(ccs.available()){
-            if(!ccs.readData()){ 
-              C02Pub.publish(uint32_t(ccs.geteCO2()));  // this what I add *****************************************************        
-              Serial.print("C02: "); Serial.print(ccs.geteCO2()); Serial.println("");
-              VOCPub.publish(uint32_t(ccs.getTVOC()));  // this what I add *****************************************************        
-              Serial.print("VOC: "); Serial.print(ccs.getTVOC()); Serial.println("");
-              }
-          }    
+    
+ 
 
-          //BME sensor - Humidity/temp/pressure
-          TemperaturePub.publish(uint32_t(bme.readTemperature()));  // this what I add ***************************************************** 
-          Serial.print("Temp-degree: "); Serial.print(bme.readTemperature()); Serial.println("");
-          PressurePub.publish(uint32_t(bme.readPressure()/100));  // this what I add ***************************************************** 
-          Serial.print("Pressure-hPa: "); Serial.print(bme.readPressure()); Serial.println("");
-          AltitudePub.publish(uint32_t(bme.readAltitude(SEALEVELPRESSURE_HPA)));  // this what I add ***************************************************** 
-          Serial.print("Alt: "); Serial.print(bme.readAltitude(SEALEVELPRESSURE_HPA)); Serial.println("");
-          HumidityPub.publish(uint32_t(bme.readHumidity()));  // this what I add *****************************************************
-          Serial.print("Humid: "); Serial.print(bme.readHumidity()); Serial.println("");
+  // This sends the sensors that change less frequently to shiftr
+        if (currentMillis - previousSlowMillis >= slowDelayTime) {
+          previousSlowMillis = currentMillis;
 
-        //Particulate
-          particles_03umPub.publish(uint32_t(data.particles_03um));  // this what I add ***************************************************** 
-          particles_05umPub.publish(uint32_t(data.particles_05um));  // this what I add ***************************************************** 
-          particles_10umPub.publish(uint32_t(data.particles_10um));  // this what I add ***************************************************** 
-          particles_25umPub.publish(uint32_t(data.particles_25um));  // this what I add ***************************************************** 
-          particles_50umPub.publish(uint32_t(data.particles_50um));  // this what I add ***************************************************** 
-          particles_100umPub.publish(uint32_t(data.particles_100um));  // this what I add ***************************************************** 
-                   
+
+        
     }
   }
 }  
@@ -254,58 +169,78 @@ void LightCallback(uint32_t Light) {  // each needs a seperate one**************
 
 // Call this every loop.
 // It will process incoming messagew as well as maintain the MQTT connection
-void mqtt_loop() {
-  if (!mqtt.connected()) {
-    setRGB(100, 0, 0);
-    mqtt_connect();
-    setRGB(0, 0, 0);
+// Will return true if we've got a valid MQTT connection, false otherwise.
+bool mqtt_loop() {
+  if (!mqtt_connect()) {
+    Serial.println("Retrying in 5 sec...");
+    delay(5000);
+    return false;
   }
-  mqtt.processPackets(100);
-  unsigned long currentTime = millis();
-  if (currentTime - lastPing > KEEPALIVE) {
-    setRGB(0, 0, 100);
-    if (mqtt.ping()) {
-      lastPing = currentTime;
-    }
-    else {
-      Serial.println("MQTT Ping failed");
-      setRGB(255, 0, 0);
-      delay(1000);
-    }
-    setRGB(0, 0, 100);
-    int pingResult = WiFi.ping("google.com");
-    if (pingResult < 0) {
-      Serial.print("Ping failed: "); Serial.println(pingResult);
-      setRGB(255, 0, 0);
-      delay(1000);
-    }
-    setRGB(0, 0, 0);
+  else {
+    mqtt.processPackets(100);
+    return true;
   }
 }
 
 // Function to connect and reconnect as necessary to the MQTT server.
-void mqtt_connect() {
-  if (WiFi.status() != WL_CONNECTED) {
-    Serial.print("WiFi: Reconnecting to ");
-    Serial.print(ssid);
-    Serial.println("...");
-    status = WiFi.begin(ssid, pass);
+// Will return true if we've got a connection, false otherwise.
+bool mqtt_connect() {
+  // If WiFi client is connected
+  if (mqtt.connected()) {
+
+    unsigned long currentTime = millis();
+    if (currentTime - lastPing > KEEPALIVE) {
+      setRGB(0, 0, 100);
+      if (mqtt.ping()) {
+        lastPing = currentTime;
+      }
+      else {
+        Serial.println("MQTT Ping failed");
+        setRGB(255, 0, 0);
+        delay(1000);
+      }
+      setRGB(0, 100, 100);
+      int pingResult = WiFi.ping("google.com");
+      if (pingResult < 0) {
+        Serial.print("google.com ping failed: "); Serial.println(pingResult);
+        setRGB(255, 0, 0);
+        delay(1000);
+      }
+      setRGB(0, 0, 0);
+    }
+
+    return true;
   }
 
-  // If WiFi client is connected
-  if (mqtt.connected()) return;
+  setRGB(100, 100, 0);
+  uint8_t wifiStatus = WiFi.status();
+  if (wifiStatus != WL_CONNECTED) {
+    Serial.print("WiFi disconnected: "); Serial.println(wifiStatus);
+    Serial.print("  reconnecting to ");
+    Serial.print(ssid);
+    Serial.println("...");
+    wifiStatus = WiFi.begin(ssid, pass);
+    Serial.print("  reconnect status: "); Serial.println(wifiStatus);
+    if (wifiStatus != WL_CONNECTED) {
+      setRGB(100, 0, 0);
+      return false; // Reconnect unsuccessful
+    }
+  }
 
   Serial.print("MQTT: Connecting to ");
   Serial.print(MQTT_SERVER); Serial.print(":"); Serial.print(MQTT_PORT); Serial.print("...");
 
-  int8_t ret;
-  while ((ret = mqtt.connect()) != 0) {
-    Serial.println(mqtt.connectErrorString(ret));
-    Serial.println("Retrying in 5 seconds...");
+  int8_t mqttStatus = mqtt.connect();
+  if (mqttStatus != 0) {
+    setRGB(100, 0, 0);
+    Serial.print("  MQTT connection status: ");
+    Serial.println(mqtt.connectErrorString(mqttStatus));
     mqtt.disconnect();
-    delay(5000);
+    return false;
   }
-  Serial.println("connected!");
+  Serial.println("  MQTT connected");
+  setRGB(0, 0, 0);
+  return true;
 }
 
 void printWifiData() {
