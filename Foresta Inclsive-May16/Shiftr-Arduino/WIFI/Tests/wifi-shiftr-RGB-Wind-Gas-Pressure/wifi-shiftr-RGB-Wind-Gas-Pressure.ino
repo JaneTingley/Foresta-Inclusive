@@ -3,6 +3,8 @@
 
 1)TCS34725 - RGB colour sensor - Colour temp, LUX - https://learn.adafruit.com/adafruit-color-sensors/arduino-code
 2)Anemometer wind Sensor - https://www.adafruit.com/product/1733
+3)CCS811 Gas Sensor - Co2 and VOC - https://learn.adafruit.com/adafruit-ccs811-air-quality-sensor?view=all
+4) BME280 humidity, temperature & pressure sensor - https://learn.adafruit.com/adafruit-bme280-humidity-barometric-pressure-temperature-sensor-breakout/arduino-test
 
 Sensors 1, 2 and 3 use I2C or SPI to communicate, 2 or 4 pins are required
 to interface. The device's I2C address is either 0x76 or 0x77 and 0x5a.
@@ -15,8 +17,9 @@ Notes on wiring:
 2)Anemometer wind sensor -- red to + of power source - 12vdc is fine.  
     Black is to ground on power source and ground on microcontroller.
     Blue goes to A0
+3)CCS811 Gas Sensor - Co2 and VOC - must also ground WAKE pin
 
- *****************************************************************************/
+ ***************************************************************************/
 
 #include <SPI.h>
 #include <WiFiNINA.h>
@@ -24,11 +27,24 @@ Notes on wiring:
 #include <Adafruit_MQTT.h>
 #include <Adafruit_MQTT_Client.h>
 
+#include "arduino_secrets.h" 
+
 //RGB
 #include <Wire.h>
 #include "Adafruit_TCS34725.h"
 
-#include "arduino_secrets.h" 
+// GAS/VOC
+#include "Adafruit_CCS811.h"
+
+#include <Adafruit_Sensor.h>// BME - Temp/pressure sensor
+#include <Adafruit_BME280.h>// BME - Temp/pressure sensor
+
+#define BME_SCK 13// BME - Temp/pressure sensor
+#define BME_MISO 12// BME - Temp/pressure sensor
+#define BME_MOSI 11// BME - Temp/pressure sensor
+#define BME_CS 10// BME - Temp/pressure sensor
+
+#define SEALEVELPRESSURE_HPA (1013.25)// BME - Temp/pressure sensor
 
 WiFiClient net;
 
@@ -36,9 +52,15 @@ WiFiClient net;
 #define MQTT_PORT 1883
 Adafruit_MQTT_Client mqtt(&net, MQTT_SERVER, MQTT_PORT, MQTT_NAMESPACE, MQTT_USERNAME, MQTT_PASSWORD);
 
-Adafruit_MQTT_Publish colorTempPub(&mqtt, "colorTemp");   // publish topic*********************************************
-Adafruit_MQTT_Publish luxPub(&mqtt, "lux");               // publish topic*********************************************
-Adafruit_MQTT_Publish WindPub(&mqtt, "Wind");             // publish topic*********************************************
+Adafruit_MQTT_Publish colorTempPub(&mqtt, "colorTemp");     // RGB-publish topic*********************************************
+Adafruit_MQTT_Publish luxPub(&mqtt, "lux");                 // RGB-publish topic*********************************************
+Adafruit_MQTT_Publish WindPub(&mqtt, "Wind");               // Wind-publish topic*********************************************
+Adafruit_MQTT_Publish C02Pub(&mqtt, "C02");                 // GAS-publish topic*********************************************
+Adafruit_MQTT_Publish VOCPub(&mqtt, "VOC");                 // GAS-publish topic*********************************************
+Adafruit_MQTT_Publish TemperaturePub(&mqtt, "Temperature"); // BME-publish topic*********************************************
+Adafruit_MQTT_Publish PressurePub(&mqtt, "Pressure");       // BME-publish topic*********************************************
+Adafruit_MQTT_Publish AltitudePub(&mqtt, "Altitude");       // BME-publish topic*********************************************
+Adafruit_MQTT_Publish HumidityPub(&mqtt, "Humidity");       // BME-publish topic*********************************************
 
 char ssid[] = SECRET_SSID;   // your network SSID (name)
 char pass[] = SECRET_PASS;   // your network password (use for WPA, or use as key for WEP)
@@ -50,6 +72,8 @@ const unsigned long KEEPALIVE = 60000;
 uint32_t counter = 0;
 
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS34725_GAIN_1X);
+Adafruit_CCS811 ccs;  //CCS811 code - Co2 and TVOC
+Adafruit_BME280 bme; // I2C - BME - Temp/pressure sensor
 
 //sensors:
 int sensorPin = A0;    // sdefines input pin for the wind sensor
@@ -60,6 +84,8 @@ void setup() {
   Serial.begin(115200);
 
   tcs.begin(); //RGB colour sensor
+  ccs.begin(); // gas sensor
+  bme.begin();  //Pressure/Temp
   
   while (!Serial && millis() < 4000);
   delay(100);
@@ -122,6 +148,26 @@ void loop() {
     Serial.print("Color Temp: "); Serial.print(colorTemp, DEC); Serial.println(" K ");
     luxPub.publish(uint32_t(lux));  // this what I add *****************************************************
     Serial.print("Lux: "); Serial.println(lux, DEC);
+
+      //Gas/VOC sensor
+    if(ccs.available()){
+      if(!ccs.readData()){ 
+        C02Pub.publish(uint32_t(ccs.geteCO2()));  // this what I add *****************************************************        
+        Serial.print("C02: "); Serial.print(ccs.geteCO2()); Serial.println("");
+        VOCPub.publish(uint32_t(ccs.getTVOC()));  // this what I add *****************************************************        
+        Serial.print("VOC: "); Serial.print(ccs.getTVOC()); Serial.println("");
+      }
+    }
+
+        //BME sensor - Humidity/temp/pressure
+    TemperaturePub.publish(uint32_t(bme.readTemperature()));  // this what I add ***************************************************** 
+    Serial.print("Temp-degree: "); Serial.print(bme.readTemperature()); Serial.println("");
+    PressurePub.publish(uint32_t(bme.readPressure()/100));  // this what I add ***************************************************** 
+    Serial.print("Pressure-hPa: "); Serial.print(bme.readPressure()); Serial.println("");
+    AltitudePub.publish(uint32_t(bme.readAltitude(SEALEVELPRESSURE_HPA)));  // this what I add ***************************************************** 
+    Serial.print("Alt: "); Serial.print(bme.readAltitude(SEALEVELPRESSURE_HPA)); Serial.println("");
+    HumidityPub.publish(uint32_t(bme.readHumidity()));  // this what I add *****************************************************
+    Serial.print("Humid: "); Serial.print(bme.readHumidity()); Serial.println("");
   }
 }
 
