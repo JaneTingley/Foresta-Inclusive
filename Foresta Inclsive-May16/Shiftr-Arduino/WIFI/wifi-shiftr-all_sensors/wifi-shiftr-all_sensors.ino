@@ -172,7 +172,7 @@ void loop() {
     windsensorValue = analogRead(sensorPin);
     WindPub.publish(windsensorValue);  // this what I add *****************************************************
     Serial.print("Wind: "); Serial.println(windsensorValue);
-
+    
           //Particulate
       if (readPMSdata(&Serial1)) { //if (readPMSdata(&pmsSerial)) - if using software serial
         // reading data was successful!
@@ -190,13 +190,14 @@ void loop() {
           previousSlowMillis = currentMillis;
 
           moistureReading = analogRead(moisturePin);
-          //client.publish("/WetSoil1", String(moistureReading)); // sending to shiftr 
           moistureReadingPub.publish(moistureReading);  // this what I add *****************************************************
-
+    Serial.print("Soil-Moisture: "); Serial.println(moistureReading);
+ 
           temperatureReading = analogRead(temperaturePin); 
           temperatureReading = map(temperatureReading, 0, 625, -40, 85);
           soilTemperaturePub.publish(temperatureReading);  // this what I add *****************************************************
-
+   Serial.print("Soil-Temp: "); Serial.println(temperatureReading);
+   
           //this converts the RGB colour sensor data 
           float red, green, blue; //taken from the other sketch to transform RGB values
           uint16_t r, g, b, c, colorTemp, lux;
