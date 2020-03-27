@@ -83,7 +83,7 @@ void setRGB(uint8_t r, uint8_t g, uint8_t b) {
 }
 
 void loop() {
-  mqtt_loop();
+  if (!mqtt_loop()) return;
   
   unsigned long currentTime = millis();
   if (currentTime - lastMillis > 1000) {
@@ -103,58 +103,78 @@ void LightCallback(uint32_t Light) {  // each needs a seperate one**************
 
 // Call this every loop.
 // It will process incoming messagew as well as maintain the MQTT connection
-void mqtt_loop() {
-  if (!mqtt.connected()) {
-    setRGB(100, 0, 0);
-    mqtt_connect();
-    setRGB(0, 0, 0);
+// Will return true if we've got a valid MQTT connection, false otherwise.
+bool mqtt_loop() {
+  if (!mqtt_connect()) {
+    Serial.println("Retrying in 5 sec...");
+    delay(5000);
+    return false;
   }
-  mqtt.processPackets(100);
-  unsigned long currentTime = millis();
-  if (currentTime - lastPing > KEEPALIVE) {
-    setRGB(0, 0, 100);
-    if (mqtt.ping()) {
-      lastPing = currentTime;
-    }
-    else {
-      Serial.println("MQTT Ping failed");
-      setRGB(255, 0, 0);
-      delay(1000);
-    }
-    setRGB(0, 0, 100);
-    int pingResult = WiFi.ping("google.com");
-    if (pingResult < 0) {
-      Serial.print("Ping failed: "); Serial.println(pingResult);
-      setRGB(255, 0, 0);
-      delay(1000);
-    }
-    setRGB(0, 0, 0);
+  else {
+    mqtt.processPackets(100);
+    return true;
   }
 }
 
 // Function to connect and reconnect as necessary to the MQTT server.
-void mqtt_connect() {
-  if (WiFi.status() != WL_CONNECTED) {
-    Serial.print("WiFi: Reconnecting to ");
-    Serial.print(ssid);
-    Serial.println("...");
-    status = WiFi.begin(ssid, pass);
+// Will return true if we've got a connection, false otherwise.
+bool mqtt_connect() {
+  // If WiFi client is connected
+  if (mqtt.connected()) {
+
+    unsigned long currentTime = millis();
+    if (currentTime - lastPing > KEEPALIVE) {
+      setRGB(0, 0, 100);
+      if (mqtt.ping()) {
+        lastPing = currentTime;
+      }
+      else {
+        Serial.println("MQTT Ping failed");
+        setRGB(255, 0, 0);
+        delay(1000);
+      }
+      setRGB(0, 100, 100);
+      int pingResult = WiFi.ping("google.com");
+      if (pingResult < 0) {
+        Serial.print("google.com ping failed: "); Serial.println(pingResult);
+        setRGB(255, 0, 0);
+        delay(1000);
+      }
+      setRGB(0, 0, 0);
+    }
+
+    return true;
   }
 
-  // If WiFi client is connected
-  if (mqtt.connected()) return;
+  setRGB(100, 100, 0);
+  uint8_t wifiStatus = WiFi.status();
+  if (wifiStatus != WL_CONNECTED) {
+    Serial.print("WiFi disconnected: "); Serial.println(wifiStatus);
+    Serial.print("  reconnecting to ");
+    Serial.print(ssid);
+    Serial.println("...");
+    wifiStatus = WiFi.begin(ssid, pass);
+    Serial.print("  reconnect status: "); Serial.println(wifiStatus);
+    if (wifiStatus != WL_CONNECTED) {
+      setRGB(100, 0, 0);
+      return false; // Reconnect unsuccessful
+    }
+  }
 
   Serial.print("MQTT: Connecting to ");
   Serial.print(MQTT_SERVER); Serial.print(":"); Serial.print(MQTT_PORT); Serial.print("...");
 
-  int8_t ret;
-  while ((ret = mqtt.connect()) != 0) {
-    Serial.println(mqtt.connectErrorString(ret));
-    Serial.println("Retrying in 5 seconds...");
+  int8_t mqttStatus = mqtt.connect();
+  if (mqttStatus != 0) {
+    setRGB(100, 0, 0);
+    Serial.print("  MQTT connection status: ");
+    Serial.println(mqtt.connectErrorString(mqttStatus));
     mqtt.disconnect();
-    delay(5000);
+    return false;
   }
-  Serial.println("connected!");
+  Serial.println("  MQTT connected");
+  setRGB(0, 0, 0);
+  return true;
 }
 
 void printWifiData() {
