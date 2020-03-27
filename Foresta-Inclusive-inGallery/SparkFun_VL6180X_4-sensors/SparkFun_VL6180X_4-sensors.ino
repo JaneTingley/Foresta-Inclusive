@@ -9,7 +9,7 @@
  * uses pulsed IR light to determine distances from object at close
  * range.  The average range of a sensor is between 0-200mm
  * 
- * Resources:
+ * Resources: 
  * This library uses the Arduino Wire.h to complete I2C transactions.
  * 
  * Development environment specifics:
