@@ -49,24 +49,24 @@ void setup() {
   Wire.begin(); //Start I2C library
   delay(100); // delay .1s
 
-  sensor.getIdentification(&identification); // Retrieve manufacture info from device memory
-  printIdentification(&identification); // Helper function to print all the Module information
+  //sensor.getIdentification(&identification); // Retrieve manufacture info from device memory
+  //printIdentification(&identification); // Helper function to print all the Module information
 
-    if(sensor.VL6180xInit() != 0){
-    Serial.println("FAILED TO INITALIZE"); //Initialize device and check for errors
+    //if(sensor.VL6180xInit() != 0){
+    //Serial.println("FAILED TO INITALIZE"); //Initialize device and check for errors
   }; 
 
-  sensor.VL6180xDefautSettings(); //Load default settings to get started.
+  //sensor.VL6180xDefautSettings(); //Load default settings to get started.
   
-    delay(1000); // delay 1s
+    //delay(1000); // delay 1s
 
 
-}
+//}
 
 void loop() {
 
   //Get Ambient Light level and report in LUX
-  Serial.print("Ambient Light Level (Lux) = ");
+  //Serial.print("Ambient Light Level (Lux) = ");
   
   //Input GAIN for light levels, 
   // GAIN_20     // Actual ALS Gain of 20
@@ -78,16 +78,16 @@ void loop() {
   // GAIN_1      // Actual ALS Gain of 1.01
   // GAIN_40     // Actual ALS Gain of 40
   
-  Serial.println( sensor.getAmbientLight(GAIN_1) );
+  Serial.println( sensor.getAmbientLight(GAIN_20) );
 
   //Get Distance and report in mm
-  Serial.print("Distance measured (mm) = ");
-  Serial.println( sensor.getDistance() ); 
+  //Serial.print("Distance measured (mm) = ");
+  //Serial.println( sensor.getDistance() ); 
 
   delay(500);  
 };
 
-void printIdentification(struct VL6180xIdentification *temp){
+/*void printIdentification(struct VL6180xIdentification *temp){
   Serial.print("Model ID = ");
   Serial.println(temp->idModel);
 
@@ -114,4 +114,4 @@ void printIdentification(struct VL6180xIdentification *temp){
   Serial.println(temp->idTime * 2);
   Serial.println();
   Serial.println();
-}
+}*/
