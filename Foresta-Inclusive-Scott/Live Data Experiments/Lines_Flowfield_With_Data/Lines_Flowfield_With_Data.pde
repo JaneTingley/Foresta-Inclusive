@@ -53,7 +53,7 @@ void setup() {
 }
 
 void draw() {
-  println(frameRate);
+  //println(frameRate);
   xoff = xoff + .01;
   float alpha = map(noise(xoff), 0, 1, 4, 90);
   fill(20, 0, 50, alpha);
@@ -83,7 +83,7 @@ void draw() {
     yoff += inc;
 
     //change this value to increase the speed of change in the flowfield noise
-    zoff += 0.001; ////////========set this back to 0.0001
+    zoff += 0.0001; ////////========set this back to 0.0001
   }
 
   //loop through particle object methods to generate the visuals
