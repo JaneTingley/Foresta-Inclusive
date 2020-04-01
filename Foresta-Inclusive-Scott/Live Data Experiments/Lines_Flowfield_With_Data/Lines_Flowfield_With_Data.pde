@@ -19,8 +19,8 @@ float xoff = 0.0;
 int liveLight;
 
 void setup() {
-  size(500, 500);
-  //fullScreen();
+  size(1000, 1000, P2D);
+  //fullScreen(P2D);
 
 
   client = new MQTTClient(this);
