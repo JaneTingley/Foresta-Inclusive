@@ -5,7 +5,8 @@
   3) TCS34725 - RGB colour sensor - Colour temp, LUX - https://learn.adafruit.com/adafruit-color-sensors/arduino-code
   4) PM2.5 Air Quality Sensor - https://learn.adafruit.com/pm25-air-quality-sensor/arduino-code
   5) Anemometer wind Sensor - https://www.adafruit.com/product/1733
-
+  6) https://www.vegetronix.com/Products/THERM200/
+  7) https://www.vegetronix.com/Products/VH400/
   Sensors 1, 2 and 3 use I2C or SPI to communicate, 2 or 4 pins are required
   to interface. The device's I2C address is either 0x76 or 0x77 and 0x5a.
 
