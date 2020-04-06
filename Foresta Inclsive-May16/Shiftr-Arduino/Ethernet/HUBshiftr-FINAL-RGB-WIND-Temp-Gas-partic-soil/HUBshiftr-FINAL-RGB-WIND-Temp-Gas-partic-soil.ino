@@ -29,7 +29,7 @@ Anemometer wind sensor -- red to + of power source - 12vdc is fine.
 #include <SPI.h> //from DhcpAddressPrinter
 
 #include <Wire.h>
-#include "Adafruit_TCS34725.h" //RGB colour sensor
+#include <SparkFun_VL6180X.h> // ToF Lux colour sensor
 #include <Adafruit_Sensor.h>  // BME - Temp/pressure sensor
 #include <Adafruit_BME280.h> // BME - Temp/pressure sensor
 #include "Adafruit_CCS811.h" //CCS811 code - Co2 and TVOC
@@ -37,6 +37,8 @@ Anemometer wind sensor -- red to + of power source - 12vdc is fine.
 //https://learn.adafruit.com/pm25-air-quality-sensor/arduino-code
 //#include <SoftwareSerial.h>
 //SoftwareSerial pmsSerial(10, 11);  // on a mega - (10-RX, 11=TX) on an uno (2=RX,3=TX)
+
+#define VL6180X_ADDRESS 0x29 // ToF Lux sensor
 
 #define BME_SCK 13 // BME - Temp/pressure sensor
 #define BME_MISO 12 // BME - Temp/pressure sensor
@@ -55,7 +57,8 @@ byte mac[] = {
 EthernetClient net;
 MQTTClient client;
 Adafruit_BME280 bme; // I2C - BME - Temp/pressure sensor
-Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS34725_GAIN_1X); //RGB colour sensor
+VL6180xIdentification identification; //ToF lux colour sensor
+VL6180x sensor(VL6180X_ADDRESS); //ToF lux colour sensor
 Adafruit_CCS811 ccs; //CCS811 code - Co2 and TVOC
 
 struct pms5003data { //particulate
@@ -87,9 +90,15 @@ void setup() {
         //pmsSerial.begin(9600);
         Serial1.begin(9600); // for mega in pin 19
         
-    tcs.begin(); //RGB colour sensor
     bme.begin();  //Pressure/Temp sensor
     ccs.begin(); // gas sensor
+
+    if(sensor.VL6180xInit() != 0){ //initialize lux
+      Serial.println("FAILED TO INITALIZE"); //Initialize device and check for errors
+    }; 
+
+    sensor.VL6180xDefautSettings(); //Load default settings to get started.
+
 
 // from DhcpAddressPrinter           
      // start the Ethernet connection:
@@ -156,7 +165,7 @@ void loop() {
         temperatureReading = analogRead(temperaturePin); 
         temperatureReading = map(temperatureReading, 0, 625, -40, 85);
         client.publish("/Temperature1", String(temperatureReading)); // sending to shiftr
-
+/*
         //this converts the RGB colour sensor data 
         float red, green, blue; //taken from the other sketch to transform RGB values
         uint16_t r, g, b, c, colorTemp, lux;
@@ -170,8 +179,22 @@ void loop() {
         client.publish("/colourTemp", String(colorTemp));
         Serial.print("Color Temp: "); Serial.print(colorTemp, DEC); Serial.println(" K ");
         client.publish("/Lux", String(lux));
-        Serial.print("Lux: "); Serial.println(lux, DEC);
+        Serial.print("Lux: "); Serial.println(lux, DEC);*/
 
+//Input GAIN for light levels, 
+  // GAIN_20     // Actual ALS Gain of 20
+  // GAIN_10     // Actual ALS Gain of 10.32
+  // GAIN_5      // Actual ALS Gain of 5.21
+  // GAIN_2_5    // Actual ALS Gain of 2.60
+  // GAIN_1_67   // Actual ALS Gain of 1.72
+  // GAIN_1_25   // Actual ALS Gain of 1.28
+  // GAIN_1      // Actual ALS Gain of 1.01
+  // GAIN_40     // Actual ALS Gain of 40
+
+        //ToF-Lux sensor
+        client.publish("/lux", String(sensor.getAmbientLight(GAIN_1)));
+        Serial.print("Lux: "); Serial.println(sensor.getAmbientLight(GAIN_1));
+        
         //Gas/VOC sensor
         if(ccs.available()){
           if(!ccs.readData()){         
