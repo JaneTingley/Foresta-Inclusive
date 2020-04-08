@@ -1,7 +1,7 @@
 import mqtt.*;
 MQTTClient client;
 
-int scale = 20; // -----------------------------change this for density of flowfield
+int scale = 30; // -----------------------------change this for density of flowfield
 int cols;
 int rows;
 float inc = 0.07;
@@ -38,8 +38,8 @@ void setup() {
 
   table = loadTable("data/sensor_data.csv", "header");// excel type file
 
-  for (TableRow row : table.rows()) {
-    for (int i = 0; i < 30; i++) { // change the # to change the amount of particles
+  for (TableRow row : table.rows()) {//reads data down the collumns
+    for (int i = 0; i < 30; i++) { // change the # to change the amount of particles //reads the same row multiple times
       float light = row.getFloat("light");
       float temp = row.getFloat("temp");
 
