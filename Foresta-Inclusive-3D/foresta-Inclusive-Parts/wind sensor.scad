@@ -1,6 +1,6 @@
 $fn=100;
-//Bearing();
-//Magnet();
+Bearing();
+#Magnet();
 translate([0,0,-20]) Mholder();
 Top();
 Base();
