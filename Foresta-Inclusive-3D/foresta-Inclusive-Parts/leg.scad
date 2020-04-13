@@ -1,7 +1,7 @@
 
 $fn=100;
 
-Finger();
+//Finger();
 Inside();
 
 module Inside(){
