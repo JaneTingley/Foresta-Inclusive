@@ -1,8 +1,9 @@
 
 $fn=100;
+outFinger=19;
 
-//Finger2();
-//Inside2();
+translate([50,0,0])Finger2();
+translate([50,0,0]) Inside2();
 Finger();
 Inside();
 
@@ -19,9 +20,9 @@ module Inside(){
 module Finger(){
     translate([0,0,25]) difference(){
         union(){
-            cylinder(h=50, r=11, center=true);//  lower outter cylinder
-            translate([-0.5,0,26]) sphere(11); //outter sphere
-            translate([5,0,40]) rotate([0,20,0]) cylinder(h=30, d1=22,d2=17.5, center=true);// upper cylinder outside
+            cylinder(h=50, d=outFinger, center=true);//  lower outer cylinder
+            translate([-0.5,0,26]) sphere(d=outFinger); //outer sphere
+            translate([5,0,40]) rotate([0,20,0]) cylinder(h=30, d1=outFinger,d2=17.5, center=true);// upper cylinder outside
         }
         
         translate([0,0,0]) union(){
@@ -46,9 +47,9 @@ module Inside2(){
 module Finger2(){
     translate([0,0,25]) difference(){
         union(){
-            cylinder(h=50, r=11, center=true);//  lower outter cylinder
-            translate([-0.5,0,26]) sphere(11); //outter sphere
-            translate([5,0,40]) rotate([0,20,0]) cylinder(h=30, d1=22,d2=16, center=true);// upper cylinder outter
+            cylinder(h=50, d=outFinger, center=true);//  lower outter cylinder
+            translate([-0.5,0,26]) sphere(d=outFinger); //outter sphere
+            translate([5,0,40]) rotate([0,20,0]) cylinder(h=30, d1=outFinger,d2=16, center=true);// upper cylinder outter
         }
         
         translate([0,0,0]) union(){

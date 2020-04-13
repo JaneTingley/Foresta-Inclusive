@@ -11,7 +11,7 @@ module Base(){
     height=10; // change height
     difference(){
         translate([0,0,-height+3]) cylinder(h=height, d=30);
-        translate([0,0,-.5]) cylinder(h=5, d=8.25);
+        translate([0,0,-.5]) cylinder(h=5, d=8.5);
         translate([0,0,-height+0]) cylinder(h=height, d=26);
 }
 }
