@@ -1,18 +1,18 @@
 $fn=100;
 //Bearing();
-Magnet();
-translate([0,0,-20]) Mholder();
+//Magnet();
+//translate([0,0,-20]) Mholder();
 //Top();
-//Base();
+Base();
 
 
 
 module Base(){
-    height=30;
+    height=10; // change height
     difference(){
-        translate([0,0,-height+4]) cylinder(h=height, d=30);
-        translate([0,0,-.5]) cylinder(h=5, d=9);
-        translate([0,0,-height]) cylinder(h=height, d=26);
+        translate([0,0,-height+3]) cylinder(h=height, d=30);
+        translate([0,0,-.5]) cylinder(h=5, d=8.25);
+        translate([0,0,-height+0]) cylinder(h=height, d=26);
 }
 }
 
