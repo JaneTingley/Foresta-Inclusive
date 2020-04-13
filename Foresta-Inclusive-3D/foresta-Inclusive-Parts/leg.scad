@@ -6,8 +6,8 @@ Inside();
 
 module Inside(){
     translate([20,0,15])  difference(){
-        translate([5,0,-5]) cylinder(h=20, r=6.5, center=true);
-        translate([5,0,-5]) cylinder(h=23, r=4.5, center=true);
+        translate([5,0,-5]) cylinder(h=20, r=6, center=true);
+        translate([5,0,-5]) cylinder(h=23, r=4, center=true);
         translate ([14,0,0]) cube ([14,4,42], center=true);
     }
 }
