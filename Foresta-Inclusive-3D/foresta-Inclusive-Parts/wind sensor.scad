@@ -1,9 +1,9 @@
 $fn=100;
-Bearing();
-#Magnet();
+//Bearing();
+//Magnet();
 translate([0,0,-20]) Mholder();
-Top();
-Base();
+//Top();
+//Base();
 
 
 
@@ -22,17 +22,17 @@ module Magnet(){
 
 module Mholder(){
     difference(){
-        translate([0,0,17]) cube ([7,7,2.5],center=true);//top nut hole
+        translate([0,0,17.5]) cube ([6,8,2.5],center=true);//top nut hole
         translate([0,0,13]) cylinder(h=8, d=3);//centre hole
     }
-    translate([0,4.5,14.5]) cube ([7,2,7.5],center=true);//side nut hole
-    translate([0,-4.5,14.50]) cube ([7,2,7.5],center=true);//- sidenut hole
-    //translate([0,0,14]) cube ([6.5,6.5,2.5],center=true);//fake nut
+    translate([0,5,14.75]) cube ([6,2,8],center=true);//side nut hole
+    translate([0,-5,14.75]) cube ([6,2,8],center=true);//- side nut hole
+    //translate([0,0,14.8]) cube ([6.5,6.5,2.5],center=true);//fake nut
     
-    translate([0,0,12]) cube ([7,7,2.5],center=true);//bottom nut hole
-    translate([0,0,8]) cube ([4,4,9], center=true);//shaft
+    translate([0,0,12]) cube ([6,8,2.5],center=true);//bottom nut hole
+    translate([0,0,8]) cube ([6,4,9], center=true);//shaft
     difference(){
-        rotate([0,90,0]) cylinder(h=5, d=8, center=true);
+        rotate([0,90,0]) cylinder(h=6, d=8, center=true);
         translate([0,0,0]) rotate([0,90,0])cylinder(h=10, d=4.25, center=true);
     }
 }
@@ -41,15 +41,15 @@ module Top(){
 
     union (){
         translate([0,3,6]) cube ([4,68,4]);//shaft
-        translate([+2,68,6])cube ([2,15,10]);//grip
+        translate([+0,70,6.8]) rotate([0,25,0]) cube ([2,15,10]);//grip
     }
     rotate([0,0, 120]) union (){
         translate([0,3,6]) cube ([4,68,4]);//shaft
-        translate([+2,68,6])cube ([2,15,10]);//grip
+        translate([+0,70.6,6.8]) rotate([0,25,0]) cube ([2,15,10]);//grip
     }
     rotate([0,0, 240]) union (){
         translate([0,3,6]) cube ([4,68,4]);//shaft
-        translate([+2,68,6])cube ([2,15,10]);//grip
+        translate([+0,70.6,6.8]) rotate([0,25,0]) cube ([2,15,10]);//grip
     }
   difference(){
     translate([0,0,6]) cylinder(h=4, r=15);
