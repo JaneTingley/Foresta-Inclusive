@@ -28,7 +28,7 @@ module Finger(){
         
         translate([0,0,0]) union(){
             translate([0,0,-1]) cylinder(h=53, d=outFinger-4, center=true); //lower inner 
-            translate([-0.5,0,26]) sphere(9.00);//inner shere
+            translate([-0.5,0,26]) sphere(8.50);//inner sphere
             translate([5,0,40]) rotate([0,20,0]) 
                 cylinder(h=33, d=13, center=true);// upper cylinder inner
         }
