@@ -1,9 +1,9 @@
 $fn=100;
 //Bearing();
 //Magnet();
-//translate([0,0,-20]) Mholder();
+translate([0,0,-20]) Mholder();
 //Top();
-Base();
+//Base();
 
 
 
@@ -27,7 +27,7 @@ module Mholder(){
     }
     translate([-3,4,11]) cube ([6,2,6.4]);//side nut hole
     translate([-3.0,-6,11.0]) cube ([6,2,6.4]);//- side nut hole
-    translate([0,0,14.2]) cube ([6.5,6.5,2.2],center=true);//fake nut
+    //translate([0,0,14.2]) cube ([6.5,6.5,2.2],center=true);//fake nut
     
     translate([0,0,12]) cube ([6,8,2.0],center=true);//bottom nut hole
     translate([0,0,8]) cube ([6,4,9], center=true);//shaft

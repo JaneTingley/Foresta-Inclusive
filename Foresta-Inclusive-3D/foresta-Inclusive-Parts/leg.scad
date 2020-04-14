@@ -2,8 +2,8 @@
 $fn=100;
 outFinger=19;
 
-translate([50,0,0])Finger2();
-translate([50,0,0]) Inside2();
+//translate([50,0,0])Finger2();
+//translate([50,0,0]) Inside2();
 Finger();
 Inside();
 
