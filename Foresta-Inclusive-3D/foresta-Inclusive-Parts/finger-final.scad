@@ -1,6 +1,6 @@
 
 $fn=100;
-outFinger=21;
+outFinger=21.5;
 
 Inside2(); // thinner
 Finger(); //shorter and fatter
