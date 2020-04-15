@@ -1,6 +1,6 @@
 
 $fn=100;
-outFinger=19;
+outFinger=21;
 
 Inside2(); // thinner
 Finger(); //shorter and fatter
@@ -18,7 +18,7 @@ module Finger(){
         
         translate([0,0,0]) union(){
             translate([0,0,-1]) cylinder(h=53, d=outFinger-4, center=true); //lower inner 
-            translate([-0.5,0,26]) sphere(8.5);//inner sphere
+            translate([-0.5,0,26]) sphere(d=outFinger-4);//inner sphere
             translate([5,0,40]) rotate([0,20,0]) 
                 cylinder(h=30, d=13, center=true);// upper cylinder inner
            
