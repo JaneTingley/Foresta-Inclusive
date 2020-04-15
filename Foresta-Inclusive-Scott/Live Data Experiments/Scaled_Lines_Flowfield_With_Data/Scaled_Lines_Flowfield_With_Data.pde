@@ -51,7 +51,7 @@ void setup() {
 
 void draw() {
 
-  scale = 1 + abs(int(map(wind, 5, 100, 500, 5)));
+  scale = 1 + abs(int(map(wind, 70, 180, 80, 5))); // this scales
   
   cols = floor(width / scale) + 1;
   rows = floor(height / scale) + 1;
@@ -85,12 +85,12 @@ void draw() {
       flowField[index] = v;
       xoff += inc;
       
-      push();
-      translate(x * scale, y * scale);
-      stroke(255);
-      rotate(angle);
-      line(0, 0, scale, 0);
-      pop();
+      //push(); = //comment out to not see lines
+      //translate(x * scale, y * scale);
+      //stroke(255);
+      //rotate(angle);
+      //line(0, 0, scale, 0);
+      //pop();
     }
     yoff += inc;
 
@@ -110,12 +110,12 @@ void draw() {
 void messageReceived(String topic, byte[] payload) {
 
   if (topic.equals("WetSoil")) {
-    println("WetSoil", int(new String(payload)));
+    //println("WetSoil", int(new String(payload)));
   } else if (topic.equals("Light")) {
-    println("Light", int(new String(payload)));
+    //println("Light", int(new String(payload)));
     liveLight = int(new String(payload));
   } else if (topic.equals("Temperature")) {
-    println("Temperature", int(new String(payload)));
+    //println("Temperature", int(new String(payload)));
   } else if (topic.equals("Wind")) {
     println("Wind", int(new String(payload)));
     wind = int(new String(payload));
