@@ -1,12 +1,13 @@
 import mqtt.*;
 MQTTClient client;
+float theta; // Added the sin function*****************************************
 
 int scale = 30; // -----------------------------change this for density of flowfield
 int cols;
 int rows;
 float inc = 0.07;
 float zoff = 0;
-
+float wind;
 //array list that contains the particle objects
 ArrayList<Particle> particles = new ArrayList<Particle>();
 //array of vectors that makes up the flow field
@@ -19,7 +20,7 @@ float xoff = 0.0;
 int liveLight;
 
 void setup() {
-  size(700, 700, P2D);
+  size(1000, 1000, P2D);
   //fullScreen(P2D);
 
 
@@ -28,13 +29,11 @@ void setup() {
   client.subscribe("WetSoil"); //values between 0-800
   client.subscribe("Light"); // values between 0-800(ish) (hands covering sensor = 200, light but in shade =600
   client.subscribe("Temperature"); // remapped the values to produce between -30 and 30 degrees. Value not 100% accurate
+  client.subscribe("Wind"); 
 
 
   background(20, 0, 50);
 
-  //dividing canvas into a grid that is scaled
-  cols = floor(width / scale) + 1;
-  rows = floor(height / scale) + 1;
 
   table = loadTable("data/sensor_data.csv", "header");// excel type file
 
@@ -48,11 +47,18 @@ void setup() {
     }
   }
 
-  //setting flowfield array size
-  flowField = new PVector [cols*rows];
+ 
 }
 
 void draw() {
+  wind = waveData(80, 180, 0.005); // this is the range of values and frequency of sin wave****************
+  scale = 1 + abs(int(map(wind, 70, 180, 80, 5))); // this scales
+  
+  cols = floor(width / scale) + 1;
+  rows = floor(height / scale) + 1;
+  flowField = new PVector [cols*rows];
+  //println(flowField.length);
+  
   //println(frameRate);
   xoff = xoff + .01;
   float alpha = map(noise(xoff), 0, 1, 4, 90);
@@ -79,6 +85,13 @@ void draw() {
       //Add the calculated vector to the flowfield
       flowField[index] = v;
       xoff += inc;
+      
+      //push(); //comment out to not see lines - *********************** see the grid
+      //translate(x * scale, y * scale);
+      //stroke(255);
+      //rotate(angle);
+      //line(0, 0, scale, 0);
+      //pop();
     }
     yoff += inc;
 
@@ -98,12 +111,22 @@ void draw() {
 void messageReceived(String topic, byte[] payload) {
 
   if (topic.equals("WetSoil")) {
-    println("WetSoil", int(new String(payload)));
+    //println("WetSoil", int(new String(payload)));
   } else if (topic.equals("Light")) {
-    println("Light", int(new String(payload)));
+    //println("Light", int(new String(payload)));
     liveLight = int(new String(payload));
-
   } else if (topic.equals("Temperature")) {
-    println("Temperature", int(new String(payload)));
+    //println("Temperature", int(new String(payload)));
+  } else if (topic.equals("Wind")) {
+    println("Wind", int(new String(payload)));
+    //wind = int(new String(payload)); // Comment out the sensor to replace with sion wave********************
+      println("Scale", scale);
+
   }
+}
+
+float waveData(int min, int max, float freq) { // Added function --********************************
+  float data = map(sin(theta), -1, 1, min, max);
+  theta += freq;
+  return data;
 }

@@ -8,13 +8,13 @@ void setup() {
 }
 
 
-float waveData(int min, int max, float freq) {
+float waveData(int min, int max, float freq) { // copy paste at bottom of sketch
   float data = map(sin(theta), -1, 1, min, max);
   theta += freq;
   return data;
 }
 
-void draw() {
+void draw() { // nothing to do with anything
   background(255);
 
 
