@@ -2,7 +2,7 @@
   This is a sketch that connects the 
   1) BME280 humidity, temperature & pressure sensor - https://learn.adafruit.com/adafruit-bme280-humidity-barometric-pressure-temperature-sensor-breakout/arduino-test
   2) CCS811 Gas Sensor - Co2 and VOC - https://learn.adafruit.com/adafruit-ccs811-air-quality-sensor?view=all
-  3) TCS34725 - RGB colour sensor - Colour temp, LUX - https://learn.adafruit.com/adafruit-color-sensors/arduino-code
+  3) TCL2561 - lux sensor - https://learn.adafruit.com/tsl2561/arduino-code
   4) PM2.5 Air Quality Sensor - https://learn.adafruit.com/pm25-air-quality-sensor/arduino-code
   5) Anemometer wind Sensor - https://www.adafruit.com/product/1733
   6) https://www.vegetronix.com/Products/THERM200/
@@ -14,6 +14,7 @@ SDA-> Pin 4A on Arduino Uno
 SCL -> Pin 5A on Arduino Uno
 
 Notes on wiring:
+BME - SCK pin to the I2C clock SCL  and SDI pin to the I2C data SDA pin 
 CCS811 Gas Sensor - Co2 and VOC - must also ground WAKE pin
 TCS34725 - RGB colour sensor - To turn off LED on Board ground LED pin
 PM2.5 - Ground, Positive, Pin 2 on Arduino
@@ -29,7 +30,7 @@ Anemometer wind sensor -- red to + of power source - 12vdc is fine.
 #include <SPI.h> //from DhcpAddressPrinter
 
 #include <Wire.h>
-#include <SparkFun_VL6180X.h> // ToF Lux colour sensor
+#include <Adafruit_TSL2561_U.h> // LUX
 #include <Adafruit_Sensor.h>  // BME - Temp/pressure sensor
 #include <Adafruit_BME280.h> // BME - Temp/pressure sensor
 #include "Adafruit_CCS811.h" //CCS811 code - Co2 and TVOC
@@ -37,8 +38,6 @@ Anemometer wind sensor -- red to + of power source - 12vdc is fine.
 //https://learn.adafruit.com/pm25-air-quality-sensor/arduino-code
 //#include <SoftwareSerial.h>
 //SoftwareSerial pmsSerial(10, 11);  // on a mega - (10-RX, 11=TX) on an uno (2=RX,3=TX)
-
-#define VL6180X_ADDRESS 0x29 // ToF Lux sensor
 
 #define BME_SCK 13 // BME - Temp/pressure sensor
 #define BME_MISO 12 // BME - Temp/pressure sensor
@@ -49,7 +48,7 @@ Anemometer wind sensor -- red to + of power source - 12vdc is fine.
 
 // from DhcpAddressPrinter 
 byte mac[] = {
-    0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x04 /*change mac address so it is different from the programme 
+    0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x03 /*change mac address so it is different from the programme 
     on send arduino */
   };
 // end from DhcpAddressPrinter
@@ -57,8 +56,7 @@ byte mac[] = {
 EthernetClient net;
 MQTTClient client;
 Adafruit_BME280 bme; // I2C - BME - Temp/pressure sensor
-VL6180xIdentification identification; //ToF lux colour sensor
-VL6180x sensor(VL6180X_ADDRESS); //ToF lux colour sensor
+Adafruit_TSL2561_Unified tsl = Adafruit_TSL2561_Unified(TSL2561_ADDR_FLOAT, 12345);// LUX - should give a unique name -default is 12345
 Adafruit_CCS811 ccs; //CCS811 code - Co2 and TVOC
 
 struct pms5003data { //particulate
@@ -90,15 +88,10 @@ void setup() {
         //pmsSerial.begin(9600);
         Serial1.begin(9600); // for mega in pin 19
         
+    tsl.begin(); //Lux sensor
+    configureSensor();
     bme.begin();  //Pressure/Temp sensor
     ccs.begin(); // gas sensor
-
-    if(sensor.VL6180xInit() != 0){ //initialize lux
-      Serial.println("FAILED TO INITALIZE"); //Initialize device and check for errors
-    }; 
-
-    sensor.VL6180xDefautSettings(); //Load default settings to get started.
-
 
 // from DhcpAddressPrinter           
      // start the Ethernet connection:
@@ -144,6 +137,16 @@ void loop() {
         client.publish("/Wind", String(windsensorValue));
         Serial.print("Wind value: ");Serial.println(windsensorValue);
 
+        //LUX sensor
+        //print sensor values only when necessary - else look at shiftr
+        /* Get a new sensor event */ 
+        sensors_event_t event; //LUX sensor
+        tsl.getEvent(&event);
+        if (event.light){
+          client.publish("/Lux", String(event.light));
+          Serial.print("lux:"); Serial.println(event.light); 
+        }
+
           //Particulate
           if (readPMSdata(&Serial1)) { //if (readPMSdata(&pmsSerial)) - if using software serial
             // reading data was successful!
@@ -165,36 +168,7 @@ void loop() {
         temperatureReading = analogRead(temperaturePin); 
         temperatureReading = map(temperatureReading, 0, 625, -40, 85);
         client.publish("/Temperature1", String(temperatureReading)); // sending to shiftr
-/*
-        //this converts the RGB colour sensor data 
-        float red, green, blue; //taken from the other sketch to transform RGB values
-        uint16_t r, g, b, c, colorTemp, lux;
-        tcs.getRawData(&r, &g, &b, &c);
-        tcs.getRGB(&red, &green, &blue);//taken from the other sketch to transform RGB values
-        colorTemp = tcs.calculateColorTemperature(r, g, b);
-        lux = tcs.calculateLux(r, g, b);
 
-        //RBG sensor
-         //print sensor values only when necessary - else look at shiftr
-        client.publish("/colourTemp", String(colorTemp));
-        Serial.print("Color Temp: "); Serial.print(colorTemp, DEC); Serial.println(" K ");
-        client.publish("/Lux", String(lux));
-        Serial.print("Lux: "); Serial.println(lux, DEC);*/
-
-//Input GAIN for light levels, 
-  // GAIN_20     // Actual ALS Gain of 20
-  // GAIN_10     // Actual ALS Gain of 10.32
-  // GAIN_5      // Actual ALS Gain of 5.21
-  // GAIN_2_5    // Actual ALS Gain of 2.60
-  // GAIN_1_67   // Actual ALS Gain of 1.72
-  // GAIN_1_25   // Actual ALS Gain of 1.28
-  // GAIN_1      // Actual ALS Gain of 1.01
-  // GAIN_40     // Actual ALS Gain of 40
-
-        //ToF-Lux sensor
-        client.publish("/lux", String(sensor.getAmbientLight(GAIN_1)));
-        Serial.print("Lux: "); Serial.println(sensor.getAmbientLight(GAIN_1));
-        
         //Gas/VOC sensor
         if(ccs.available()){
           if(!ccs.readData()){         
@@ -281,7 +255,7 @@ boolean readPMSdata(Stream *s) {
 
 void connect() {
   Serial.print("connecting...");
-  while (!client.connect("Foresta-InclusiveHUB-wifiTOethernet", "dd34246a", "506f8bb540dd3fbb")) {
+  while (!client.connect("Foresta-InclusiveRECEIVE3SENSORS", "83aa4496", "02ffd19115bcd0ed")) {
     Serial.print(".");
     delay(1000);
   }
@@ -332,6 +306,12 @@ void DhcpAddress(){
   }
 }
 
+void configureSensor(void)
+{
+  tsl.enableAutoRange(true);            /* Auto-gain ... switches automatically between 1x and 16x */
+  tsl.setIntegrationTime(TSL2561_INTEGRATIONTIME_13MS);      /* fast but low resolution */
+
+}
 // Add this if I want to subscribe to something
 /*(void messageReceived(String &topic, String &payload) {   // string is a type of variable - a series of characters (topic= /WetSoil  payload= the value
   if (topic== "moistureReading"){
