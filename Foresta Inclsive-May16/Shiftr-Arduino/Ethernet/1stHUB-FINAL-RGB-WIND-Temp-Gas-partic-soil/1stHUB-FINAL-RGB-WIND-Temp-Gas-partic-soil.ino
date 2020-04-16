@@ -7,6 +7,7 @@
   5) Anemometer wind Sensor - https://www.adafruit.com/product/1733
   6) https://www.vegetronix.com/Products/THERM200/
   7) https://www.vegetronix.com/Products/VH400/
+  8) https://voltatek.ca/sensors/151-rain-drop-detection-sensor-module.html
   Sensors 1, 2 and 3 use I2C or SPI to communicate, 2 or 4 pins are required
   to interface. The device's I2C address is either 0x76 or 0x77 and 0x5a.
 
@@ -21,6 +22,7 @@ PM2.5 - Ground, Positive, Pin 2 on Arduino
 Anemometer wind sensor -- red to + of power source - 12vdc is fine.  
     Black is to ground on power source and ground on microcontroller.
     Blue goes to A0
+The Rain sensor - unlike the other analog sensors uses 5vdc as VCC
 
  ***************************************************************************/
 
@@ -80,6 +82,8 @@ int moisturePin = A1; // this defines the pin A0 as the moisture sensor pin
 int moistureReading;  // this holds the reading from the soil moisture sensor
 int temperaturePin = A2; // defines the pin A2 as the temperature sensor pin
 int temperatureReading;  // this holds the reading from the soil temperature sensor
+int rainPin = A3; // defines the pin A3 as the rain sensor pin
+int rainReading;  // this holds the reading from the rain sensor
 
 void setup() {
   Serial.begin(115200); // this is now faster for particulate sensor
@@ -164,10 +168,12 @@ void loop() {
           previousSlowMillis = currentMillis;
 
         moistureReading = analogRead(moisturePin);
-        client.publish("/WetSoil1", String(moistureReading)); // sending to shiftr 
+        client.publish("/WetSoil", String(moistureReading)); // sending to shiftr 
         temperatureReading = analogRead(temperaturePin); 
         temperatureReading = map(temperatureReading, 0, 625, -40, 85);
-        client.publish("/Temperature1", String(temperatureReading)); // sending to shiftr
+        client.publish("/TempSoil", String(temperatureReading)); // sending to shiftr
+        rainReading = analogRead(rainPin);
+        client.publish("/Rain", String(rainReading)); // sending to shiftr 
         
         //Gas/VOC sensor
         if(ccs.available()){
