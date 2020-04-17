@@ -77,9 +77,6 @@ void loop() {
   // This sends the threshold value to the wifi module  
   if (millis() - lastMillis > 1000) {
     lastMillis = millis();
-    windsensorValue = analogRead(sensorPin);
-    client.publish("/Wind", String(windsensorValue));
-    Serial.print("Wind value: ");Serial.println(windsensorValue);
     client.publish("/NewThreshold", String(moistureThreshold)); // sending to shiftr client.publish("NewThreshold", String(moistureThreshold)); // sending to shiftr
     Serial.print("moistureThreshold value : "); Serial.println(moistureThreshold);
     client.publish("/ValveTime", String(valveTime));
@@ -126,7 +123,7 @@ void loop() {
 
 void connect() {
   Serial.print("connecting...");
-  while (!client.connect("Foresta-InclusiveGARDEN-CHANGE-VALVETIME", "2acec332", "75e1f667b4b6f930")) {
+  while (!client.connect("Foresta-InclusiveGARDEN-CHANGE-VALVETIME", "c9f6b6d3", "055ad1c0d8de9605")) {
     Serial.print(".");
     delay(1000);
   }
