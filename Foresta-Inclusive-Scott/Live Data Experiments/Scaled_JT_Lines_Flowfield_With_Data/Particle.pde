@@ -28,7 +28,7 @@ class Particle {
     color from = color(#007adf); //Hex values of particle (from and to)
     color to = color(#00ecbc);  //Hex values of particle
     //map the values of the sensors to a usable range
-    sensorLight = map(sensorLightInput, 1, 13000, 0.5, 5);
+    sensorLight = map(sensorLightInput, 40.18333333, 259.8135593, 0.5, 5);
     sensorTemp = map(sensorTempInput, 6, 13, 0, 1);
     //set particle movement parameters
     position = new PVector (posX, posY);
@@ -94,7 +94,7 @@ class Particle {
   }
 
   void changeColor(int timeIn) {
-    int paletteSwitch = int(map(timeIn, 0, 610, 0, colorPalette.length ));
+    int paletteSwitch = int(map(timeIn, 0, 500, 0, colorPalette.length ));
     // println(timeIn, paletteSwitch);
     color newFill = lerpColor(colorPalette[paletteSwitch][0], colorPalette[paletteSwitch][1], sensorTemp);
 
