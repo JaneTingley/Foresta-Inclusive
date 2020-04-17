@@ -24,10 +24,10 @@ void setup() {
 
 
   client = new MQTTClient(this);
-  client.connect("mqtt://buddadweet~Foresta-Inclusive@broker.shiftr.io", "processing-sketch");
+  client.connect("mqtt://buddadweet~Foresta-Inclusive-Ethernet@broker.shiftr.io", "processing-sketch");
   client.subscribe("WetSoil"); //values between 0-800
-  client.subscribe("Light"); // values between 0-800(ish) (hands covering sensor = 200, light but in shade =600
-  client.subscribe("Temperature"); // remapped the values to produce between -30 and 30 degrees. Value not 100% accurate
+  client.subscribe("Lux"); // values between 0-800(ish) (hands covering sensor = 2, light but in shade =6000, strong light =13000
+  client.subscribe("TempSoil"); // remapped the values to produce between -30 and 30 degrees. Value not 100% accurate
   client.subscribe("Wind"); 
 
 
@@ -111,11 +111,11 @@ void messageReceived(String topic, byte[] payload) {
 
   if (topic.equals("WetSoil")) {
     //println("WetSoil", int(new String(payload)));
-  } else if (topic.equals("Light")) {
-    //println("Light", int(new String(payload)));
+  } else if (topic.equals("Lux")) {
+    //println("Lux", int(new String(payload)));
     liveLight = int(new String(payload));
-  } else if (topic.equals("Temperature")) {
-    //println("Temperature", int(new String(payload)));
+  } else if (topic.equals("TempSoil")) {
+    //println("TempSoil", int(new String(payload)));
   } else if (topic.equals("Wind")) {
     println("Wind", int(new String(payload)));
     wind = int(new String(payload));
