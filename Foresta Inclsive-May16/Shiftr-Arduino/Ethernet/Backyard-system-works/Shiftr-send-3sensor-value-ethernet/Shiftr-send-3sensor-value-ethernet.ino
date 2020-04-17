@@ -143,7 +143,7 @@ void loop() {
 
 void connect() {
   Serial.print("connecting...");
-  while (!client.connect("Foresta-InclusiveSEND3SENSOR", "83aa4496", "02ffd19115bcd0ed")) {
+  while (!client.connect("Foresta-InclusiveGARDEN", "2acec332", "75e1f667b4b6f930")) {
     Serial.print(".");
     delay(1000);
   }
