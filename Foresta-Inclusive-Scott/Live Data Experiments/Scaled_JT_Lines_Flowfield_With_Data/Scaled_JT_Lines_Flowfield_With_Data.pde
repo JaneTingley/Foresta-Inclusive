@@ -85,12 +85,12 @@ void draw() {
       flowField[index] = v;
       xoff += inc;
       
-      push(); //comment out to not see lines
-      translate(x * scale, y * scale);
-      stroke(255);
-      rotate(angle);
-      line(0, 0, scale, 0);
-      pop();
+      //push(); //comment out to not see lines
+      //translate(x * scale, y * scale);
+      //stroke(255);
+      //rotate(angle);
+      //line(0, 0, scale, 0);
+      //pop();
     }
     yoff += inc;
 
@@ -110,12 +110,12 @@ void draw() {
 void messageReceived(String topic, byte[] payload) {
 
   if (topic.equals("WetSoil")) {
-    println("WetSoil", int(new String(payload)));
+    //println("WetSoil", int(new String(payload)));
   } else if (topic.equals("Lux")) {
     println("Lux", int(new String(payload)));
     liveLight = int(new String(payload));
   } else if (topic.equals("TempSoil")) {
-    println("TempSoil", int(new String(payload)));
+    //println("TempSoil", int(new String(payload)));
   } else if (topic.equals("Wind")) {
     println("Wind", int(new String(payload)));
     wind = int(new String(payload));

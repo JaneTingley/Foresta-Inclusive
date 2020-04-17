@@ -94,7 +94,7 @@ class Particle {
   }
 
   void changeColor(int timeIn) {
-    int paletteSwitch = int(map(timeIn, 0, 500, 0, colorPalette.length ));
+    int paletteSwitch = int(map(timeIn, 0, 300, 0, colorPalette.length ));
     // println(timeIn, paletteSwitch);
     color newFill = lerpColor(colorPalette[paletteSwitch][0], colorPalette[paletteSwitch][1], sensorTemp);
 
