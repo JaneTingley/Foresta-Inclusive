@@ -169,10 +169,10 @@ void loop() {
           previousSlowMillis = currentMillis;
 
         moistureReading = analogRead(moisturePin);
-        client.publish("/WetSoil1", String(moistureReading)); // sending to shiftr 
+        client.publish("/WetSoil", String(moistureReading)); // sending to shiftr 
         temperatureReading = analogRead(temperaturePin); 
         temperatureReading = map(temperatureReading, 0, 625, -40, 85);
-        client.publish("/Temperature1", String(temperatureReading)); // sending to shiftr
+        client.publish("/SoilTemp", String(temperatureReading)); // sending to shiftr
         rainReading = analogRead(rainPin);
         client.publish("/Rain", String(rainReading)); // sending to shiftr 
 
