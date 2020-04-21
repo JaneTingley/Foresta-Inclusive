@@ -1,19 +1,27 @@
 $fn=100;
 //Bearing();
 //Magnet();
-translate([0,0,-20]) Mholder();
+//translate([0,0,-20]) Mholder();
 //Top();
-//Base();
+Base();
 
 
 
 module Base(){
-    height=10; // change height
+    height=30; // change height
     difference(){
-        translate([0,0,-height+5]) cylinder(h=height, d=30);
+        translate([0,0,-height+5]) cylinder(h=height, d=32);
         translate([0,0,-.5]) cylinder(h=6, d=16.5);
-        translate([0,0,-height+0]) cylinder(h=height, d=26);
+        translate([0,0,-height+0]) cylinder(h=height, d=28);
 }
+    difference(){
+        union(){
+            translate([0,-13,-height+5]) cylinder(h=height, d=6);
+            translate([0,13,-height+5]) cylinder(h=height, d=6);
+        }
+        translate([0,-13,-height+4]) cylinder(h=height+2, d=2);
+        translate([0,13,-height+4]) cylinder(h=height+2, d=2);
+    }
 }
 
 module Magnet(){
@@ -53,7 +61,7 @@ module Top(){
         translate([+0,70.6,6.8]) rotate([0,25,0]) cube ([2,15,10]);//grip
     }
   difference(){
-    translate([0,0,6]) cylinder(h=4, r=15);
+    translate([0,0,6]) cylinder(h=4, r=16);
     translate([0,0,3]) cylinder(h=8, d=5);//centre hole
 }  
 }
