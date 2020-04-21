@@ -261,7 +261,7 @@ boolean readPMSdata(Stream *s) {
 
 void connect() {
   Serial.print("connecting...");
-  while (!client.connect("Foresta-InclusiveHUB-wifiTOethernet", "dd34246a", "506f8bb540dd3fbb")) {
+  while (!client.connect("Foresta-InclusiveHUB1-wifiTOethernet", "dd34246a", "506f8bb540dd3fbb")) {
     Serial.print(".");
     delay(1000);
   }
