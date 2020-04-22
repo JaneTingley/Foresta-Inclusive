@@ -1,9 +1,9 @@
 $fn=100;
 //Bearing();
 //Magnet();
-//translate([0,0,-20]) Mholder();
+translate([0,0,-20]) Mholder();
 //Top();
-Base();
+//Base();
 
 
 
@@ -31,14 +31,14 @@ module Magnet(){
 module Mholder(){
     
     difference(){
-        translate([0,0,18.0]) cube ([7,15,2],center=true);//top of nut hole
+        translate([0,0,17.5]) cube ([7,14,2],center=true);//top of nut hole
         translate([0,0,13]) cylinder(h=8, d=5);//centre hole
     }
-    translate([-3.5,5.5,11]) cube ([7,2,8]);//side nut hole
-    translate([-3.5,-7.5,11.0]) cube ([7,2,8]);//- side of nut hole
-    //translate([0,0,14.7]) cube ([9,9,3],center=true);//fake nut
+    translate([-3.5,5,11]) cube ([7,2,7]);//side nut hole
+    translate([-3.5,-7,11.0]) cube ([7,2,7]);//- side of nut hole
+    translate([0,0,14.7]) cube ([9,9,3],center=true);//fake nut
     
-    translate([0,0,12]) cube ([7,15,2.0],center=true);//bottom of nut hole
+    translate([0,0,12]) cube ([7,14,2.0],center=true);//bottom of nut hole
     translate([0,0,8]) cube ([7,4,9], center=true);//shaft
     difference(){
         rotate([0,90,0]) cylinder(h=7, d=8, center=true);
