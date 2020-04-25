@@ -1,4 +1,4 @@
-
+j
 import mqtt.*;
 int soilHumidity; // holds values for WetSoil
 int lightSensor;  // holds values for Light
