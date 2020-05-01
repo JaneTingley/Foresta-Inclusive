@@ -1,9 +1,6 @@
 
 
-difference(){
-   
- 
-    
+
       
     translate ([25.2,67.3,0]) rotate ([90,0,0]) linear_extrude(6.35) import("/Users/jtingley/Documents/GitHub/Foresta-Inclusive/Foresta-Inclusive-3D/Small-Protozoa/protozoaSVGs/rib2.svg");
     
@@ -22,7 +19,4 @@ difference(){
     translate ([16,60,13]) rotate ([+4,-10,0]) linear_extrude(6.35) import("/Users/jtingley/Documents/GitHub/Foresta-Inclusive/Foresta-Inclusive-3D/Small-Protozoa/protozoaSVGs/vent1a.svg");
 
 
-
-}
-
-/*  linear_extrude(6.35) import("/Users/jtingley/Documents/GitHub/Foresta-Inclusive/Foresta-Inclusive-3D/Small-Protozoa/protozoaSVGs/footprint-redrawn.svg");*/
+    linear_extrude(6.35) import("/Users/jtingley/Documents/GitHub/Foresta-Inclusive/Foresta-Inclusive-3D/Small-Protozoa/protozoaSVGs/footprint-redrawn.svg");
