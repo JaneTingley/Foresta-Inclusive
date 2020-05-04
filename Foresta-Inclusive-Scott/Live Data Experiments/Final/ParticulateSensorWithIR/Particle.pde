@@ -160,8 +160,7 @@ class Particle {
     float hue = hue(particleColor);
     float saturation = saturation(particleColor);
     float brightness = brightness(particleColor);
-    float pollenMaker = map(mouseX, 0, width, 0, 100);
-
+    float pollenMaker = 0;
     if (isPollen == true && particle10Input > 100 ) {
       fill(48, 100, 100);
       size = 8;

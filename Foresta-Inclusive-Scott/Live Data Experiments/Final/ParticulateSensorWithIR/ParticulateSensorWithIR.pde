@@ -70,7 +70,7 @@ void setup() {
 
 void draw() {
   //println("FPS", frameRate);
-  scale = 1 + abs(int(map(wind, 5, 300, 100, 5)));
+  scale = 1 + abs(int(map(wind, 5, 180, 100, 5)));
   cols = floor(width / scale) + 1;
   rows = floor(height / scale) + 1;
   flowField = new PVector [cols*rows];
@@ -129,7 +129,6 @@ void messageReceived(String topic, byte[] payload) {
     //println("WetSoil", int(new String(payload)));
   } else if (topic.equals("Lux")) {
     liveLight = int(new String(payload));
-    println(liveLight);
   } else if (topic.equals("Temp-degree")) {
     // println("Temperature", int(new String(payload)));
   } else if (topic.equals("Wind")) {
