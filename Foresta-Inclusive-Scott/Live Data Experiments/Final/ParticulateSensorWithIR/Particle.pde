@@ -105,7 +105,6 @@ class Particle {
   void changeColor(int timeIn) {
      paletteSwitch = int(map(timeIn, 0, 1000, 0, colorPalette.length ));
      paletteSwitch = constrain(paletteSwitch, 0, colorPalette.length-1);
-    println(paletteSwitch);
     
     
     
