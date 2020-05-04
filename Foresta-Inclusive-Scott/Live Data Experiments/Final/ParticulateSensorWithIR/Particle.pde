@@ -13,10 +13,12 @@ class Particle {
   int size;
   color from;
   color to;
- int paletteSwitch;
+  int paletteSwitch;
+  int pollenSize = 8;
 
   float sensorLight;
   float sensorTemp;
+  int originalSize;
 
   color [][] colorPalette = {{#007adf, #00ecbc}, {#f43b47, #453a94}, {#50cc7f, #f5d100}, {#f9d423, #ff4e50}};
 
@@ -50,7 +52,7 @@ class Particle {
     particleColorSource = lerpColor(from, to, sensorTemp);
     particleColor = particleColorSource;
     particleSizeIncreaser = 1;
-    size = int(particleSizeInput);
+    originalSize = int(particleSizeInput);
   }
 
   void flow (PVector [] vectors) {
@@ -63,7 +65,7 @@ class Particle {
 
   //Handles the movement of the particle (do not change)
   void update(float sensorWindIn) {
-    float windMappedSpeed = map(sensorWindIn, 5, 100, 0.05, 1);
+    float windMappedSpeed = map(sensorWindIn, 70, 180, 0.05, 2);
     maxSpeed = windMappedSpeed; 
     velocity.limit(maxSpeed);
     velocity.add(acceleration);
@@ -103,13 +105,10 @@ class Particle {
   }
 
   void changeColor(int timeIn) {
-     paletteSwitch = int(map(timeIn, 0, 1000, 0, colorPalette.length ));
-     paletteSwitch = constrain(paletteSwitch, 0, colorPalette.length-1);
-    
-    
-    
-    
-    color newFill = lerpColor(colorPalette[paletteSwitch][0], colorPalette[paletteSwitch][1], sensorTemp);
+    paletteSwitch = int(map(timeIn, 0, 1200, 0, colorPalette.length ));
+    int paletteSwitchLimited = constrain(paletteSwitch, 0, colorPalette.length-1);
+
+    color newFill = lerpColor(colorPalette[paletteSwitchLimited][0], colorPalette[paletteSwitchLimited][1], sensorTemp);
     particleColor = newFill;
   }
 
@@ -163,11 +162,12 @@ class Particle {
     float pollenMaker = 0;
     if (isPollen == true && particle10Input > 100 ) {
       fill(48, 100, 100);
-      size = 8;
+      size = pollenSize;
     } else {
       fill(hue, (saturation - particlePollutionMapper) + pollenMaker, (brightness - particlePollutionMapper) + pollenMaker);
-    }
-
+      size = originalSize;
+  }
+    
     noStroke();
     ellipse(position.x, position.y, size, size);
   }
