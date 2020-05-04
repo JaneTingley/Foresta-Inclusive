@@ -1,12 +1,15 @@
 import mqtt.*;
 MQTTClient client;
 
-int scale = 30; // -----------------------------change this for density of flowfield
+int scale = 50; // -----------------------------change this for density of flowfield
 int cols;
 int rows;
 float inc = 0.07;
 float zoff = 0;
 float wind;
+int particle2_5;
+int particle10;
+
 //array list that contains the particle objects
 ArrayList<Particle> particles = new ArrayList<Particle>();
 //array of vectors that makes up the flow field
@@ -19,6 +22,7 @@ float xoff = 0.0;
 int liveLight;
 
 void setup() {
+  colorMode(HSB, 360, 100, 100);
   size(1000, 1000, P2D);
   //fullScreen(P2D);
 
@@ -26,9 +30,11 @@ void setup() {
   client = new MQTTClient(this);
   client.connect("mqtt://buddadweet~Foresta-Inclusive@broker.shiftr.io", "processing-sketch");
   client.subscribe("WetSoil"); //values between 0-800
-  client.subscribe("Light"); // values between 0-800(ish) (hands covering sensor = 200, light but in shade =600
-  client.subscribe("Temperature"); // remapped the values to produce between -30 and 30 degrees. Value not 100% accurate
+  client.subscribe("Lux"); // values between 0-800(ish) (hands covering sensor = 200, light but in shade =600
+  client.subscribe("Temp-degree"); // remapped the values to produce between -30 and 30 degrees. Value not 100% accurate
   client.subscribe("Wind"); 
+  client.subscribe("Particles2.5"); 
+  client.subscribe("Particles10"); 
 
 
   background(20, 0, 50);
@@ -37,28 +43,41 @@ void setup() {
   table = loadTable("data/sensor_data.csv", "header");// excel type file
 
   for (TableRow row : table.rows()) {//reads data down the collumns
-    for (int i = 0; i < 30; i++) { // change the # to change the amount of particles //reads the same row multiple times
-      float light = row.getFloat("light");
-      float temp = row.getFloat("temp");
+    float light = row.getFloat("Lux");
+    float temp = row.getFloat("Temp-degree");
+    int size = 0;
 
+    int particle2_5Count = int(row.getFloat("Particles2.5") + 1) * 15;
+    int particle10Count = int(row.getFloat("Particles10") + 1) * 15;
 
-      particles.add(new Particle(random(width), random(height), light, temp));
+    for (int i = 0; i < particle2_5Count; i++) {
+      size = 2;
+      particles.add(new Particle(random(width), random(height), light, temp, size, false));
+    }
+
+    for (int i = 0; i < particle10Count; i++) {
+      size = 4;
+
+      if (random(0, 1) < 0.25) { //essentially just adding some random coin flip that is skewed to lose so that the pollen doesnt overwhelm the sketch
+        particles.add(new Particle(random(width), random(height), light, temp, size, true));
+      } else {
+        particles.add(new Particle(random(width), random(height), light, temp, size, false));
+      }
     }
   }
+  println("Particles In Sketch:", particles.size());
 }
 
 void draw() {
+  //println("FPS", frameRate);
   scale = 1 + abs(int(map(wind, 5, 500, 100, 5)));
-  println(scale);
   cols = floor(width / scale) + 1;
   rows = floor(height / scale) + 1;
   flowField = new PVector [cols*rows];
-  //println(flowField.length);
 
-  //println(frameRate);
   xoff = xoff + .01;
   float alpha = map(noise(xoff), 0, 1, 4, 90);
-  fill(20, 0, 50, alpha);
+  fill(264, 100, 12, alpha);
   rect(0, 0, width, height);
 
 
@@ -76,7 +95,7 @@ void draw() {
 
       //___________________________Set how strictly the particle will follow the direction of the flowfield 
       //(Higher the value the strictier it will follow the direction)
-      v.setMag(.05); // was.12
+      v.setMag(map(scale, 100, 5, .05, .12)); // was.12=======================================================================================map
 
       //Add the calculated vector to the flowfield
       flowField[index] = v;
@@ -100,7 +119,7 @@ void draw() {
     particles.get(i).flow(flowField);
     particles.get(i).update(wind);
     particles.get(i).edges();
-    particles.get(i).show(liveLight, randomArray());
+    particles.get(i).show(liveLight, randomArray(), particle2_5, particle10);
   }
 }
 
@@ -108,14 +127,16 @@ void messageReceived(String topic, byte[] payload) {
 
   if (topic.equals("WetSoil")) {
     //println("WetSoil", int(new String(payload)));
-  } else if (topic.equals("Light")) {
-    //println("Light", int(new String(payload)));
+  } else if (topic.equals("Lux")) {
     liveLight = int(new String(payload));
-  } else if (topic.equals("Temperature")) {
-   // println("Temperature", int(new String(payload)));
+  } else if (topic.equals("Temp-degree")) {
+    // println("Temperature", int(new String(payload)));
   } else if (topic.equals("Wind")) {
-    println("Wind", int(new String(payload)));
     wind = int(new String(payload));
+  } else if (topic.equals("Particles2.5")) {
+    particle2_5 = int(new String(payload));
+  } else if (topic.equals("Particles10")) {
+    particle10 = int(new String(payload));
   }
 }
 
