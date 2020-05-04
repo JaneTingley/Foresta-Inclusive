@@ -20,7 +20,7 @@ class Particle {
   float sensorTemp;
   int originalSize;
 
-  color [][] colorPalette = {{#007adf, #00ecbc}, {#f43b47, #453a94}, {#50cc7f, #f5d100}, {#f9d423, #ff4e50}};
+  color [][] colorPalette = {{#f43b47, #453a94},  {#f9d423, #ff4e50}, {#007adf, #00ecbc}, {#50cc7f, #f5d100},};
 
 
 
@@ -105,7 +105,7 @@ class Particle {
   }
 
   void changeColor(int timeIn) {
-    paletteSwitch = int(map(timeIn, 0, 1200, 0, colorPalette.length ));
+    paletteSwitch = int(map(timeIn, 80, 200, 0, colorPalette.length ));
     int paletteSwitchLimited = constrain(paletteSwitch, 0, colorPalette.length-1);
 
     color newFill = lerpColor(colorPalette[paletteSwitchLimited][0], colorPalette[paletteSwitchLimited][1], sensorTemp);
