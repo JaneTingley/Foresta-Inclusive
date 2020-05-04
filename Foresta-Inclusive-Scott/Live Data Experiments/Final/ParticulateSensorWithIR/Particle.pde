@@ -13,7 +13,7 @@ class Particle {
   int size;
   color from;
   color to;
-
+ int paletteSwitch;
 
   float sensorLight;
   float sensorTemp;
@@ -37,7 +37,8 @@ class Particle {
     particlePollutionMapper = 0;
 
     //map the values of the sensors to a usable range
-    sensorLight = map(sensorLightInput, 40.18333333, 65000, 0.5, 5);
+    sensorLight = map(sensorLightInput, 40.18333333, 1000, 0.5, 5);
+    sensorLight = constrain(sensorLight, 0.5, 5);
     sensorTemp = map(sensorTempInput, 0, 2, 0, 1);
     //set particle movement parameters
     position = new PVector (posX, posY);
@@ -102,15 +103,14 @@ class Particle {
   }
 
   void changeColor(int timeIn) {
-    int paletteSwitch = int(map(timeIn, 0, 75600, 0, colorPalette.length ));
-
-
-
+     paletteSwitch = int(map(timeIn, 0, 1000, 0, colorPalette.length ));
+     paletteSwitch = constrain(paletteSwitch, 0, colorPalette.length-1);
+    println(paletteSwitch);
+    
+    
+    
+    
     color newFill = lerpColor(colorPalette[paletteSwitch][0], colorPalette[paletteSwitch][1], sensorTemp);
-
-
-
-
     particleColor = newFill;
   }
 
