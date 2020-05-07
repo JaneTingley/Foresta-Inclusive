@@ -28,8 +28,8 @@ int liveLight;
 
 void setup() {
   colorMode(HSB, 360, 100, 100);
-  size(1000, 1000, P2D);
-  //fullScreen(P2D);
+  //size(1000, 1000, P2D);
+  fullScreen(P2D);
 
 
   client = new MQTTClient(this);

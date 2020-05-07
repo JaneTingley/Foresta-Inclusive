@@ -126,7 +126,7 @@ class Vehicle {
   void display() {
 
 
-    s.setFill(color(#00fff0));
+    s.setFill(color(#00fff0));  //protazoa colour
 
     // Draw a triangle rotated in the direction of velocity
     float theta = velocity.heading2D() + PI/2;
