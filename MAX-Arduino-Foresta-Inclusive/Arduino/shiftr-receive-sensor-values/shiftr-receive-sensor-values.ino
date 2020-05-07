@@ -27,12 +27,9 @@ EthernetClient net;
 MQTTClient client;
 
 unsigned long lastMillis = 0;
-int moistureReading = 0;   // This is for the received sensor value sent by shiftr
-int lightReading = 0;   // This is for the received sensor value sent by shiftr
-int temperatureReading = 0;   // This is for the received sensor value sent by shiftr
-
-int moistureThreshold = 470;  // This holds the threshold for the soil - change here and reupload
-int valveTime = 4000;  // The amount of time between each time the valve is actuated (seconds)
+int luxReading = 0;   // This is for the received lux sensor value sent by shiftr
+int rainReading = 0;   // This is for the received sensor value sent by shiftr
+int pollenReading = 0;   // This is for the received sensor value sent by shiftr
 
 void setup() {
   Serial.begin(9600);
@@ -77,10 +74,7 @@ void loop() {
   // This sends the threshold value to the wifi module  
   if (millis() - lastMillis > 1000) {
     lastMillis = millis();
-    client.publish("/NewThreshold", String(moistureThreshold)); // sending to shiftr client.publish("NewThreshold", String(moistureThreshold)); // sending to shiftr
-    Serial.print("moistureThreshold value : "); Serial.println(moistureThreshold);
-    client.publish("/ValveTime", String(valveTime));
-    Serial.print("valveTime value : "); Serial.println(valveTime);
+    Serial.print(luxReading); Serial.print(" "); Serial.print(rainReading); Serial.print(" "); Serial.print(pollenReading); Serial.println(" ");
   }
 
       // from DhcpAddressPrinter 
@@ -123,28 +117,27 @@ void loop() {
 
 void connect() {
   Serial.print("connecting...");
-  while (!client.connect("Foresta-InclusiveGARDEN-CHANGE-VALVETIME", "c9f6b6d3", "055ad1c0d8de9605")) {
+  while (!client.connect("Foresta-InclusiveGALLERY-ARDUINO", "83aa4496", "02ffd19115bcd0ed")) {  
     Serial.print(".");
     delay(1000);
   }
 
   Serial.println("\nconnected!");  //  '/n' means start at new line
 
-  client.subscribe("/WetSoil");  //     '/' all names start with a slash
-  //client.unsubscribe("/WetSoil");
-  client.subscribe("/Light");  //     '/' all names start with a slash
-  client.subscribe("/Temperature");  //     '/' all names start with a slash
+  client.subscribe("/Lux");  //     '/' all names start with a slash
+  client.subscribe("/Rain");  //     '/' all names start with a slash
+  client.subscribe("/Particles10");  //     '/' all names start with a slash
 }
 
 void messageReceived(String &topic, String &payload) {   // string is a type of variable - a series of characters (topic= /WetSoil  payload= the value
-  if (topic== "/WetSoil"){
-   moistureReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
+  if (topic== "/Lux"){
+   luxReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in luxReading
   }
-  if (topic== "/Light"){
-   lightReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
+  if (topic== "/Rain"){
+   rainReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in rainReading
   } 
-  if (topic== "/Temperature"){
-   temperatureReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in moistureReading
+  if (topic== "/Particles10"){
+   pollenReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in pollenReading
   }
-  Serial.println("incoming: " + topic + " - " + payload);  // see serial - this is how the information is displayed
+  //Serial.println("incoming: " + topic + " - " + payload);  // see serial - this is how the information is displayed
 }
