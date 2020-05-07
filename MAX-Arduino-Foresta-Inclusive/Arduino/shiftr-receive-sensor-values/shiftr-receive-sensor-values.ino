@@ -28,8 +28,9 @@ MQTTClient client;
 
 unsigned long lastMillis = 0;
 int luxReading = 0;   // This is for the received lux sensor value sent by shiftr
-int rainReading = 0;   // This is for the received sensor value sent by shiftr
-int pollenReading = 0;   // This is for the received sensor value sent by shiftr
+int rainReading = 0;   // This is for the received rain sensor value sent by shiftr
+int pollenReading = 0;   // This is for the received particle sensor value sent by shiftr
+int windReading = 0;  // This is for the received wind sensor value sent by shiftr
 
 void setup() {
   Serial.begin(9600);
@@ -74,7 +75,8 @@ void loop() {
   // This sends the threshold value to the wifi module  
   if (millis() - lastMillis > 1000) {
     lastMillis = millis();
-    Serial.print(luxReading); Serial.print(" "); Serial.print(rainReading); Serial.print(" "); Serial.print(pollenReading); Serial.println(" ");
+    Serial.print(luxReading); Serial.print(" "); Serial.print(rainReading); Serial.print(" "); 
+    Serial.print(pollenReading); Serial.print(" "); Serial.print (windReading); Serial.println(" ");
   }
 
       // from DhcpAddressPrinter 
@@ -127,6 +129,7 @@ void connect() {
   client.subscribe("/Lux");  //     '/' all names start with a slash
   client.subscribe("/Rain");  //     '/' all names start with a slash
   client.subscribe("/Particles10");  //     '/' all names start with a slash
+  client.subscribe("/Wind"); 
 }
 
 void messageReceived(String &topic, String &payload) {   // string is a type of variable - a series of characters (topic= /WetSoil  payload= the value
@@ -138,6 +141,9 @@ void messageReceived(String &topic, String &payload) {   // string is a type of 
   } 
   if (topic== "/Particles10"){
    pollenReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in pollenReading
+  }
+  if (topic== "/Wind"){
+   windReading = payload.toInt(); // this translates the payload string into and integer, which is now stored in windReading
   }
   //Serial.println("incoming: " + topic + " - " + payload);  // see serial - this is how the information is displayed
 }
