@@ -54,7 +54,7 @@ void setup() {
     float temp = row.getFloat("Temp-degree");
     int size = 0;
 
-    int particle2_5Count = int(row.getFloat("Particles2.5") + 1) * 15;
+    int particle2_5Count = int(row.getFloat("Particles2.5") + 1) * 15; // amount of particles (consider removing +1 for days that don't have particles)
     int particle10Count = int(row.getFloat("Particles10") + 1) * 15;
 
     for (int i = 0; i < particle2_5Count; i++) {
@@ -111,7 +111,7 @@ void draw() {
       flowField[index] = v;
       xoff += inc;
 
-      //push();
+      //push();  // see the flow field
       //translate(x * scale, y * scale);
       //stroke(255);
       //rotate(angle);
