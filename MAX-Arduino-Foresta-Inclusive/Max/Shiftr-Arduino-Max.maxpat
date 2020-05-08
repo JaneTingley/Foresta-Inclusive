@@ -126,7 +126,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 678.0, 515.0, 97.0, 20.0 ],
-					"presentation_linecount" : 2,
 					"text" : "POLLEN Sensor"
 				}
 
@@ -344,7 +343,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 205.0, 204.0, 50.0, 22.0 ],
-					"text" : "32"
+					"text" : "48"
 				}
 
 			}
@@ -447,15 +446,6 @@
 		"lines" : [ 			{
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
-					"order" : 1,
-					"source" : [ "obj-1", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-9", 0 ],
-					"order" : 0,
 					"source" : [ "obj-1", 0 ]
 				}
 
