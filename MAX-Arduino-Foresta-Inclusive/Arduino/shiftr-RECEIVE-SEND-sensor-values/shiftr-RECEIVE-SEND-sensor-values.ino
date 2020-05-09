@@ -1,3 +1,6 @@
+//This sketch receives values from Shiftr and sends on serial.
+// received by Max. It also receives one byte of info from Max via serial to turn on/off a LED
+
 // This example uses an Arduino Uno together with
 // an Ethernet Shield to connect to shiftr.io.
 // It also automatically asks for an IP address. This code was taken from

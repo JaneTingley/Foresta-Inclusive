@@ -1,3 +1,7 @@
+//This sketch receives values from Shiftr and sends on serial.
+// received by Max. It also receives one byte of info from Max via serial to turn on/off a LED
+//trying to get it to receive RGB colour values - this sketch failed
+
 // This example uses an Arduino Uno together with
 // an Ethernet Shield to connect to shiftr.io.
 // It also automatically asks for an IP address. This code was taken from
@@ -37,16 +41,16 @@ const int ledR = 5; // LED in i/0 5
 const int ledG = 6; // LED in i/0 6
 const int ledB = 3; // LED in i/0 3
 int value; // to store the received value
-int Rvalue; // to store received Red va        lue
+int Rvalue; // to store received Red value
 int Gvalue; // to store received Green value
 int Bvalue; // to store received Blue value
 
 void setup() {
     // put your setup code here, to run once:
   pinMode (led, OUTPUT); // sets pin2 to output
-  pinMode (ledR, OUTPUT); // sets pin5 to output
-  pinMode (ledG, OUTPUT); // sets pin6 to output
-  pinMode (ledB, OUTPUT); // sets pin3 to output
+  //pinMode (ledR, OUTPUT); // sets pin5 to output  //trying to be able to send more than one value from MAX - DOES NOT WORK
+  //pinMode (ledG, OUTPUT); // sets pin6 to output
+  //pinMode (ledB, OUTPUT); // sets pin3 to output
         
   Serial.begin(9600);
 
@@ -98,13 +102,13 @@ void loop() {
     //max is sending packets of info
     // space is seperator so we need to store each value
     value= Serial.read();
-    Rvalue= Serial.read();
-    Gvalue= Serial.read();
-    Bvalue= Serial.read();
+    //Rvalue= Serial.read();
+    //Gvalue= Serial.read();
+    //Bvalue= Serial.read();
     //Serial.println (value);
     //Serial.println (Rvalue);
     //Serial.println (Gvalue);
-    //    Serial.println (Bvalue);
+    //Serial.println (Bvalue);
 
     //led is on or off
     digitalWrite(led, value);

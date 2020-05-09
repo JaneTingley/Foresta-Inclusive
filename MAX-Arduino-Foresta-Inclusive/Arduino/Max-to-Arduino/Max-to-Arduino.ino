@@ -1,3 +1,6 @@
+// This patch corresponds to Max patch "Max-to-Arduino"
+//simply receives a single value through Serial
+
 const int led = 2; // onboard LED
 
 int value;

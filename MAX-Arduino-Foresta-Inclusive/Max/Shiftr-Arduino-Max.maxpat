@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 104.0, 96.0, 1408.0, 817.0 ],
+		"rect" : [ 496.0, 291.0, 1408.0, 817.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -38,6 +38,42 @@
 		"style" : "",
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
+				"box" : 				{
+					"id" : "obj-31",
+					"linecount" : 3,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 618.0, 676.5, 150.0, 47.0 ],
+					"text" : "this is an object now - and can be used to make patches more simple"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-44",
+					"linecount" : 10,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 309.0, 211.5, 150.0, 141.0 ],
+					"text" : "receives values in ascii\n\nZL group receives the ind #s  finds where 13 and 10 are (indicates end of #)\n\nthen using itoa - changes ascii to suymbol\n\nthen symbol to int."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-39",
+					"linecount" : 4,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 689.0, 234.5, 275.0, 74.0 ],
+					"text" : "This patch received info from 4 sensors from shiftr\n\nIts corresponding arduino sketch is called Shiftr-RECEIVE-SEND-sensor-values\n"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"comment" : "",
 					"id" : "obj-42",
@@ -306,7 +342,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 83.0, 319.0, 50.0, 49.0 ],
-					"text" : "557 941 0 79"
+					"text" : "149 1023 0 80"
 				}
 
 			}
@@ -331,7 +367,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 193.0, 282.0, 50.0, 49.0 ],
-					"text" : "\"557 941 0 79 \""
+					"text" : "\"149 1023 0 80 \""
 				}
 
 			}
@@ -343,7 +379,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 205.0, 204.0, 50.0, 22.0 ],
-					"text" : "48"
+					"text" : "32"
 				}
 
 			}

@@ -1,3 +1,5 @@
+//this is the basic sketch that receives values from shift and sends through Serial.
+
 // This example uses an Arduino Uno together with
 // an Ethernet Shield to connect to shiftr.io.
 // It also automatically asks for an IP address. This code was taken from

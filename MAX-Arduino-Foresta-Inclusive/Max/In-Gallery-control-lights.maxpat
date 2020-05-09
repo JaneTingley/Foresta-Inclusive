@@ -39,6 +39,18 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-8",
+					"linecount" : 7,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 567.0, 396.0, 409.0, 114.0 ],
+					"text" : "FAILED PATCH\n\ncan't figure out how to send a string of info via serial and uppack in arduino.\n\ncorresponding failed sketch is:\nShiftr-RECEIVE-SEND-RGB\n\n"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-9",
 					"maxclass" : "message",
 					"numinlets" : 2,

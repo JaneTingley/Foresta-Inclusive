@@ -39,13 +39,38 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-13",
+					"linecount" : 3,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 240.5, 115.0, 150.0, 47.0 ],
+					"text" : "make sure you know serial speed and which port.  "
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-10",
+					"linecount" : 3,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 278.5, 264.0, 150.0, 47.0 ],
+					"text" : "This sketch receives shiftr  sensor values through Serial port - from Arduino"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-18",
+					"linecount" : 3,
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 83.0, 319.0, 50.0, 22.0 ],
-					"text" : "206"
+					"patching_rect" : [ 83.0, 319.0, 50.0, 49.0 ],
+					"text" : "148 1023 0 79"
 				}
 
 			}
@@ -68,8 +93,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 193.0, 282.0, 50.0, 22.0 ],
-					"text" : "\"206\""
+					"patching_rect" : [ 193.0, 282.0, 50.0, 22.0 ]
 				}
 
 			}
@@ -81,7 +105,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 205.0, 204.0, 50.0, 22.0 ],
-					"text" : "54"
+					"text" : "0"
 				}
 
 			}
