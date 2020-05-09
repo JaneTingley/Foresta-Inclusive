@@ -20,7 +20,7 @@
 
     // from DhcpAddressPrinter 
                 byte mac[] = {
-                  0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x06 /*change mac address so it is different from the programme 
+                  0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x07 /*change mac address so it is different from the programme 
                   on send arduino */
                 };
     // end from DhcpAddressPrinter
@@ -121,7 +121,7 @@ void loop() {
 
 void connect() {
   Serial.print("connecting...");
-  while (!client.connect("Foresta-InclusiveGALLERY-ARDUINO", "83aa4496", "02ffd19115bcd0ed")) {  
+  while (!client.connect("test", "83aa4496", "02ffd19115bcd0ed")) {  
     Serial.print(".");
     delay(1000);
   }
