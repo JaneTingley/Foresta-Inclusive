@@ -88,6 +88,7 @@
 , 			{
 				"box" : 				{
 					"id" : "obj-79",
+					"int" : 1,
 					"maxclass" : "gswitch",
 					"numinlets" : 3,
 					"numoutlets" : 1,
@@ -673,7 +674,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 1574.500001013278961, 892.000000357627869, 141.0, 22.0 ],
-					"text" : "analogWrite 11 0.19"
+					"text" : "analogWrite 11 0."
 				}
 
 			}
@@ -749,7 +750,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 1412.000001013278961, 892.000000357627869, 142.0, 22.0 ],
-					"text" : "analogWrite 10 0."
+					"text" : "analogWrite 10 0.44"
 				}
 
 			}
@@ -825,7 +826,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 1238.5, 892.000000357627869, 136.0, 22.0 ],
-					"text" : "analogWrite 9 0.53"
+					"text" : "analogWrite 9 0.84"
 				}
 
 			}
@@ -1641,7 +1642,7 @@
 , 			{
 				"box" : 				{
 					"angle" : 270.0,
-					"bgcolor" : [ 0.53, 0.0, 0.19, 1.0 ],
+					"bgcolor" : [ 0.84, 0.44, 0.0, 1.0 ],
 					"id" : "obj-7",
 					"maxclass" : "panel",
 					"mode" : 0,
