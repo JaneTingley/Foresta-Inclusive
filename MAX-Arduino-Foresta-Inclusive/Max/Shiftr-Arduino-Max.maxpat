@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 496.0, 291.0, 1408.0, 817.0 ],
+		"rect" : [ 248.0, 113.0, 944.0, 817.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -44,7 +44,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 618.0, 676.5, 150.0, 47.0 ],
+					"patching_rect" : [ 618.0, 676.5, 151.0, 47.0 ],
 					"text" : "this is an object now - and can be used to make patches more simple"
 				}
 
@@ -342,7 +342,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 83.0, 319.0, 50.0, 49.0 ],
-					"text" : "149 1023 0 80"
+					"text" : "499 1023 0 80"
 				}
 
 			}
@@ -367,7 +367,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 193.0, 282.0, 50.0, 49.0 ],
-					"text" : "\"149 1023 0 80 \""
+					"text" : "\"499 1023 0 80 \""
 				}
 
 			}
