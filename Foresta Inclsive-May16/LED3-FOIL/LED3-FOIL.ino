@@ -9,7 +9,7 @@ This program blinks the 2 high powered LEDs - headlight, and foil at 2 second in
 int LED_WHITE=8; //declares pin variables - in this case white
 int LED_AMBER=7; // in this case amber
 int LED_HEADLIGHT=6;
-int FOIL=9;
+int FOIL=5;
 
 
 // the setup function runs once when you press reset or power the board
