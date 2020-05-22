@@ -5,7 +5,7 @@ int lightSensor;  // holds values for Light
 int soilTemp;  //holds values for Temperature
 
 
-int moistureThreshold = 400;  // This holds the threshold for the soil - change here and reupload
+int moistureThreshold = 500;  // This holds the threshold for the soil - change here and reupload
 int valveTime = 4000;  // The amount of time between each time the valve is actuated (seconds)
 
 /* sensors used:
