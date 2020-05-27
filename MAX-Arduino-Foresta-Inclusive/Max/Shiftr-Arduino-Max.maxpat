@@ -341,8 +341,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 83.0, 319.0, 50.0, 35.0 ],
-					"text" : "155 0 0 81"
+					"patching_rect" : [ 83.0, 319.0, 52.0, 35.0 ],
+					"text" : "476 0 0 81"
 				}
 
 			}
@@ -367,7 +367,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 193.0, 282.0, 50.0, 35.0 ],
-					"text" : "\"155 0 0 81 \""
+					"text" : "\"476 0 0 81 \""
 				}
 
 			}
@@ -474,7 +474,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "int", "" ],
 					"patching_rect" : [ 114.0, 115.0, 77.0, 22.0 ],
-					"text" : "serial a 9600"
+					"text" : "serial b 9600"
 				}
 
 			}

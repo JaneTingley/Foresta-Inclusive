@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 445.0, 117.0, 1758.0, 951.0 ],
+		"rect" : [ 128.0, 117.0, 1758.0, 951.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -38,6 +38,19 @@
 		"style" : "",
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
+				"box" : 				{
+					"id" : "obj-1",
+					"linecount" : 6,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 688.75, 20.0, 169.0, 87.0 ],
+					"presentation_linecount" : 6,
+					"text" : "This patcher receives RGB values. It stores the first one and then receives a second value and switches to that value.  Be sure to send speed else will not work."
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"id" : "obj-18",
 					"maxclass" : "newobj",
@@ -327,11 +340,12 @@
 , 			{
 				"box" : 				{
 					"id" : "obj-2",
+					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 16.0, 11.0, 169.0, 20.0 ],
-					"text" : "Switches between two colours"
+					"patching_rect" : [ 102.5, 11.0, 169.0, 60.0 ],
+					"text" : "Switches between two colours\nSend RGB values in 0-1, 0-1, 0-1 as floating points in a message"
 				}
 
 			}
