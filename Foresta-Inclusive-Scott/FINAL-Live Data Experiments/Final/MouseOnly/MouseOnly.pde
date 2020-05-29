@@ -23,8 +23,8 @@ int liveLight;
 
 void setup() {
   colorMode(HSB, 360, 100, 100);
-  //size(1000, 1000, P2D);
-  fullScreen(P2D);
+  size(900, 900, P2D);
+  //fullScreen(P2D);
 
 
   client = new MQTTClient(this);
@@ -51,12 +51,12 @@ void setup() {
     int particle10Count = int(row.getFloat("Particles10") + 1) * 15;
 
     for (int i = 0; i < particle2_5Count; i++) {
-      size = 2;
+      size = 1; //------------------------------------size of perticles
       particles.add(new Particle(random(width), random(height), light, temp, size, false));
     }
 
     for (int i = 0; i < particle10Count; i++) {
-      size = 4;
+      size = 3; //------------------------------------size of perticles
 
       if (random(0, 1) < 0.25) { //essentially just adding some random coin flip that is skewed to lose so that the pollen doesnt overwhelm the sketch
         particles.add(new Particle(random(width), random(height), light, temp, size, true));
@@ -77,7 +77,7 @@ void draw() {
 
   xoff = xoff + .01;
   float alpha = map(noise(xoff), 0, 1, 4, 90);
-  fill(264, 100, 12, alpha);
+  fill(264, 100, 12, alpha); //background colour (originally   fill(264, 100, 12, alpha);
   rect(0, 0, width, height);
 
 

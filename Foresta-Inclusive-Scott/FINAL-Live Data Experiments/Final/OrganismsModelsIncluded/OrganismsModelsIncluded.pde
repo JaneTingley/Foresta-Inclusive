@@ -58,12 +58,12 @@ void setup() {
     int particle10Count = int(row.getFloat("Particles10") + 1) * 15;
 
     for (int i = 0; i < particle2_5Count; i++) {
-      size = 2;
+      size = 1; //-----------------------------------size of particles
       particles.add(new Particle(random(width), random(height), light, temp, size, false));
     }
 
     for (int i = 0; i < particle10Count; i++) {
-      size = 4;
+      size = 1 ; //-----------------------------------size of particles
 
       if (random(0, 1) < 0.25) { //essentially just adding some random coin flip that is skewed to lose so that the pollen doesnt overwhelm the sketch
         particles.add(new Particle(random(width), random(height), light, temp, size, true));

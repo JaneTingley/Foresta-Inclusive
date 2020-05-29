@@ -127,7 +127,7 @@ class Vehicle {
 
 
 
-    s.setFill(color(#00fff0));
+    s.setFill(color(#b5b193)); //--------------------- agent colour
 
     // Draw a triangle rotated in the direction of velocity
     float theta = velocity.heading2D() + PI/2;
