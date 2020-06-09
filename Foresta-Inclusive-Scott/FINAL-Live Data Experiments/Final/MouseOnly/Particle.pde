@@ -20,7 +20,7 @@ class Particle {
   float sensorTemp;
   int originalSize;
 
-  color [][] colorPalette = {  {#007adf, #00ecbc}, {#f43b47, #453a94}, {#f9d423, #ff4e50}, {#50cc7f, #f5d100}, };
+  color [][] colorPalette = {  {#007adf, #00ecbc}, {#f43b47, #873a94}, {#f9d423, #ff4e50}, {#6fb007, #f5c000}, };
 
 
 

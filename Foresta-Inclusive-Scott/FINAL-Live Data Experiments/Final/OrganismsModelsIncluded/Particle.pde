@@ -73,7 +73,7 @@ class Particle {
       mouse.sub(position); // gets the position of the particle in relation to the mouse
       mouse.setMag(random(-5, -1)); //sets the strength of the avoidance (negatives numbers repel, positive numbers attract);
       acceleration = mouse;
-      color newColor = lerpColor(particleColor, color(#f093fb), sensorTemp+0.45);
+      color newColor = lerpColor(particleColor, color(#e962f9), sensorTemp+0.45);
       particleColor = newColor;
       particleSizeIncreaser += 0.20; //increases the thickness of the particle the longer the mouse is close to it
     } else {
