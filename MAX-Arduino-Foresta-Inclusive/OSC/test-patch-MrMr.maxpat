@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 301.0, 424.0, 1154.0, 899.0 ],
+		"rect" : [ 472.0, 79.0, 1154.0, 899.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -39,13 +39,63 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-10",
+					"linecount" : 4,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 759.0, 538.0, 150.0, 60.0 ],
+					"text" : "make sure it is sending float values between 0 and 1 otherwise it won't work."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-5",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 125.0, 441.0, 157.0, 22.0 ],
+					"text" : "/1/jedermann 0.003"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-4",
+					"linecount" : 2,
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 488.5, 440.0, 157.0, 35.0 ],
+					"presentation_linecount" : 2,
+					"text" : "/horizontal/2/jedermann 0.832"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-2",
+					"linecount" : 3,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 792.0, 312.0, 150.0, 47.0 ],
+					"text" : "this taks in info from the test patch I created in mrmr"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-98",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 724.0, 551.0, 192.0, 22.0 ],
-					"text" : "/1/jedermann 0.411"
+					"patching_rect" : [ 294.5, 444.0, 157.0, 22.0 ],
+					"text" : "/1/jedermann 0.499"
 				}
 
 			}
@@ -55,8 +105,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 592.0, 379.0, 19.5, 20.0 ],
-					"text" : "Y"
+					"patching_rect" : [ 592.0, 407.0, 35.5, 20.0 ],
+					"text" : "slide"
 				}
 
 			}
@@ -69,7 +119,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 536.5, 379.0, 50.0, 22.0 ]
+					"patching_rect" : [ 536.5, 407.0, 50.0, 22.0 ]
 				}
 
 			}
@@ -104,7 +154,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "bang", "" ],
-					"patching_rect" : [ 254.0, 582.0, 156.5, 22.0 ],
+					"patching_rect" : [ 315.5, 746.0, 156.5, 22.0 ],
 					"text" : "t b l"
 				}
 
@@ -116,7 +166,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 3,
 					"outlettype" : [ "bang", "", "float" ],
-					"patching_rect" : [ 254.0, 486.0, 167.0, 22.0 ],
+					"patching_rect" : [ 315.5, 650.0, 167.0, 22.0 ],
 					"text" : "t b l f"
 				}
 
@@ -128,7 +178,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 254.0, 555.0, 234.0, 22.0 ],
+					"patching_rect" : [ 315.5, 719.0, 234.0, 22.0 ],
 					"text" : "prepend bgfillcolor"
 				}
 
@@ -140,7 +190,7 @@
 					"numinlets" : 3,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 329.0, 414.0, 54.0, 22.0 ],
+					"patching_rect" : [ 315.5, 614.0, 54.0, 22.0 ],
 					"text" : "pack f f f"
 				}
 
@@ -152,8 +202,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 254.0, 522.0, 239.0, 22.0 ],
-					"text" : "0.012 0.411 0.776"
+					"patching_rect" : [ 315.5, 686.0, 239.0, 22.0 ],
+					"text" : "0.003 0.499 0.832"
 				}
 
 			}
@@ -164,21 +214,21 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 254.0, 612.0, 253.0, 22.0 ],
-					"text" : "bgfillcolor 0.012 0.411 0.776"
+					"patching_rect" : [ 315.5, 776.0, 253.0, 22.0 ],
+					"text" : "bgfillcolor 0.003 0.499 0.832"
 				}
 
 			}
 , 			{
 				"box" : 				{
 					"angle" : 270.0,
-					"bgcolor" : [ 0.012000000104308, 0.41100001335144, 0.776000022888184 ],
+					"bgcolor" : [ 0.003000000026077, 0.499000012874603, 0.832000017166138 ],
 					"id" : "obj-76",
 					"maxclass" : "panel",
 					"mode" : 0,
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 233.0, 457.0, 292.0, 199.0 ],
+					"patching_rect" : [ 294.5, 599.0, 292.0, 221.0 ],
 					"proportion" : 0.39
 				}
 
@@ -189,7 +239,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 228.5, 382.0, 19.5, 20.0 ],
+					"patching_rect" : [ 228.5, 407.0, 19.5, 20.0 ],
 					"text" : "Z"
 				}
 
@@ -203,7 +253,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 173.0, 382.0, 50.0, 22.0 ]
+					"patching_rect" : [ 173.0, 407.0, 50.0, 22.0 ]
 				}
 
 			}
@@ -225,7 +275,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 402.0, 379.0, 19.5, 20.0 ],
+					"patching_rect" : [ 402.0, 407.0, 19.5, 20.0 ],
 					"text" : "Y"
 				}
 
@@ -239,7 +289,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 346.5, 379.0, 50.0, 22.0 ]
+					"patching_rect" : [ 346.5, 407.0, 50.0, 22.0 ]
 				}
 
 			}
@@ -323,7 +373,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 68.0, 208.0, 269.0, 22.0 ],
-					"text" : "/mrmr/accelerometerZ/1/jedermann 0.012"
+					"text" : "/mrmr/accelerometerZ/1/jedermann 0.003"
 				}
 
 			}
@@ -433,7 +483,16 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-5", 1 ],
+					"order" : 0,
+					"source" : [ "obj-65", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-75", 0 ],
+					"order" : 1,
 					"source" : [ "obj-65", 0 ]
 				}
 
@@ -580,7 +639,16 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-4", 1 ],
+					"order" : 0,
+					"source" : [ "obj-93", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-94", 0 ],
+					"order" : 1,
 					"source" : [ "obj-93", 0 ]
 				}
 
