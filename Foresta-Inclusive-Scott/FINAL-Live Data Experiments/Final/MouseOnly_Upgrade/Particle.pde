@@ -18,6 +18,7 @@ class Particle {
   static final int pollenThreshold = 15000; // Threshold for displaying large pollen dots
   static final int pollutionMin = 65000; // Min pollution level before starting to de-saturate small dots
   static final int pollutionMax = 66000; // Max pollution level after which all dots are fully de-saturated
+  
   float sensorLight;
   float sensorTemp;
   int originalSize;
