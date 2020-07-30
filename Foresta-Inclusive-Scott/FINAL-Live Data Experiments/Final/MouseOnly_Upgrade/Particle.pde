@@ -88,7 +88,7 @@ class Particle {
 
   //Handles the movement of the particle (do not change)
   void update(float sensorWindIn) {
-    float windMappedSpeed = map(sensorWindIn, 70, 180, 0.05, 2);
+    float windMappedSpeed = map(sensorWindIn, 70, 110, 0.05, 2); // speed of wind to affect movement
     maxSpeed = windMappedSpeed; 
     velocity.limit(maxSpeed);
     velocity.add(acceleration);
