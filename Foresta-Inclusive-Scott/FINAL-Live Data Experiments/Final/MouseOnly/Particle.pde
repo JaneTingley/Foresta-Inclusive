@@ -14,10 +14,10 @@ class Particle {
   color from;
   color to;
   int paletteSwitch;
-  static final int pollenSize = 8; // Change this for pollen size
-  static final int pollenThreshold = 15000; 
-  static final int pollutionMin = 60000;
-  static final int pollutionMax = 65000;
+  static final int pollenSize = 6; // Change this for pollen size
+  static final int pollenThreshold = 2; // threshold for when when the pollen yellow balls show up
+  static final int pollutionMin = 30; // minimum threshold for pollution
+  static final int pollutionMax = 125; // maximum threshold for pollution
 
   float sensorLight;
   float sensorTemp;
