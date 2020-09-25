@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 8,
+			"minor" : 1,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -37,7 +37,20 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
+				"box" : 				{
+					"id" : "obj-61",
+					"linecount" : 4,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 508.0, 79.0, 150.0, 60.0 ],
+					"text" : "127 - 0 = no speaker\n127 - 127 = RR\n0 - 0 = LF\n0-127 = LR"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"id" : "obj-59",
 					"maxclass" : "message",
@@ -45,7 +58,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 222.0, 205.0, 39.0, 22.0 ],
-					"text" : "64"
+					"text" : "127"
 				}
 
 			}
@@ -57,7 +70,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 555.5, 199.0, 39.0, 22.0 ],
-					"text" : "62"
+					"text" : "127"
 				}
 
 			}
@@ -312,7 +325,7 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"id" : "obj-39",
-					"items" : [ "none", ",", "tones", ",", "play", ",", "input" ],
+					"items" : [ "none", ",", "huge", ",", "play", ",", "epno" ],
 					"maxclass" : "umenu",
 					"numinlets" : 1,
 					"numoutlets" : 3,
@@ -334,8 +347,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 0,
-							"revision" : 8,
+							"minor" : 1,
+							"revision" : 6,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -368,6 +381,8 @@
 						"tags" : "",
 						"style" : "",
 						"subpatcher_template" : "",
+						"assistshowspatchername" : 0,
+						"visible" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-4",
@@ -405,8 +420,8 @@
 										"followglobaltempo" : 0,
 										"formantcorrection" : 0,
 										"mode" : "basic",
-										"originallength" : [ 616.533333333333076, "ticks" ],
-										"originaltempo" : 119.999999999999929,
+										"originallength" : [ 616.533333333332848, "ticks" ],
+										"originaltempo" : 119.999999999999901,
 										"pitchcorrection" : 0,
 										"quality" : "basic",
 										"timestretch" : [ 0 ]
@@ -453,8 +468,8 @@
 										"followglobaltempo" : 0,
 										"formantcorrection" : 0,
 										"mode" : "basic",
-										"originallength" : [ 1727.564625850340008, "ticks" ],
-										"originaltempo" : 119.999999999999972,
+										"originallength" : [ 1727.564625850339553, "ticks" ],
+										"originaltempo" : 119.999999999999957,
 										"pitchcorrection" : 0,
 										"quality" : "basic",
 										"timestretch" : [ 0 ]
@@ -735,7 +750,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "int", "int" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 324.5, 79.0, 100.0, 100.0 ]
+					"patching_rect" : [ 324.5, 74.0, 100.0, 100.0 ]
 				}
 
 			}
