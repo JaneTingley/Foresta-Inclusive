@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 204.0, 115.0, 1531.0, 840.0 ],
+		"rect" : [ 127.0, 390.0, 1531.0, 840.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -1114,7 +1114,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 204.0, 141.0, 1531.0, 814.0 ],
+						"rect" : [ 127.0, 416.0, 1531.0, 814.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -1150,8 +1150,8 @@
 									"numinlets" : 0,
 									"numoutlets" : 9,
 									"outlettype" : [ "", "", "", "", "", "", "", "", "" ],
-									"patching_rect" : [ 49.100242763757478, 21.0, 103.0, 22.0 ],
-									"text" : "get-values-Shiftr"
+									"patching_rect" : [ 49.100242763757478, 21.0, 118.0, 22.0 ],
+									"text" : "get-values-newShiftr"
 								}
 
 							}
@@ -1979,7 +1979,6 @@
 										"subpatcher_template" : "",
 										"showontab" : 0,
 										"assistshowspatchername" : 0,
-										"visible" : 1,
 										"boxes" : [ 											{
 												"box" : 												{
 													"id" : "obj-96",
@@ -2424,7 +2423,7 @@
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 510.354522701201631, 691.857421875, 59.0, 22.0 ],
-													"text" : "0.455545"
+													"text" : "0"
 												}
 
 											}
@@ -2448,7 +2447,7 @@
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 510.354522701201631, 624.857421875, 167.0, 22.0 ],
-													"text" : "0.76, 0.455545 6000"
+													"text" : "0.76 0 0 6000"
 												}
 
 											}
@@ -2472,7 +2471,7 @@
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 331.104522701201631, 691.857421875, 59.0, 22.0 ],
-													"text" : "0.509997"
+													"text" : "0."
 												}
 
 											}
@@ -2496,7 +2495,7 @@
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 336.104522701201631, 624.857421875, 167.0, 22.0 ],
-													"text" : "0., 0.509997 6000"
+													"text" : "0. 0 0 6000"
 												}
 
 											}
@@ -2520,7 +2519,7 @@
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 156.104522701201631, 691.857421875, 59.0, 22.0 ],
-													"text" : "0.644453"
+													"text" : "0"
 												}
 
 											}
@@ -2532,7 +2531,7 @@
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 161.104522701201631, 624.857421875, 167.0, 22.0 ],
-													"text" : "0.15, 0.644453 6000"
+													"text" : "0.15 0 0 6000"
 												}
 
 											}
@@ -11196,7 +11195,7 @@
 			}
  ],
 		"dependency_cache" : [ 			{
-				"name" : "get-values-Shiftr.maxpat",
+				"name" : "get-values-newShiftr.maxpat",
 				"bootpath" : "~/Documents/GitHub/Foresta-Inclusive/MAX-Arduino-Foresta-Inclusive/From Shiftr",
 				"patcherrelativepath" : "../From Shiftr",
 				"type" : "JSON",
