@@ -2,12 +2,12 @@
 	"name" : "Functional-RGB-Switcher",
 	"version" : 1,
 	"creationdate" : 3691407427,
-	"modificationdate" : 3691407427,
-	"viewrect" : [ 0.0, 0.0, 300.0, 500.0 ],
+	"modificationdate" : 3691407564,
+	"viewrect" : [ 17.0, 83.0, 300.0, 500.0 ],
 	"autoorganize" : 1,
 	"hideprojectwindow" : 0,
 	"showdependencies" : 1,
-	"autolocalize" : 0,
+	"autolocalize" : 1,
 	"contents" : 	{
 		"patchers" : 		{
 			"Functional-RGB-Switcher.maxpat" : 			{
