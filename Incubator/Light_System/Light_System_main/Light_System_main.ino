@@ -40,7 +40,8 @@ if (light_counter < sizeof(lux_values_array)){
   new_lux_value = lux_values_array[light_counter];  
   update_light(new_lux_value,previous_lux_value);
   light_counter ++;
-  delay(5000);} //this is here to act like other systems are updating 
+  //delay(5000);
+}//this is here to act like other systems are updating 
 
 else {
   Serial.print("No more values in the array");
